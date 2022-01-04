@@ -14,7 +14,7 @@ function profile(){
 	
 	div.onclick=(function(){		
 
-		formEdit("users",user.session);
+		formEdit("users");
 		navClose();
 		
 	});

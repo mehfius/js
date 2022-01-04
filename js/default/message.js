@@ -7,7 +7,7 @@ function message(code){
       a["501"]="Logado com sucesso";
       a["502"]="Senha inválida";
       a["503"]="Conta desativada";
-      a["504"]="Usuário não encontrado";
+      a["504"]="Email não encontrado ou senha incorreta";
       a["505"]="Campo password vazio";
       a["506"]="Erro deconhecido";
       a["507"]="Sistema em atualização";
@@ -18,8 +18,9 @@ function message(code){
       a["605"]="O campo cpf está vazio";
       a["606"]="Este cpf já foi cadastrado por outro usuário";
       a["607"]="Este email já foi cadastrado por outro usuário";
-      
       a["620"]="Digite apenas números, 11 dígitos";
+      
+      a["301"]="As senhas não coincidem,repita a senha.";
       
   
       a["999"]="Erro no sistema";  

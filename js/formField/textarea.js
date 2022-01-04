@@ -2,6 +2,7 @@ function textarea(data){
   
   var label = createObject('{"tag":"label","type":"'+data.type+'","innerhtml":"'+data.label+'"}');
   var div   = createObject('{"tag":"div"}');
+if(data.attributes){
 
 	Object.entries(data.attributes).forEach(([key, value]) => {
 
@@ -10,6 +11,7 @@ function textarea(data){
     }
 
   });
+}
 
   div.append(label);
   

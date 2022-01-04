@@ -1,13 +1,12 @@
-
 function formSend(data,id){
 
   const modules     = document.querySelector("window").getAttribute("modules");
   const config        = JSON.parse(localStorage.config);
   const user          = JSON.parse(localStorage.user);
 
-data.session=user.session;
-data.modules=modules;
-data.id=id;
+  data.session=user.session;
+  data.modules=modules;
+  data.id=id;
 
   var url  = config.formsave;
 
@@ -27,15 +26,20 @@ data.id=id;
 
     const post = await rawResponse.json();
 
-    itemReload(id)
+    if(modules!=="users"){
 
-  
-    
-}
+      itemReload(id)
 
-send(data); 
+    }else{
 
-  
+      document.body.setAttribute("loading","0");
+
+    }
+
+  }
+
+  send(data); 
+
 }
 
 function itemReload(id){

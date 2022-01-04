@@ -65,10 +65,10 @@ function formDelete(codigo){
 }
 
 function formNew(){
-      document.body.setAttribute("loading","1");
+
+  document.body.setAttribute("loading","1");
   formEdit(gA(),null);
 
-	
 }
 
 function gridShow(){

@@ -17,16 +17,9 @@ function selectAjax(data,header){
 
     div.append(selectAjaxListCards(json));
 
-    label.onclick = function(){
+    label.onclick = function(){selectBox(data.url);};
 
-      selectBox(data.url);
-
-    };
-
-btshare.onclick = function(){
-
- selectBox(data.url);
-};
+    btshare.onclick = function(){selectBox(data.url);};
 
     header.append(btshare);
 

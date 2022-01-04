@@ -1,6 +1,52 @@
-
 function recovery(){
+  
+	var config      = JSON.parse(localStorage.config);
+
+	var email 	 = goi('email');
+	var status   = goi('status');
+
+	email.setAttribute('class','');
 	
+	sA(status,"class","loading");
+	status.innerHTML="";
+	status.innerHTML="Localizando conta...";
+
+  const send = async function() {
+
+    const rawResponse = await fetch(config.passrecovery, {
+
+      method: 'POST',
+      headers: {'Accept': 'application/json','Content-Type': 'application/json'},
+      body: JSON.stringify({email:email.value})
+
+    });
+
+    const post = await rawResponse.json();
+
+    if(post.status){
+
+      status.innerHTML="A senha enviada por email";				
+      sA(status,"class","sucess");
+
+    }else{
+
+      status.innerHTML="Email não encontrado";
+      email.setAttribute('class','error');
+
+    }
+
+  }
+
+  send(); 
+
+}
+
+
+
+/* function recovery(){
+  
+	var config      = JSON.parse(localStorage.config); 
+
 	var email 	 = goi('email');
 	var status   = goi('status');
   var suites = document.body.getAttribute("suites");
@@ -75,7 +121,7 @@ function recovery(){
 				
 			}
 		}
-	};
+	}; 
 
 	setTimeout(function () {
 		
@@ -86,3 +132,4 @@ function recovery(){
 
 	
 }
+*/

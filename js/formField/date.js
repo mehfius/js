@@ -1,25 +1,16 @@
-function text(data){
-
+function date(data){
+  
   var value       = (data.value!==undefined)?data.value:"";
   var placeholder = (data.placeholder!==undefined)?data.placeholder:"";
 
   var label       = createObject('{"tag":"label","innerhtml":"'+data.label+'"}');
 	var div         = createObject('{"tag":"div"}');
-	var object      = createObject('{"tag":"input","value":"'+value+'","id":"'+data.url+'"}');
+	var object      = createObject('{"tag":"input","value":"'+value+'","id":"'+data.url+'","type":"date"}');
 
   div.appendChild(label);
 
-/* 	for (var key in attribute){
-				
-		if(attribute[key]!=="0" && attribute[key]!==""){
-			object.setAttribute(key,attribute[key]);
-		}
-
-	}
-	 */
 
 	object.setAttribute("autocomplete","new-password");
-	object.setAttribute("type","text");
 	object.setAttribute("class","default");
 
   if(placeholder){
@@ -29,7 +20,6 @@ function text(data){
 	object.setAttribute("required",data.required);
 		
   div.appendChild(object);
-
-  return div;
   
+  return div;
 }

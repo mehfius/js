@@ -6,6 +6,7 @@ function fields(data,header){
 
     case "textarea":return textarea(data);
     case "selectajax":return selectAjax(data,header);
+    case "date":return date(data);
   /*   case "multiplehidden":return multipleHidden(data);
    case "share":return share(data);header.append(btOptionsBtShare());*/
     case "fileupload":return fileupload(data,header);
@@ -17,11 +18,11 @@ function fields(data,header){
   }())
 
 
-  e.setAttribute('required',data.required);
+  //e.setAttribute('required',data.required);
   e.setAttribute('id','div'+data.url);
   e.setAttribute('grid',data.grid);
   e.setAttribute('gridmobile',data.gridmobile);
-  e.setAttribute('fieldcodigo',data.id);
+  //e.setAttribute('fieldcodigo',data.id);
   e.setAttribute('type',data.type);
 
   return e;

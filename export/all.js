@@ -1609,12 +1609,9 @@ function uuidv4() {
 }
 
 
-
-
 function boxFilter(){
   
-  const user = JSON.parse(localStorage.user);
-
+  const user   = JSON.parse(localStorage.user);
   const config = JSON.parse(localStorage.config);
 
   if(document.getElementsByTagName("boxfilter").length==0){
@@ -1664,8 +1661,7 @@ function boxFilter(){
 }
 
 function mountFilterStandard(){
-	
-	
+
 	var filter 	= cE("filter");
 	var input   = cE("input");	
 	var btSearch= cE("icon");
@@ -2675,7 +2671,7 @@ function message(code){
       a["501"]="Logado com sucesso";
       a["502"]="Senha inválida";
       a["503"]="Conta desativada";
-      a["504"]="Usuário não encontrado";
+      a["504"]="Email não encontrado ou senha incorreta";
       a["505"]="Campo password vazio";
       a["506"]="Erro deconhecido";
       a["507"]="Sistema em atualização";
@@ -2686,8 +2682,9 @@ function message(code){
       a["605"]="O campo cpf está vazio";
       a["606"]="Este cpf já foi cadastrado por outro usuário";
       a["607"]="Este email já foi cadastrado por outro usuário";
-      
       a["620"]="Digite apenas números, 11 dígitos";
+      
+      a["301"]="As senhas não coincidem,repita a senha.";
       
   
       a["999"]="Erro no sistema";  
@@ -2767,9 +2764,9 @@ header.appendChild(logo);
 
 function navMount(){
   
-  var user   = JSON.parse(localStorage.user);  
-  var config          = JSON.parse(localStorage.config);
-  var storagenav     = JSON.parse(localStorage.nav);
+  var user          = JSON.parse(localStorage.user);  
+  var config        = JSON.parse(localStorage.config);
+  var storagenav    = JSON.parse(localStorage.nav);
 
 	if(gotFind("nav")){
     
@@ -2792,25 +2789,37 @@ function navMount(){
 
     Object.entries(value.modules).forEach(([key1, value1]) => {
 
-       let label   = value1.label;
-       let url    = value1.url;
-       let premium = value1.premium;
-       let id       = value1.id; 
+      let label     = value1.label;
+      let url       = value1.url;
+      let premium   = value1.premium;
+      let id        = value1.id; 
+      let attr      = value1.attributes; 
 
-      var a      = createObject('{"tag":"a","innerhtml":"'+label+'","modules":"'+url+'","premium":"'+premium+'","c":"'+id+'"}');     
+      var a         = createObject('{"tag":"a","innerhtml":"'+label+'","modules":"'+url+'","premium":"'+premium+'","c":"'+id+'"}');     
 
-     a.onclick=(function(){
-        resetHeaderOptions();
-        //modulesLoadTitle(c);
-        modulesOpen(url);
-        navClose();
-        gridHide();
-       
-        //mountRanking();
+      a.onclick=(function(){
 
         document.body.setAttribute("loading","1");
-      });
 
+        if(attr){
+          
+		      navClose();
+          eval(attr.onclick);
+
+        }else{
+
+          resetHeaderOptions();
+          //modulesLoadTitle(c);
+          modulesOpen(url);
+          navClose();
+          gridHide();
+        
+          //mountRanking();
+
+        }
+
+
+      });
 
       nav.append(a);
 
@@ -2818,9 +2827,7 @@ function navMount(){
 
   }); 
 
-
-
-    nav.append(createObject('{"tag":"span"}'));
+  nav.append(createObject('{"tag":"span"}'));
 
 	var a = cE('a');
 
@@ -2927,7 +2934,7 @@ function profile(){
 	
 	div.onclick=(function(){		
 
-		formEdit("users",user.session);
+		formEdit("users");
 		navClose();
 		
 	});
@@ -3873,10 +3880,10 @@ function formDelete(codigo){
 }
 
 function formNew(){
-      document.body.setAttribute("loading","1");
+
+  document.body.setAttribute("loading","1");
   formEdit(gA(),null);
 
-	
 }
 
 function gridShow(){
@@ -4159,17 +4166,15 @@ function formSave(codigo){
 
 }
 
-
-
 function formSend(data,id){
 
   const modules     = document.querySelector("window").getAttribute("modules");
   const config        = JSON.parse(localStorage.config);
   const user          = JSON.parse(localStorage.user);
 
-data.session=user.session;
-data.modules=modules;
-data.id=id;
+  data.session=user.session;
+  data.modules=modules;
+  data.id=id;
 
   var url  = config.formsave;
 
@@ -4189,15 +4194,20 @@ data.id=id;
 
     const post = await rawResponse.json();
 
-    itemReload(id)
+    if(modules!=="users"){
 
-  
-    
-}
+      itemReload(id)
 
-send(data); 
+    }else{
 
-  
+      document.body.setAttribute("loading","0");
+
+    }
+
+  }
+
+  send(data); 
+
 }
 
 function itemReload(id){
@@ -4259,6 +4269,32 @@ function formView(areas,codigo){
 
 }
 
+function date(data){
+  
+  var value       = (data.value!==undefined)?data.value:"";
+  var placeholder = (data.placeholder!==undefined)?data.placeholder:"";
+
+  var label       = createObject('{"tag":"label","innerhtml":"'+data.label+'"}');
+	var div         = createObject('{"tag":"div"}');
+	var object      = createObject('{"tag":"input","value":"'+value+'","id":"'+data.url+'","type":"date"}');
+
+  div.appendChild(label);
+
+
+	object.setAttribute("autocomplete","new-password");
+	object.setAttribute("class","default");
+
+  if(placeholder){
+	  object.setAttribute("placeholder",placeholder);
+  }
+
+	object.setAttribute("required",data.required);
+		
+  div.appendChild(object);
+  
+  return div;
+}
+
 function fieldTooltip(div,data){
 
   if(data){
@@ -4284,6 +4320,7 @@ function fields(data,header){
 
     case "textarea":return textarea(data);
     case "selectajax":return selectAjax(data,header);
+    case "date":return date(data);
   /*   case "multiplehidden":return multipleHidden(data);
    case "share":return share(data);header.append(btOptionsBtShare());*/
     case "fileupload":return fileupload(data,header);
@@ -4295,11 +4332,11 @@ function fields(data,header){
   }())
 
 
-  e.setAttribute('required',data.required);
+  //e.setAttribute('required',data.required);
   e.setAttribute('id','div'+data.url);
   e.setAttribute('grid',data.grid);
   e.setAttribute('gridmobile',data.gridmobile);
-  e.setAttribute('fieldcodigo',data.id);
+  //e.setAttribute('fieldcodigo',data.id);
   e.setAttribute('type',data.type);
 
   return e;
@@ -5141,16 +5178,9 @@ function selectAjax(data,header){
 
     div.append(selectAjaxListCards(json));
 
-    label.onclick = function(){
+    label.onclick = function(){selectBox(data.url);};
 
-      selectBox(data.url);
-
-    };
-
-btshare.onclick = function(){
-
- selectBox(data.url);
-};
+    btshare.onclick = function(){selectBox(data.url);};
 
     header.append(btshare);
 
@@ -5536,10 +5566,13 @@ function share(attribute){
 }
 
 function text(data){
-  
+
+  var value       = (data.value!==undefined)?data.value:"";
+  var placeholder = (data.placeholder!==undefined)?data.placeholder:"";
+
   var label       = createObject('{"tag":"label","innerhtml":"'+data.label+'"}');
 	var div         = createObject('{"tag":"div"}');
-	var object      = createObject('{"tag":"input","value":"'+data.value+'","id":"'+data.url+'"}');
+	var object      = createObject('{"tag":"input","value":"'+value+'","id":"'+data.url+'"}');
 
   div.appendChild(label);
 
@@ -5555,7 +5588,11 @@ function text(data){
 	object.setAttribute("autocomplete","new-password");
 	object.setAttribute("type","text");
 	object.setAttribute("class","default");
-	object.setAttribute("placeholder",data.placeholder);
+
+  if(placeholder){
+	  object.setAttribute("placeholder",placeholder);
+  }
+
 	object.setAttribute("required",data.required);
 		
   div.appendChild(object);
@@ -5568,6 +5605,7 @@ function textarea(data){
   
   var label = createObject('{"tag":"label","type":"'+data.type+'","innerhtml":"'+data.label+'"}');
   var div   = createObject('{"tag":"div"}');
+if(data.attributes){
 
 	Object.entries(data.attributes).forEach(([key, value]) => {
 
@@ -5576,6 +5614,7 @@ function textarea(data){
     }
 
   });
+}
 
   div.append(label);
   
@@ -5837,6 +5876,161 @@ var inputName        = createObject('{"tag":"input","id":"label","placeholder":"
 var pattern          = encodeURI("[a-z0-9._%+-]+@[a-z0-9.-]+\\.[a-z]{2,4}$");  
 var inputEmail       = createObject('{"tag":"input","id":"email","placeholder":"seu@email.com","pattern":"'+pattern+'"}');
 var inputPass        = createObject('{"tag":"input","id":"password","type":"password","placeholder":"Senha"}');
+//var inputPass2       = createObject('{"tag":"input","id":"password2","type":"password","placeholder":"Confirmação da senha"}');
+var pattern          = encodeURI("\\d{11}");
+//var inputEstado      = createObject('{"tag":"input","id":"estado","placeholder":"Estado"}'); 
+var inputCRM         = createObject('{"tag":"input","id":"crm","placeholder":"Registro profissional","type":"text","onkeydown":"return inputTypeNumber(event);"}');
+//var inputSuite       = createObject('{"tag":"input","id":"suite","type":"hidden","value":"'+config.id+'"}');  
+// Fim input
+  
+//var text = 'Ao clicar em Cadastrar, você concorda com <a href=https://docs.google.com/document/d/1i_-hQXcuPfCH48fUNvC-GN60zZas8eqSjrzoHPZtnPc/edit?usp=sharing target=_blank>nossos termos</a>, Política de Dados e Política de Cookies.';  
+var text = 'Ao clicar em cadastrar, você concorda com a <a href=https://docs.google.com/document/d/1i_-hQXcuPfCH48fUNvC-GN60zZas8eqSjrzoHPZtnPc/edit?usp=sharing target=_blank>política de privacidade</a>, <a href=https://docs.google.com/document/d/1EsgYKoX4mG40kd0oXfwbuID1t9Oi1oFvEGlxfZ9SAsw/edit target=_blank>termos de uso</a> e <a href=https://docs.google.com/document/d/1EsgYKoX4mG40kd0oXfwbuID1t9Oi1oFvEGlxfZ9SAsw/ target=_blank>acordo do usuário</a> e <a href=https://docs.google.com/document/d/1i_-hQXcuPfCH48fUNvC-GN60zZas8eqSjrzoHPZtnPc/edit?usp=sharing target=_blank>política de cookies</a>.'; 
+var pTermos = createObject('{"tag":"p","innerhtml":"'+text+'","class":"ptermos"}');
+  
+
+  
+var inputAreas  = createObject('{"tag":"input","id":"areas","type":"hidden"}');
+  
+var div         = createObject('{"tag":"div","id":"status","class":"status"}');
+  
+//var button      = createObject('{"tag":"button","id":"status","innerhtml":""}');
+  
+var btEntrar           = createObject('{"tag":"button","id":"btEntrar","innerhtml":"Entrar"}'); 
+var btCadastrar        = createObject('{"tag":"button","id":"btCadastrar","innerhtml":"Cadastrar"}');  
+var btRecuperar        = createObject('{"tag":"button","id":"btRecuperar","innerhtml":"Recuperar"}'); 
+  
+var bLogin             = createObject('{"tag":"button","id":"btLogin","type":"button","textnode":"Fazer login"}');
+var bInsert            = createObject('{"tag":"button","id":"btInsert","type":"button","textnode":"Criar conta"}');
+  
+var bInsertPaciente    = createObject('{"tag":"button","id":"btInsertPaciente","type":"button","textnode":"Sou paciente"}');
+var bInsertMedico      = createObject('{"tag":"button","id":"btInsertMedico","type":"button","textnode":"Sou profissional da saúde"}');
+  
+var bRecovery          = createObject('{"tag":"button","id":"btRecovery","type":"button","textnode":"Esqueci minha senha"}');
+  
+//var menu        = createObject('{"tag":"options"}');
+  
+bLogin.onclick=(function(){
+
+  sA(login,'class','login');
+  setRequired('email,password')
+  sA(formLogin,'onsubmit','login();return false;');
+  
+})
+
+bInsert.onclick=(function(){
+
+  setRequired('label,email,password');
+  sA(login,'class','insert');
+  sA(formLogin,'onsubmit','insert();return false;');
+  goi('areas').value="100";
+  
+})
+  
+bInsertPaciente.onclick=(function(){
+  
+  setRequired('label,email,password');
+  
+  sA(login,'class','insertpaciente');
+  sA(goi('name'),'required','required');
+  sA(formLogin,'onsubmit','insert();return false;');
+  goi('areas').value="100";
+  
+})  
+  
+bInsertMedico.onclick=(function(){
+  
+  setRequired('label,email,password,crm');
+  
+  sA(login,'class','insertmedico');
+  sA(goi('name'),'required','required');
+  sA(formLogin,'onsubmit','insert();return false;');
+  goi('areas').value="50";
+  
+})  
+  
+bRecovery.onclick=(function(){
+  
+  setRequired('email');
+  
+  sA(login,'class','recovery');
+
+  sA(formLogin,'onsubmit','recovery();return false;');
+
+})
+
+formLogin.append(btclose,h1,plogin,pinsert,pinsertm,precovery,inputName,inputEmail,inputPass);
+  
+formLogin.appendChild(bInsertPaciente);
+formLogin.appendChild(bInsertMedico);
+
+formLogin.append(inputCRM,inputAreas,pTermos,btEntrar,btCadastrar,btRecuperar,div);
+
+if(config.newusers==1){
+
+    formLogin.appendChild(bInsert);
+
+}
+
+formLogin.append(bLogin,bRecovery);
+  
+login.append(formLogin);
+  
+return login;
+  
+  	/*
+  	login.appendChild(adsense());
+	(adsbygoogle = window.adsbygoogle || []).push({});
+*/
+	
+}
+
+function setRequired(list){
+  
+  var form = got(document,"form");
+
+  var input    = got(form[0],"input");
+
+  for (var x = 0; x < input.length;x++){
+    
+    input[x].removeAttribute('required');
+    
+  }
+  
+  var split = list.split(",");
+  
+  for(x=0;x<split.length;x++){
+    
+    goi(split[x]).setAttribute("required","required");
+    
+  }
+  
+}
+
+
+function mountLoginOld(){
+
+
+var config      = JSON.parse(localStorage.config); 
+
+var logo        = config.urllogo;
+  
+var btclose     = createObject('{"tag":"btclose","innerhtml":"x","onclick":"document.body.setAttribute(\'openlogin\',\'0\');"}');  
+var h1          = createObject('{"tag":"h1","innerhtml":"'+config.login+'","style":"background-image:url('+logo+');"}');  
+var plogin      = createObject('{"tag":"p","innerhtml":"Login","class":"plogin"}');
+var pinsert     = createObject('{"tag":"p","innerhtml":"Criar conta","class":"pinsert"}');
+var pinsertm    = createObject('{"tag":"p","innerhtml":"Cadastro de Médico","class":"pinsertm"}');
+var precovery   = createObject('{"tag":"p","innerhtml":"Recuperar senha","class":"precovery"}');  
+var login 	    = createObject('{"tag":"login","class":"login","name":"login"}');
+var formLogin   = createObject('{"tag":"form","onsubmit":"login();return false;"}');
+
+
+  
+// Inicio Input  
+  
+var inputName        = createObject('{"tag":"input","id":"label","placeholder":"Nome completo"}');
+var pattern          = encodeURI("[a-z0-9._%+-]+@[a-z0-9.-]+\\.[a-z]{2,4}$");  
+var inputEmail       = createObject('{"tag":"input","id":"email","placeholder":"seu@email.com","pattern":"'+pattern+'"}');
+var inputPass        = createObject('{"tag":"input","id":"password","type":"password","placeholder":"Senha"}');
 var pattern          = encodeURI("\\d{11}");
 var inputCPF         = createObject('{"tag":"input","id":"cpf","placeholder":"CPF","type":"number","title":"'+message("620")+'","pattern":"'+pattern+'"}');
 var inputRG          = createObject('{"tag":"input","id":"identidade","placeholder":"RG Identidade"}');  
@@ -5951,126 +6145,69 @@ return login;
 	
 }
 
-function setRequired(list){
-  
-  var form = got(document,"form");
-
-  var input    = got(form[0],"input");
-
-  for (var x = 0; x < input.length;x++){
-    
-    input[x].removeAttribute('required');
-    
-  }
-  
-  var split = list.split(",");
-  
-  for(x=0;x<split.length;x++){
-    
-    goi(split[x]).setAttribute("required","required");
-    
-  }
-  
-}
-
-
-
 
 function insert(){
-		
-// 	var name 	     = goi('label');
-// 	var email 	   = goi('email');
-// 	var cpf 	     = goi('cpf');
-// 	var crm 	     = goi('crm');
-  
-// 	var identidade = goi('identidade');
-// 	var telefone 	 = goi('telefone');
-// 	var cep 	     = goi('cep');
-// 	var endereco 	 = goi('endereco'); 
-  
-// 	var password   = goi('password');
-// 	var userstipos = goi('userstipos');
-// 	var status     = goi('status');
-  
-// 	var cidade   = goi('cidade');
-// 	var estado = goi('estado');
-// 	var bairro     = goi('bairro');		
-  
-// 	name.setAttribute('class','');
-// 	email.setAttribute('class','');
-// 	password.setAttribute('class','');
-// 	cpf.setAttribute('class','');
-	
-	status.innerHTML="";
-	status.innerHTML="<p>Verificando...</p>";
-  
-  var form = got(document,"form");
-	
-	var input    = got(form[0],"input");
-  
-	var data = new FormData();
-	
-	for (var x = 0; x < input.length;x++){
-    
-    input[x].setAttribute('class','');
-    
-		var n = input[x].getAttribute("id");
-		var v = input[x].value;
-		v = (v!==null)?v:"";
 
-    data.append(n,v);
-    
-  }
+	const config = JSON.parse(localStorage.config);
+
+  const status = goi("status");
+
   
-	var xmlhttp;
+        status.innerHTML = "Verificando...";
 
-	xmlhttp = new XMLHttpRequest();
- 
-	xmlhttp.onreadystatechange = function() {
+    var formfields    = document.querySelectorAll("form input");
+    var data          = {};
+    let error         = '';
 
-		if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
+    Object.entries(formfields).forEach(([key, value]) => {
 
-	    var authentic=JSON.parse(xmlhttp.responseText);
+      let id          = value.getAttribute('id');
+      let required    = value.parentElement.getAttribute('required');
+      let title       = value.getAttribute('title');
+      let valueid     = value.value;
+      
+        data[id]=valueid;
 
-      switch (authentic.status) {
+        if(required=="true"){
+
+          error+= (valueid)?"":"Campo "+title+" está vazio \n";
+
+        }
+
+    });
+
+    const send = async function(data) {
+
+      const rawResponse = await fetch(config.logininsert, {
+
+        method: 'POST',
+        headers: {'Accept': 'application/json','Content-Type': 'application/json'},
+        body: JSON.stringify({data:data})
+
+      });
+
+      const post = await rawResponse.json();
+
+      switch (post.status) {
           
-      case '1':loginInsertSuccess(authentic);break;
-      case '602':goi("label").setAttribute('class','error');goi("status").innerHTML=message(authentic.status);break;
-      case '603':goi("password").setAttribute('class','error');goi("status").innerHTML=message(authentic.status);break;
-      case '605':goi("cpf").setAttribute('class','error');goi("status").innerHTML=message(authentic.status);break;   
-      case '606':goi("cpf").setAttribute('class','error');goi("status").innerHTML=message(authentic.status);break;  
-      case '607':goi("email").setAttribute('class','error');goi("status").innerHTML=message(authentic.status);break; 
+        case '1':loginInsertSuccess(post);break;
 
-      default:goi("email").setAttribute('class','error');goi("status").innerHTML=message("999");      
+        case '301':goi("password").setAttribute('class','error');status.innerHTML=message(post.status);break; 
+
+        case '602':goi("label").setAttribute('class','error');status.innerHTML=message(post.status);break;
+        case '603':goi("password").setAttribute('class','error');status.innerHTML=message(post.status);break;
+        case '605':goi("cpf").setAttribute('class','error');status.innerHTML=message(post.status);break;   
+        case '606':goi("cpf").setAttribute('class','error');status.innerHTML=message(post.status);break;  
+        case '607':goi("email").setAttribute('class','error');status.innerHTML=message(post.status);break; 
+
+        default:goi("email").setAttribute('class','error');status.innerHTML=message("999");    
+
       }  
-		}
-    
-	};
 
-	setTimeout(function () {
-    
-    var url = localStorage.getItem("url")+'/admin/json/jsonLoginInsert.php';
-//    var params = "";
-    
-//     params+="userstipos="+userstipos.value+"&";
-//     params+="crm="+crm.value+"&";    
-//     params+="cpf="+cpf.value+"&";
-//     params+="email="+email.value+"&";
-//     params+="password="+password.value+"&";
-//     params+="label="+name.value+"&";
-//     params+="identidade="+identidade.value+"&";
-//     params+="telefone="+telefone.value+"&";
-//     params+="cep="+cep.value+"&";
-//     params+="endereco="+endereco.value+"&";
-  
-    xmlhttp.open("POST", url, true);
-    //xmlhttp.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
-    xmlhttp.send(data);    
-    
-	}, 1000);
-	
-	
-	
+    }
+
+    send(data);
+
 }
 
 function loginInsertSuccess(authentic){
@@ -6103,98 +6240,47 @@ function login(){
 	sA(status,"class","loading");
 	status.innerHTML="";
 	status.innerHTML="Autenticando...";
- /* 
-	var xmlhttp;
-
-	xmlhttp = new XMLHttpRequest();
-  
-	xmlhttp.onreadystatechange = function() {
-		
-		if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
-
-			var authentic=JSON.parse(xmlhttp.responseText);
-
-			if(authentic.status==="1"){
-				
-				//success
-
-				status.innerHTML=message("501");	
-				sA(status,"class","sucess");
-				setTimeout(function () {loadLogged(authentic);}, 500);
-			
-			}else{
-				
-				sA(status,"class","error");
-				
-        status.innerHTML=message(authentic.status);
-        
-        switch (authentic.status) {
-
-          case '502':sA(password,"class","error");break;  
-          case '504':sA(email,"class","error");break; 
-          case '505':sA(password,"class","error");break;
-          case '508':sA(email,"class","error");break;            
-  
-        }  
-  
-				setTimeout(function () {status.innerHTML="";sA(status,"class","");}, 2000);
-				
-			}
-		}
-	}; */
 
 	setTimeout(function () {
 
-/*      var url    =  getLocalStorage("config","login");
-    
-    var data 	= new FormData();
-        data.append('email', email.value);
-        data.append('password', password.value);
-        data.append('suite', suite.value);
+    (async () => {
+      const rawResponse = await fetch(getLocalStorage("config","login"), {
+      method: 'POST',
+      headers: {'Accept': 'application/json','Content-Type': 'application/json'},
+      body: JSON.stringify({email: email.value, password: password.value})
+      });
 
-    xmlhttp.open("POST", url, true);
-
-    xmlhttp.send(data); */
+      const authentic = await rawResponse.json();
 
 
-  (async () => {
-    const rawResponse = await fetch(getLocalStorage("config","login"), {
-    method: 'POST',
-    headers: {'Accept': 'application/json','Content-Type': 'application/json'},
-    body: JSON.stringify({email: email.value, password: password.value, suite: suite.value})
-    });
+        if(authentic.status==1){
+          
+          //success
 
-    const authentic = await rawResponse.json();
-
-
-			if(authentic.status==1){
-				
-				//success
-
-				status.innerHTML=message("501");	
-				sA(status,"class","sucess");
-				setTimeout(function () {loadLogged(authentic);}, 100);
-			
-			}else{
-				
-				sA(status,"class","error");
-				
-        status.innerHTML=message(authentic.status);
+          status.innerHTML=message("501");	
+          sA(status,"class","sucess");
+          setTimeout(function () {loadLogged(authentic);}, 100);
         
-        switch (authentic.status) {
+        }else{
+          
+          sA(status,"class","error");
+          console.log(authentic);
+          status.innerHTML=message(authentic.status);
+          
+          switch (authentic.status) {
 
-          case '502':sA(password,"class","error");break;  
-          case '504':sA(email,"class","error");break; 
-          case '505':sA(password,"class","error");break;
-          case '508':sA(email,"class","error");break;            
-  
-        }  
-  
-				setTimeout(function () {status.innerHTML="";sA(status,"class","");}, 100);
-				
-			}
+            case '502':sA(password,"class","error");break;  
+            case '504':sA(email,"class","error");break; 
+            case '505':sA(password,"class","error");break;
+            case '508':sA(email,"class","error");break;            
+    
+          }  
+    
+          //setTimeout(function () {status.innerHTML="";sA(status,"class","");}, 100);
+          
+        }
 
-  })();
+    })();
 		
 	}, 100);
 
@@ -6272,9 +6358,55 @@ function logoutResetStep2(){
   }
 
 
-
 function recovery(){
+  
+	var config      = JSON.parse(localStorage.config);
+
+	var email 	 = goi('email');
+	var status   = goi('status');
+
+	email.setAttribute('class','');
 	
+	sA(status,"class","loading");
+	status.innerHTML="";
+	status.innerHTML="Localizando conta...";
+
+  const send = async function() {
+
+    const rawResponse = await fetch(config.passrecovery, {
+
+      method: 'POST',
+      headers: {'Accept': 'application/json','Content-Type': 'application/json'},
+      body: JSON.stringify({email:email.value})
+
+    });
+
+    const post = await rawResponse.json();
+
+    if(post.status){
+
+      status.innerHTML="A senha enviada por email";				
+      sA(status,"class","sucess");
+
+    }else{
+
+      status.innerHTML="Email não encontrado";
+      email.setAttribute('class','error');
+
+    }
+
+  }
+
+  send(); 
+
+}
+
+
+
+/* function recovery(){
+  
+	var config      = JSON.parse(localStorage.config); 
+
 	var email 	 = goi('email');
 	var status   = goi('status');
   var suites = document.body.getAttribute("suites");
@@ -6349,7 +6481,7 @@ function recovery(){
 				
 			}
 		}
-	};
+	}; 
 
 	setTimeout(function () {
 		
@@ -6360,7 +6492,7 @@ function recovery(){
 
 	
 }
-
+*/
 
 function getLoginStatus(){
   

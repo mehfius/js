@@ -1,9 +1,6 @@
-
-
 function boxFilter(){
   
-  const user = JSON.parse(localStorage.user);
-
+  const user   = JSON.parse(localStorage.user);
   const config = JSON.parse(localStorage.config);
 
   if(document.getElementsByTagName("boxfilter").length==0){
@@ -53,8 +50,7 @@ function boxFilter(){
 }
 
 function mountFilterStandard(){
-	
-	
+
 	var filter 	= cE("filter");
 	var input   = cE("input");	
 	var btSearch= cE("icon");

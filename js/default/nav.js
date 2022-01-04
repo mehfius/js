@@ -1,8 +1,8 @@
 function navMount(){
   
-  var user   = JSON.parse(localStorage.user);  
-  var config          = JSON.parse(localStorage.config);
-  var storagenav     = JSON.parse(localStorage.nav);
+  var user          = JSON.parse(localStorage.user);  
+  var config        = JSON.parse(localStorage.config);
+  var storagenav    = JSON.parse(localStorage.nav);
 
 	if(gotFind("nav")){
     
@@ -25,25 +25,37 @@ function navMount(){
 
     Object.entries(value.modules).forEach(([key1, value1]) => {
 
-       let label   = value1.label;
-       let url    = value1.url;
-       let premium = value1.premium;
-       let id       = value1.id; 
+      let label     = value1.label;
+      let url       = value1.url;
+      let premium   = value1.premium;
+      let id        = value1.id; 
+      let attr      = value1.attributes; 
 
-      var a      = createObject('{"tag":"a","innerhtml":"'+label+'","modules":"'+url+'","premium":"'+premium+'","c":"'+id+'"}');     
+      var a         = createObject('{"tag":"a","innerhtml":"'+label+'","modules":"'+url+'","premium":"'+premium+'","c":"'+id+'"}');     
 
-     a.onclick=(function(){
-        resetHeaderOptions();
-        //modulesLoadTitle(c);
-        modulesOpen(url);
-        navClose();
-        gridHide();
-       
-        //mountRanking();
+      a.onclick=(function(){
 
         document.body.setAttribute("loading","1");
-      });
 
+        if(attr){
+          
+		      navClose();
+          eval(attr.onclick);
+
+        }else{
+
+          resetHeaderOptions();
+          //modulesLoadTitle(c);
+          modulesOpen(url);
+          navClose();
+          gridHide();
+        
+          //mountRanking();
+
+        }
+
+
+      });
 
       nav.append(a);
 
@@ -51,9 +63,7 @@ function navMount(){
 
   }); 
 
-
-
-    nav.append(createObject('{"tag":"span"}'));
+  nav.append(createObject('{"tag":"span"}'));
 
 	var a = cE('a');
 
