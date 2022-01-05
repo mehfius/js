@@ -1,4 +1,4 @@
-function fields(data,header){
+function fields(data,header,pagedata){
 
   const e = (function(){
     
@@ -9,7 +9,7 @@ function fields(data,header){
     case "date":return date(data);
   /*   case "multiplehidden":return multipleHidden(data);
    case "share":return share(data);header.append(btOptionsBtShare());*/
-    case "fileupload":return fileupload(data,header);
+    case "fileupload":return fileupload(data,header,pagedata);
  
     default:return text(data);
       

@@ -3685,7 +3685,7 @@ function formMount(modules,id,header){
 
 }
 
-function formMountFields(modules,data){
+function formMountFields(modules,pagedata){
 
 	var user     = JSON.parse(localStorage.user);
 	var config   = JSON.parse(localStorage.config);
@@ -3695,27 +3695,27 @@ function formMountFields(modules,data){
 	var header   = createObject('{"tag":"header"}');
 	var label    = createObject('{"tag":"label"}');
 
-	header.append(btBack(data.id),label);
+	header.append(btBack(pagedata.id),label);
 
 	window.append(header);
 
-  header.append(btHeaderSave(data.id));
+  header.append(btHeaderSave(pagedata.id));
 
-	if(data.id){
+	if(pagedata.id){
     
     label.appendChild(cT("Editando "+modules));
     header.appendChild(btHeaderPrint());
     
 		got(document,"body")[0].setAttribute("open","1");
 
-    var jsonform = data.form.fields;
+    var jsonform = pagedata.form.fields;
 
 	}else{
 
 		window.setAttribute("tutorial","1");
 		label.appendChild(cT("Novo "+modules));
 		
-		var jsonform = data.form.fields;
+		var jsonform = pagedata.form.fields;
 
 	}  
   
@@ -3726,7 +3726,7 @@ function formMountFields(modules,data){
 
 	Object.entries(jsonform).forEach(([key, value]) => {
 
-    form.append(fields(value,header));	
+    form.append(fields(value,header,pagedata));	
 	
 	});
   
@@ -4312,7 +4312,7 @@ function fieldTooltip(div,data){
 
 
 
-function fields(data,header){
+function fields(data,header,pagedata){
 
   const e = (function(){
     
@@ -4323,7 +4323,7 @@ function fields(data,header){
     case "date":return date(data);
   /*   case "multiplehidden":return multipleHidden(data);
    case "share":return share(data);header.append(btOptionsBtShare());*/
-    case "fileupload":return fileupload(data,header);
+    case "fileupload":return fileupload(data,header,pagedata);
  
     default:return text(data);
       
@@ -4382,12 +4382,11 @@ function fields(data,header){
       break;
    */
 
-function fileupload(data,header){
+function fileupload(data,header,pagedata){
 
   var label    = createObject('{"tag":"label","innerhtml":"'+data.label+'"}');
   var div      = createObject('{"tag":"div"}');
-
-  var uuid = uuidv4();
+  var uuid = (pagedata.uuid)?pagedata.files:uuidv4();
 
   var object   = createObject('{"tag":"input","id":"files","type":"hidden","value":"'+uuid+'"}');
 
@@ -4404,13 +4403,13 @@ function fileupload(data,header){
 
       console.log(files);
 
-/*       Object.entries(files).forEach(([key, value]) => {
-         */
-          fileUploadFigure(result,files);
-    
-  /*         object.setAttribute('value',value.uuid);
+        /*       Object.entries(files).forEach(([key, value]) => {
+        */
+        fileUploadFigure(result,files);
 
-      }); */
+        /*         object.setAttribute('value',value.uuid);
+
+        }); */
 
     }
 

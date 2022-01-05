@@ -1,4 +1,4 @@
-function formMountFields(modules,data){
+function formMountFields(modules,pagedata){
 
 	var user     = JSON.parse(localStorage.user);
 	var config   = JSON.parse(localStorage.config);
@@ -8,27 +8,27 @@ function formMountFields(modules,data){
 	var header   = createObject('{"tag":"header"}');
 	var label    = createObject('{"tag":"label"}');
 
-	header.append(btBack(data.id),label);
+	header.append(btBack(pagedata.id),label);
 
 	window.append(header);
 
-  header.append(btHeaderSave(data.id));
+  header.append(btHeaderSave(pagedata.id));
 
-	if(data.id){
+	if(pagedata.id){
     
     label.appendChild(cT("Editando "+modules));
     header.appendChild(btHeaderPrint());
     
 		got(document,"body")[0].setAttribute("open","1");
 
-    var jsonform = data.form.fields;
+    var jsonform = pagedata.form.fields;
 
 	}else{
 
 		window.setAttribute("tutorial","1");
 		label.appendChild(cT("Novo "+modules));
 		
-		var jsonform = data.form.fields;
+		var jsonform = pagedata.form.fields;
 
 	}  
   
@@ -39,7 +39,7 @@ function formMountFields(modules,data){
 
 	Object.entries(jsonform).forEach(([key, value]) => {
 
-    form.append(fields(value,header));	
+    form.append(fields(value,header,pagedata));	
 	
 	});
   
