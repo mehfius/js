@@ -108,7 +108,7 @@ function upload(object){
 			
 		}else if(ext=='application/pdf'){
 			
-			sendFile(object.files[x],anexos,localStorage.getItem("upload")+'?',
+			sendFile(object.files[x],anexos,config.upload+'?',
 
 							 
 				function(filename){

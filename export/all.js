@@ -4391,26 +4391,28 @@ function fileupload(data,header){
 
   var object   = createObject('{"tag":"input","id":"files","type":"hidden","value":"'+uuid+'"}');
 
-      header.append(btHeaderAttach());
+    header.append(btHeaderAttach());
 
   var span   = createObject('{"tag":"uploadedStatus"}');
   var result = createObject('{"tag":"uploadedFiles"}');
     
-      div.append(object,result,span);
+    div.append(object,result,span);
 
-      if(data.value){
+    if(data.value){
 
-        var files    = JSON.parse(data.value);
+      var files    = JSON.parse(data.value);
 
-        Object.entries(files).forEach(([key, value]) => {
-          
-            fileUploadFigure(result,files);
-      
-            object.setAttribute('value',value.uuid);
+      console.log(files);
 
-        });
+/*       Object.entries(files).forEach(([key, value]) => {
+         */
+          fileUploadFigure(result,files);
+    
+  /*         object.setAttribute('value',value.uuid);
 
-      }
+      }); */
+
+    }
 
   return div;
   
@@ -4553,18 +4555,6 @@ function addUploadFilesPDF(local,filename){
 	var figure 			= createObject('{"tag":"figure","style":"background-image:url('+config.imgp+split[0]+'.jpg);"}');
 	var divLabel 		= createObject('{"tag":"h3"}');
 
-
-	if(goiFind(filename)){
-
-		goi(filename).appendChild(divOptions);
-		goi(filename).appendChild(figure);
-
-	}else{
-
-		local.insertBefore(div, local.childNodes[0]);
-		div.appendChild(figure);
-
-	}
 	
   spanDelete.onclick=(function(){
 
@@ -4580,8 +4570,19 @@ function addUploadFilesPDF(local,filename){
 	
   divOptions.append(spanDelete,spanZoom);
   figure.append(divLabel);
-  div.append(figure,divOptions);
 
+  
+	if(goiFind(filename)){
+
+		goi(filename).append(divOptions,figure);
+
+	}else{
+
+		local.insertBefore(div, local.childNodes[0]);
+		div.append(figure,divOptions);
+    
+	}
+  
 }
 
 function addUploadFilesPDFv2(local,filename){
@@ -4836,7 +4837,7 @@ function upload(object){
 			
 		}else if(ext=='application/pdf'){
 			
-			sendFile(object.files[x],anexos,localStorage.getItem("upload")+'?',
+			sendFile(object.files[x],anexos,config.upload+'?',
 
 							 
 				function(filename){
