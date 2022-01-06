@@ -9,8 +9,11 @@ function selectBox(modules){
     selectbox.append(selectBoxFields(modules),selectBoxList());
   
     window.append(selectbox);
+ 
 
   }
+
+  document.body.setAttribute("selectbox","1")
 
   selectbox.setAttribute('modules',modules);
 
@@ -31,7 +34,7 @@ function selectBoxFields(modules){
 
       input.onkeyup = function(){
 
-        if(this.value.length>2){
+        if(this.value.length>3){
           selectBoxSearch(this.value,modules)
         }
           
@@ -41,6 +44,7 @@ function selectBoxFields(modules){
 
       icon.onclick=(function(){
         rE(document.querySelector('selectbox'));
+          document.body.removeAttribute("selectbox")
       });
 
       fields.append(loading,input,icon);
@@ -76,7 +80,7 @@ function selectBoxOpt(data,modules){
 
   })
 
-  opt.append(selectBoxCells('files',data.files),selectBoxCells('id',data.id),selectBoxCells('label',data.label));
+  opt.append(selectBoxCells('files',data.files,data.color),selectBoxCells('id',data.id),selectBoxCells('label',data.label));
 
   return opt;
 
@@ -99,7 +103,7 @@ function selectBoxOptClick(e,data,modules){
 }
 
 
-function selectBoxCells(type,data){
+function selectBoxCells(type,data,color){
 
   const e = (function(){
 
@@ -107,7 +111,7 @@ function selectBoxCells(type,data){
 
       case "id"     :return createObject('{"tag":"'+type+'","innerhtml":"'+data+'"}');
       case "label"  :return createObject('{"tag":"'+type+'","innerhtml":"'+data+'"}');
-      case "files"  :return selectBoxCellsFigure(data);
+      case "files"  :return selectBoxCellsFigure(data,color);
 
    }
 
@@ -117,9 +121,15 @@ function selectBoxCells(type,data){
 
 } 
 
-function selectBoxCellsFigure(data){
+function selectBoxCellsFigure(data,color){
+
+
 
   var figure = createObject('{"tag":"figure"}');
+
+  if(color){
+    figure.setAttribute("style","background-color:"+color+";")
+  }
 
   if(data!==null){
 
