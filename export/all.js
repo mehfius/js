@@ -5333,15 +5333,14 @@ function selectBox(modules){
 	
   var selectbox   = document.querySelector('selectbox');
   var window   = document.querySelector('window');
-
-
-
+  
   if(!selectbox){
 
-      selectbox   = createObject('{"tag":"selectbox"}');
-      selectbox.append(selectBoxFields(modules),selectBoxList());
-    
-      window.append(selectbox);
+    selectbox   = createObject('{"tag":"selectbox"}');
+    selectbox.append(selectBoxFields(modules),selectBoxList());
+  
+    window.append(selectbox);
+
   }
 
   selectbox.setAttribute('modules',modules);
@@ -5355,27 +5354,27 @@ function selectBoxFields(modules){
 
   var fields = createObject('{"tag":"fields"}');
 
+  var loading   = createObject('{"tag":"icon","class":"icon-spinner3"}');
+
   var icon   = createObject('{"tag":"icon","class":"icon-cancel-circle"}');
 
   var input  = createObject('{"tag":"input","type":"text","placeholder":"Digite para procurar"}'); 
 
+      input.onkeyup = function(){
 
-
-    input.onkeyup = function(){
-
-      if(this.value.length>4){
-        selectBoxSearch(this.value,modules)
+        if(this.value.length>2){
+          selectBoxSearch(this.value,modules)
+        }
+          
       }
-        
-    }
 
-tooltip(icon,"fechar"); 
+      tooltip(icon,"fechar"); 
 
-    icon.onclick=(function(){
-      rE(document.querySelector('selectbox'));
-    });
+      icon.onclick=(function(){
+        rE(document.querySelector('selectbox'));
+      });
 
-  fields.append(input,icon);
+      fields.append(loading,input,icon);
 
   return fields;
 
@@ -5397,8 +5396,6 @@ function selectBoxOpt(data,modules){
   opt.onclick=(function(){
 
     if(plugin=='multiply'){
-
-
 
       selectBoxOptClickMultiply(this,data,modules);
 
@@ -5490,7 +5487,9 @@ function selectBoxOptClickMultiply(e,data,modules){
 }
 
 function selectBoxSearch(string,modules){
-  
+
+  document.querySelector('selectbox').setAttribute("loading","1");
+
   const config = JSON.parse(localStorage.config);
 
     const send = async function() {
@@ -5515,6 +5514,8 @@ function selectBoxSearch(string,modules){
 
       });
 
+      document.querySelector('selectbox').setAttribute("loading","0");
+      
   }();
 
 }

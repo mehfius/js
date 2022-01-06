@@ -1,5 +1,7 @@
 function selectBoxSearch(string,modules){
-  
+
+  document.querySelector('selectbox').setAttribute("loading","1");
+
   const config = JSON.parse(localStorage.config);
 
     const send = async function() {
@@ -24,6 +26,8 @@ function selectBoxSearch(string,modules){
 
       });
 
+      document.querySelector('selectbox').setAttribute("loading","0");
+      
   }();
 
 }
