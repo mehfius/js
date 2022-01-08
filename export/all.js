@@ -4382,496 +4382,6 @@ function fields(data,header,pagedata){
       break;
    */
 
-function fileupload(data,header,pagedata){
-
-  var label    = createObject('{"tag":"label","innerhtml":"'+data.label+'"}');
-  var div      = createObject('{"tag":"div"}');
-  var uuid = (pagedata.uuid)?pagedata.files:uuidv4();
-
-  var object   = createObject('{"tag":"input","id":"files","type":"hidden","value":"'+uuid+'"}');
-
-    header.append(btHeaderAttach());
-
-  var span   = createObject('{"tag":"uploadedStatus"}');
-  var result = createObject('{"tag":"uploadedFiles"}');
-    
-    div.append(object,result,span);
-
-    if(data.value){
-
-      var files    = JSON.parse(data.value);
-
-      console.log(files);
-
-        /*       Object.entries(files).forEach(([key, value]) => {
-        */
-        fileUploadFigure(result,files);
-
-        /*         object.setAttribute('value',value.uuid);
-
-        }); */
-
-    }
-
-  return div;
-  
-}
-
-
-function addUploadFiles(local,object){
-
-  const config = JSON.parse(localStorage.config);
-
-	var div 				= cE("div");
-	var figure 			= cE("figure");
-	var textCover 	= cT("Destaque");
-	var spanDelete 	= cE("span");
-	var spanLeft 		= cE("span");
-	var spanRight 	= cE("span");
-	var spanZoom 		= cE("span");
-	var spanCover 	= cE("span");
-	var divOptions 	= cE("options");
-  var spanEdit 		= cE("span");
-
-	if(object.filename!==undefined){
-    
-		var filename=object.filename;
-		var key=object.key;
-		
-	}else{
-		var filename=object;
-	}
-	
-	if(filename!==null){
-    
-    var urlimgm = config.imgm+filename+"?key="+key;
-    var urlimg  = config.img+filename+"?key="+randomString(32);
-
-		spanCover.appendChild(textCover);
-
-		divOptions.appendChild(spanDelete);
-		divOptions.appendChild(spanLeft);
-		divOptions.appendChild(spanZoom);
-		divOptions.appendChild(spanRight);
-		//divOptions.appendChild(spanEdit);
-		
-		div.appendChild(divOptions);
-
-		spanDelete.setAttribute('class','icon-bin');
-		spanLeft.setAttribute('class','icon-undo');
-		spanRight.setAttribute('class','icon-redo');
-		spanZoom.setAttribute('class','icon-search');
-		spanEdit.setAttribute('class','icon-edit');
-		
-		sA(figure,"style","background-image:url('"+urlimgm+"');");
-		sA(spanDelete,"onclick","if(confirm('Deseja remover este arquivo?')){removeAnexos(this.parentNode.parentNode,'"+filename+"')}");
-		
-		//sA(spanZoom,"onclick","window.open('"+localStorage.getItem("img")+filename+"?key="+randomString(32)+"','_blank');");
-    
-    spanZoom.onclick=(function(){
-      window.open(urlimg,'_blank');
-    });
-                      
-		spanLeft.onclick=(function(){
-
-			figure.setAttribute('style',"background-image:url('"+localStorage.getItem("urlimagerotate")+"?img="+filename+"&rotate=left&key="+randomString(32)+"');");
-			divOptions.setAttribute('style',"background-image:url('"+localStorage.getItem("url")+"/admin/action/actionChangeImageKey.php?filename="+filename+"&key="+randomString(32)+"');");
-      
-      
-		});
-
-		spanRight.onclick=(function(){
-
-			figure.setAttribute('style',"background-image:url('"+localStorage.getItem("urlimagerotate")+"?img="+filename+"&rotate=right&key="+randomString(32)+"');");
-			divOptions.setAttribute('style',"background-image:url('"+localStorage.getItem("url")+"/admin/action/actionChangeImageKey.php?filename="+filename+"&key="+randomString(32)+"');");
-      
-		});
-		
-		if(goiFind(filename)){
-			
-			goi(filename).appendChild(divOptions);
-			goi(filename).appendChild(figure);
-			
-		}else{
-			
-			local.insertBefore(div, local.childNodes[0]);
-			div.appendChild(figure);
-			
-		}
-		
-
-		/*local.appendChild(div);*/
-		
-		
-		var label   = cE("input");
-		var content = cE("textarea");
-    var btsalvar = cE("button");
-        
-		label.setAttribute("name","label");
-		label.setAttribute("placeholder","Título");
-		content.setAttribute("name","textarea");
-    content.setAttribute("placeholder","Descrição");
-    btsalvar.setAttribute("type","button");
-		
-    /*    
-	    div.appendChild(label);
-		div.appendChild(content);
-		div.appendChild(btsalvar);
-			*/
-		div.setAttribute("id",filename);
-	
-		
-	}else{
-
-		var icon 	= cE("icon");
-
-		figure.setAttribute('style',"");
-		figure.appendChild(icon);
-		div.appendChild(figure);
-	
-		
-		local.insertBefore(div, local.childNodes[0]);
-		icon.setAttribute('class','icon-user');
-
-	}
-
-
-}
-
-
-
-function addUploadFilesPDF(local,filename){
-
-  const config = JSON.parse(localStorage.config);
-
-	var split       = filename.split(".");
-
-	var div 				= createObject('{"tag":"div","id":"'+filename+'"}');
-	var divOptions 	= createObject('{"tag":"options"}');
-	var spanDelete 	= createObject('{"tag":"span","class":"icon-bin"}');
-	var spanCover 	= createObject('{"tag":"span","innerhtml":"Destaque"}');
-	var spanZoom 		= createObject('{"tag":"span","class":"icon-search"}');
-	var figure 			= createObject('{"tag":"figure","style":"background-image:url('+config.imgp+split[0]+'.jpg);"}');
-	var divLabel 		= createObject('{"tag":"h3"}');
-
-	
-  spanDelete.onclick=(function(){
-
-      if(confirm('Deseja remover este arquivo?')){removeAnexos(this.parentNode.parentNode,filename)}
-
-  });
-
-  spanZoom.onclick=(function(){
-
-    window.open(config.pdf+filename,'_blank');
-
-  });
-	
-  divOptions.append(spanDelete,spanZoom);
-  figure.append(divLabel);
-
-  
-	if(goiFind(filename)){
-
-		goi(filename).append(divOptions,figure);
-
-	}else{
-
-		local.insertBefore(div, local.childNodes[0]);
-		div.append(figure,divOptions);
-    
-	}
-  
-}
-
-function addUploadFilesPDFv2(local,filename){
-
-  const config = JSON.parse(localStorage.config);
-
-	var div 				= cE("div");
-	var divOptions 	= cE("options");
-
-	var textCover 	= cT("Destaque");
-	
-	var spanDelete 	= cE("span");
-	var spanCover 	= cE("span");
-	var spanZoom 		= cE("span");
-	var figure 			= cE("iframe");
-	
-
-	var divLabel 			= cE("h3");
-	
-	spanDelete.setAttribute('class','icon-bin');
-	spanCover.appendChild(textCover);
-	spanZoom.setAttribute('class','icon-search');
-	divOptions.appendChild(spanDelete);
-		divOptions.appendChild(spanZoom);
-	figure.appendChild(divLabel);
-	div.appendChild(figure);
-			div.appendChild(divOptions);
-
-	if(goiFind(filename)){
-
-		goi(filename).appendChild(divOptions);
-		goi(filename).appendChild(figure);
-
-	}else{
-
-		local.insertBefore(div, local.childNodes[0]);
-		div.appendChild(figure);
-	}
-	
-
-	var split= filename.split(".");
-	
-	sA(figure,"src",localStorage.getItem("pdf")+split[0]+".pdf");
-
-	sA(spanDelete,"onclick","if(confirm('Deseja remover este arquivo?')){removeAnexos(this.parentNode.parentNode,'"+filename+"')}");
-	
-	sA(spanZoom,"onclick","window.open('"+localStorage.getItem("pdf")+filename+"','_blank');");
-	//console.log(filename);
-	
-	div.setAttribute("id",filename);
-	
-}
-
-
-
-function addUploadFilesPNG(local,filename){
-
-	var div 		= cE("div");
-	var figure 		= cE("figure");
-	
-	var textCover 	= cT("Destaque");
-	var spanDelete 	= cE("span");
-
-	var spanZoom 	= cE("span");
-	var spanCover 	= cE("span");
-	var divOptions 	= cE("options");
-
-	if(filename!==null){
-
-		spanCover.appendChild(textCover);
-
-		divOptions.appendChild(spanDelete);
-
-		divOptions.appendChild(spanZoom);
-
-
-		div.appendChild(divOptions);
-
-		spanDelete.setAttribute('class','icon-bin')
-
-		spanZoom.setAttribute('class','icon-search')
-		
-		sA(figure,"style","background-image:url('"+localStorage.getItem("png")+filename+"');");
-		sA(spanDelete,"onclick","if(confirm('Deseja remover este arquivo?')){removeAnexos(this.parentNode.parentNode,'"+filename+"')}");
-		
-		sA(spanZoom,"onclick","window.open('"+localStorage.getItem("png")+filename+"','_blank');");
-
-		div.appendChild(figure);
-		local.appendChild(div);
-
-	}else{
-
-		var icon 	= cE("icon");
-
-		figure.setAttribute('style',"");
-		figure.appendChild(icon);
-		div.appendChild(figure);
-		local.appendChild(div);
-		icon.setAttribute('class','icon-user');
-
-	}
-
-
-}
-
-
-function fileUploadFigure(result,data){
-
-  Object.entries(data).forEach(([key, value]) => {
-
-    var ext = value.filename.split('.').pop();
-
-    switch(ext) {
-
-      case "jpg": addUploadFiles(result,value);break;
-      case "pdf": addUploadFilesPDF(result,value.filename);break;
-      case "png": ddUploadFilesPNG(result,value.filename);break;
-
-    } 
-
-  });
-
-}
-
-
-function insertAnexos(anexos,filename){
-
-  const config  = JSON.parse(localStorage.config);
-  const user    = JSON.parse(localStorage.user);
-
-
-  (async () => {
-    const rawResponse = await fetch(config.insertfile, {
-    method: 'POST',
-    headers: {'Accept': 'application/json','Content-Type': 'application/json'},
-    body: JSON.stringify({session: user.session, anexos: anexos, filename: filename})
-    });
-
-    const data = await rawResponse.json();
-
-  })();
-
-}
-
-
-
-function sendFile(file,anexos,url,cb){
-
-	var formData 	= new FormData();
-
-	formData.append('fileupload', file);
-
-	var xhr = new XMLHttpRequest();
-	
-	//var anexos = gon('files')[0].value;
-	
-	var form = got(document,"form")[0];
-	var uploadedfiles = document.querySelector("form uploadedfiles");
-	
-	var divLoading=cE("div");
-	var labelLoading=cE("label");
-	divLoading.appendChild(labelLoading);
-	uploadedfiles.insertBefore(divLoading, uploadedfiles.childNodes[0]);
-	
-
-	
-	xhr.upload.addEventListener("progress", function(e) {
-		
-		var pc = parseInt((e.loaded / e.total * 100));
-
-			labelLoading.innerHTML=pc+"%";
-		
-	}, false);
-	
-	xhr.onreadystatechange = function() {
-
-		if (xhr.readyState == 4 && xhr.status == 200) {
-			
-			var object = JSON.parse(xhr.responseText);
-			
-			if(object.ext=='jpg'){
-
-				var div = cE('div');
-				
-				//sA(div,"style","background-image:url('/client/"+object.url+"');");
-				//sA(div,"onclick","window.open('/client/"+object.url+"','_blank');");
-				
-				insertAnexos(anexos,object.filename);
-				divLoading.setAttribute("id",object.filename);
-				divLoading.innerHTML="";
-				cb(object.filename);
-			
-				//got('fileuploadresult').appendChild(div);
-
-			}else if(object.ext=='png'){
-
-				var div = cE('div');
-				
-				//sA(div,"style","background-image:url('/client/"+object.url+"');");
-				//sA(div,"onclick","window.open('/client/"+object.url+"','_blank');");
-				
-				insertAnexos(anexos,object.filename);
-				cb(object.filename);
-				console.log(object);
-				//got('fileuploadresult').appendChild(div);
-
-			}else if(object.ext=='pdf'){
-				
-				//var uploadedfiles = got(object.parentNode.parentNode,"uploadedfiles")[0];
-				
-				//addUploadFiles(uploadedfiles,object.filename);
-				insertAnexos(anexos,object.filename);
-				divLoading.setAttribute("id",object.filename);
-				divLoading.innerHTML="";
-				cb(object.filename);
-				
-			}
-			
-		}
-
-	};
-
-	xhr.open('POST', url, true);
-	xhr.send(formData);
-
-}
-
-function upload(object){
-
-	const config = JSON.parse(localStorage.config);
-
-	var window = got(document,"window")[0];
-	
-	var uploadedfiles = got(window,"uploadedfiles")[0];
-	
-	for(var x=0;x<object.files.length;x++){
-			
-		var ext     = object.files[x].type;
-		var anexos  = document.getElementById('files').value;
-
-		if(ext=='image/jpeg'){
-
-			sendFile(object.files[x],anexos,config.upload+'?',
-
-				function(filename){
-
-					addUploadFiles(uploadedfiles,filename);
-
-				}
-
-			);
-			
-		}else if(ext=='application/pdf'){
-			
-			sendFile(object.files[x],anexos,config.upload+'?',
-
-							 
-				function(filename){
-        
-				  //pdftothumb(object);
-	
-
-					addUploadFilesPDF(uploadedfiles,filename);
-
-				}
-							 
-			);
-
-		}else if(ext=='image/png'){
-			
-			sendFile(object.files[x],anexos,config.upload+'?',
-
-							 
-				function(filename){
-				
-
-					addUploadFiles(uploadedfiles,filename);
-
-				}
-							 
-			);
-						
-		}else{
-			alert('Formato de arquivo não suportado');
-		}
-
-	}
-		
-}
-
 function getAttValue(data,att){
 
   if (data.attributes){
@@ -5686,34 +5196,517 @@ function textareaPresetSelect(textarea,array){
 }
 
 
+function fileupload(data,header,pagedata){
 
-function removeAnexos(e,filename){
+  var label    = createObject('{"tag":"label","innerhtml":"'+data.label+'"}');
+  var div      = createObject('{"tag":"div"}');
+  var uuid     = (pagedata.uuid)?pagedata.files:uuidv4();
+
+  var object   = createObject('{"tag":"input","id":"files","type":"hidden","value":"'+uuid+'"}');
+
+    header.append(btHeaderAttach());
+
+  var span   = createObject('{"tag":"uploadedStatus"}');
+  var result = createObject('{"tag":"uploadedFiles"}');
+    
+    div.append(object,result,span);
+
+    if(data.value){
+
+      var files    = JSON.parse(data.value);
+
+
+        /*       Object.entries(files).forEach(([key, value]) => {
+        */
+        fileUploadFigure(result,files);
+
+        /*         object.setAttribute('value',value.uuid);
+
+        }); */
+
+    }
+
+  return div;
+  
+}
+
+
+function addUploadFiles(local,object){
+
+  const config = JSON.parse(localStorage.config);
+
+	var div 				= createObject('{"tag":"div"}');
+	var figure 			= createObject('{"tag":"figure"}');
+
+	var spanDelete 	= createObject('{"tag":"span","class":"icon-bin"}');
+	var spanLeft 		= createObject('{"tag":"span","class":"icon-undo"}');
+	var spanRight 	= createObject('{"tag":"span","class":"icon-redo"}');
+	var spanZoom 		= createObject('{"tag":"span","class":"icon-search"}');
+	var divOptions 	= createObject('{"tag":"options"}');
+
+	if(object.filename!==undefined){
+    
+		var filename = object.filename;
+		var key      = object.key;
+		
+	}else{
+
+		var filename = object;
+
+	}
 	
-	var url 	= localStorage.getItem("url")+'/admin/json/jsonAnexosDelete.php?filename='+filename;
+	if(filename!==null){
+    
+    var urlimgm = config.imgm+filename+"?key="+key;
+    var urlimg  = config.img+filename+"?key="+randomString(32);
 
-	var xmlhttp;
+		    divOptions.append(spanDelete,spanLeft,spanZoom,spanRight);
+		    div.append(divOptions);
 
-	xmlhttp = new XMLHttpRequest();
 
-	xmlhttp.onreadystatechange = function() {
+		sA(figure,"style","background-image:url('"+urlimgm+"');");
+		sA(spanDelete,"onclick","if(confirm('Deseja remover este arquivo?')){removeAnexos(this.parentNode.parentNode,'"+filename+"')}");
+		
+		//sA(spanZoom,"onclick","window.open('"+localStorage.getItem("img")+filename+"?key="+randomString(32)+"','_blank');");
+    
 
-		if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
 
-			var json = JSON.parse(xmlhttp.responseText);
+    spanZoom.onclick=(function(){
+      window.open(urlimg,'_blank');
+    });
+                      
+		spanLeft.onclick=(function(){
+
+      let key = randomString(32);
+
+			figure.setAttribute('style',"background-image:url('"+config.urlimagerotate+"?img="+filename+"&rotate=left&key="+key+"');");
+			//divOptions.setAttribute('style',"background-image:url('"+localStorage.getItem("url")+"/admin/action/actionChangeImageKey.php?filename="+filename+"&key="+randomString(32)+"');");
+
+      rotateImage(filename,key);
+      
+		});
+
+		spanRight.onclick=(function(){
+
+      let key = randomString(32);
+
+			figure.setAttribute('style',"background-image:url('"+config.urlimagerotate+"?img="+filename+"&rotate=right&key="+key+"');");
+			//divOptions.setAttribute('style',"background-image:url('"+localStorage.getItem("url")+"/admin/action/actionChangeImageKey.php?filename="+filename+"&key="+randomString(32)+"');");
+      rotateImage(filename,key);
+		});
+		
+		if(goiFind(filename)){
 			
-			if(xmlhttp.responseText==1){
-				
-				rE(e);
-				console.log(e);
-			}
+			goi(filename).appendChild(divOptions);
+			goi(filename).appendChild(figure);
+			
+		}else{
+			
+			local.insertBefore(div, local.childNodes[0]);
+			div.appendChild(figure);
 			
 		}
 		
-	};
+		var label   = cE("input");
+		var content = cE("textarea");
+    var btsalvar = cE("button");
+        
+		label.setAttribute("name","label");
+		label.setAttribute("placeholder","Título");
+		content.setAttribute("name","textarea");
+    content.setAttribute("placeholder","Descrição");
+    btsalvar.setAttribute("type","button");
+		
+
+		div.setAttribute("id",filename);
 	
-	xmlhttp.open("GET", url, true);
-	xmlhttp.send();
+		
+	}else{
+
+		var icon 	= cE("icon");
+
+		figure.setAttribute('style',"");
+		figure.appendChild(icon);
+		div.appendChild(figure);
+	
+		
+		local.insertBefore(div, local.childNodes[0]);
+		icon.setAttribute('class','icon-user');
+
+	}
+
+
+}
+
+
+const rotateImage = async function(filename,key){
+
+  const config      = JSON.parse(localStorage.config);
+
+  const rawResponse = await fetch(config.urlsetimagekey, {
+
+    method: 'POST',
+    headers: {'Accept': 'application/json','Content-Type': 'application/json'},
+    body: JSON.stringify({filename:filename,key:key})
+
+  });
+
+  const data = await rawResponse.json();
+  
+}
+
+
+function addUploadFilesPDF(local,filename){
+
+  const config = JSON.parse(localStorage.config);
+
+	var split       = filename.split(".");
+
+	var div 				= createObject('{"tag":"div","id":"'+filename+'"}');
+	var divOptions 	= createObject('{"tag":"options"}');
+	var spanDelete 	= createObject('{"tag":"span","class":"icon-bin"}');
+	var spanCover 	= createObject('{"tag":"span","innerhtml":"Destaque"}');
+	var spanZoom 		= createObject('{"tag":"span","class":"icon-search"}');
+	var figure 			= createObject('{"tag":"figure","style":"background-image:url('+config.imgp+split[0]+'.jpg);"}');
+	var divLabel 		= createObject('{"tag":"h3"}');
+
+	
+  spanDelete.onclick=(function(){
+
+      if(confirm('Deseja remover este arquivo?')){removeAnexos(this.parentNode.parentNode,filename)}
+
+  });
+
+  spanZoom.onclick=(function(){
+
+    window.open(config.pdf+filename,'_blank');
+
+  });
+	
+  divOptions.append(spanDelete,spanZoom);
+  figure.append(divLabel);
+
+  
+	if(goiFind(filename)){
+
+		goi(filename).append(divOptions,figure);
+
+	}else{
+
+		local.insertBefore(div, local.childNodes[0]);
+		div.append(figure,divOptions);
+    
+	}
+  
+}
+
+function addUploadFilesPDFv2(local,filename){
+
+  const config = JSON.parse(localStorage.config);
+
+	var div 				= cE("div");
+	var divOptions 	= cE("options");
+
+	var textCover 	= cT("Destaque");
+	
+	var spanDelete 	= cE("span");
+	var spanCover 	= cE("span");
+	var spanZoom 		= cE("span");
+	var figure 			= cE("iframe");
+	
+
+	var divLabel 			= cE("h3");
+	
+	spanDelete.setAttribute('class','icon-bin');
+	spanCover.appendChild(textCover);
+	spanZoom.setAttribute('class','icon-search');
+	divOptions.appendChild(spanDelete);
+		divOptions.appendChild(spanZoom);
+	figure.appendChild(divLabel);
+	div.appendChild(figure);
+			div.appendChild(divOptions);
+
+	if(goiFind(filename)){
+
+		goi(filename).appendChild(divOptions);
+		goi(filename).appendChild(figure);
+
+	}else{
+
+		local.insertBefore(div, local.childNodes[0]);
+		div.appendChild(figure);
+	}
+	
+
+	var split= filename.split(".");
+	
+	sA(figure,"src",localStorage.getItem("pdf")+split[0]+".pdf");
+
+	sA(spanDelete,"onclick","if(confirm('Deseja remover este arquivo?')){removeAnexos(this.parentNode.parentNode,'"+filename+"')}");
+	
+	sA(spanZoom,"onclick","window.open('"+localStorage.getItem("pdf")+filename+"','_blank');");
+	//console.log(filename);
+	
+	div.setAttribute("id",filename);
+	
+}
+
+
+
+function addUploadFilesPNG(local,filename){
+
+	var div 		= cE("div");
+	var figure 		= cE("figure");
+	
+	var textCover 	= cT("Destaque");
+	var spanDelete 	= cE("span");
+
+	var spanZoom 	= cE("span");
+	var spanCover 	= cE("span");
+	var divOptions 	= cE("options");
+
+	if(filename!==null){
+
+		spanCover.appendChild(textCover);
+
+		divOptions.appendChild(spanDelete);
+
+		divOptions.appendChild(spanZoom);
+
+
+		div.appendChild(divOptions);
+
+		spanDelete.setAttribute('class','icon-bin')
+
+		spanZoom.setAttribute('class','icon-search')
+		
+		sA(figure,"style","background-image:url('"+localStorage.getItem("png")+filename+"');");
+		sA(spanDelete,"onclick","if(confirm('Deseja remover este arquivo?')){removeAnexos(this.parentNode.parentNode,'"+filename+"')}");
+		
+		sA(spanZoom,"onclick","window.open('"+localStorage.getItem("png")+filename+"','_blank');");
+
+		div.appendChild(figure);
+		local.appendChild(div);
+
+	}else{
+
+		var icon 	= cE("icon");
+
+		figure.setAttribute('style',"");
+		figure.appendChild(icon);
+		div.appendChild(figure);
+		local.appendChild(div);
+		icon.setAttribute('class','icon-user');
+
+	}
+
+
+}
+
+
+function fileUploadFigure(result,data){
+
+  Object.entries(data).forEach(([key, value]) => {
+
+    var ext = value.filename.split('.').pop();
+
+    switch(ext) {
+
+      case "jpg": addUploadFiles(result,value);break;
+      case "pdf": addUploadFilesPDF(result,value.filename);break;
+      case "png": ddUploadFilesPNG(result,value.filename);break;
+
+    } 
+
+  });
+
+}
+
+
+function insertAnexos(anexos,filename){
+
+  const config  = JSON.parse(localStorage.config);
+  const user    = JSON.parse(localStorage.user);
+
+
+  (async () => {
+    const rawResponse = await fetch(config.insertfile, {
+    method: 'POST',
+    headers: {'Accept': 'application/json','Content-Type': 'application/json'},
+    body: JSON.stringify({session: user.session, anexos: anexos, filename: filename})
+    });
+
+    const data = await rawResponse.json();
+
+  })();
+
+}
+
+
+function removeAnexos(e,filename){
+
+  const config  = JSON.parse(localStorage.config);
+  const user    = JSON.parse(localStorage.user);
+
+  (async () => {
+    const rawResponse = await fetch(config.deletefile, {
+    method: 'POST',
+    headers: {'Accept': 'application/json','Content-Type': 'application/json'},
+    body: JSON.stringify({session: user.session, filename: filename})
+  });
+
+  const data = await rawResponse.json();
+  
+    rE(e);
+
+  })();
 			
+}
+
+
+
+function sendFile(file,anexos,url,cb){
+
+	var formData 	= new FormData();
+
+	formData.append('fileupload', file);
+
+	var xhr = new XMLHttpRequest();
+	
+	//var anexos = gon('files')[0].value;
+	
+	var form = got(document,"form")[0];
+	var uploadedfiles = document.querySelector("form uploadedfiles");
+	
+	var divLoading=cE("div");
+	var labelLoading=cE("label");
+	divLoading.appendChild(labelLoading);
+	uploadedfiles.insertBefore(divLoading, uploadedfiles.childNodes[0]);
+	
+
+	
+	xhr.upload.addEventListener("progress", function(e) {
+		
+		var pc = parseInt((e.loaded / e.total * 100));
+
+			labelLoading.innerHTML=pc+"%";
+		
+	}, false);
+	
+	xhr.onreadystatechange = function() {
+
+		if (xhr.readyState == 4 && xhr.status == 200) {
+			
+			var object = JSON.parse(xhr.responseText);
+			
+			if(object.ext=='jpg'){
+
+				var div = cE('div');
+				
+				//sA(div,"style","background-image:url('/client/"+object.url+"');");
+				//sA(div,"onclick","window.open('/client/"+object.url+"','_blank');");
+				
+				insertAnexos(anexos,object.filename);
+				divLoading.setAttribute("id",object.filename);
+				divLoading.innerHTML="";
+				cb(object.filename);
+			
+				//got('fileuploadresult').appendChild(div);
+
+			}else if(object.ext=='png'){
+
+				var div = cE('div');
+				
+				//sA(div,"style","background-image:url('/client/"+object.url+"');");
+				//sA(div,"onclick","window.open('/client/"+object.url+"','_blank');");
+				
+				insertAnexos(anexos,object.filename);
+				cb(object.filename);
+				console.log(object);
+				//got('fileuploadresult').appendChild(div);
+
+			}else if(object.ext=='pdf'){
+				
+				//var uploadedfiles = got(object.parentNode.parentNode,"uploadedfiles")[0];
+				
+				//addUploadFiles(uploadedfiles,object.filename);
+				insertAnexos(anexos,object.filename);
+				divLoading.setAttribute("id",object.filename);
+				divLoading.innerHTML="";
+				cb(object.filename);
+				
+			}
+			
+		}
+
+	};
+
+	xhr.open('POST', url, true);
+	xhr.send(formData);
+
+}
+
+function upload(object){
+
+	const config = JSON.parse(localStorage.config);
+
+	var window = got(document,"window")[0];
+	
+	var uploadedfiles = got(window,"uploadedfiles")[0];
+	
+	for(var x=0;x<object.files.length;x++){
+			
+		var ext     = object.files[x].type;
+		var anexos  = document.getElementById('files').value;
+
+		if(ext=='image/jpeg'){
+
+			sendFile(object.files[x],anexos,config.upload+'?',
+
+				function(filename){
+
+					addUploadFiles(uploadedfiles,filename);
+
+				}
+
+			);
+			
+		}else if(ext=='application/pdf'){
+			
+			sendFile(object.files[x],anexos,config.upload+'?',
+
+							 
+				function(filename){
+        
+				  //pdftothumb(object);
+	
+
+					addUploadFilesPDF(uploadedfiles,filename);
+
+				}
+							 
+			);
+
+		}else if(ext=='image/png'){
+			
+			sendFile(object.files[x],anexos,config.upload+'?',
+
+							 
+				function(filename){
+				
+
+					addUploadFiles(uploadedfiles,filename);
+
+				}
+							 
+			);
+						
+		}else{
+			alert('Formato de arquivo não suportado');
+		}
+
+	}
+		
 }
 
 function load(){

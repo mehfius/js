@@ -2,7 +2,7 @@ function fileupload(data,header,pagedata){
 
   var label    = createObject('{"tag":"label","innerhtml":"'+data.label+'"}');
   var div      = createObject('{"tag":"div"}');
-  var uuid = (pagedata.uuid)?pagedata.files:uuidv4();
+  var uuid     = (pagedata.uuid)?pagedata.files:uuidv4();
 
   var object   = createObject('{"tag":"input","id":"files","type":"hidden","value":"'+uuid+'"}');
 
@@ -17,7 +17,6 @@ function fileupload(data,header,pagedata){
 
       var files    = JSON.parse(data.value);
 
-      console.log(files);
 
         /*       Object.entries(files).forEach(([key, value]) => {
         */

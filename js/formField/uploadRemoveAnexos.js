@@ -1,29 +1,20 @@
 
 function removeAnexos(e,filename){
-	
-	var url 	= localStorage.getItem("url")+'/admin/json/jsonAnexosDelete.php?filename='+filename;
 
-	var xmlhttp;
+  const config  = JSON.parse(localStorage.config);
+  const user    = JSON.parse(localStorage.user);
 
-	xmlhttp = new XMLHttpRequest();
+  (async () => {
+    const rawResponse = await fetch(config.deletefile, {
+    method: 'POST',
+    headers: {'Accept': 'application/json','Content-Type': 'application/json'},
+    body: JSON.stringify({session: user.session, filename: filename})
+  });
 
-	xmlhttp.onreadystatechange = function() {
+  const data = await rawResponse.json();
+  
+    rE(e);
 
-		if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
-
-			var json = JSON.parse(xmlhttp.responseText);
-			
-			if(xmlhttp.responseText==1){
-				
-				rE(e);
-				console.log(e);
-			}
-			
-		}
-		
-	};
-	
-	xmlhttp.open("GET", url, true);
-	xmlhttp.send();
+  })();
 			
 }
