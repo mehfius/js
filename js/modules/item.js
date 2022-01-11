@@ -35,7 +35,13 @@ function loadItem(item,array){
   loadItemOptions(item,array);
   itemDetail(item,array);
   loadMedicos(item,array.jsonmedicos);
-  loadPacientesFull(item,array.jsonpacientes);
+
+  if(array.jsonpacientes){
+
+    loadPacientesFull(item,array.jsonpacientes);
+
+  }
+
   loadItemUpdateTime(item,array);
   loadShare(footer,array);
   

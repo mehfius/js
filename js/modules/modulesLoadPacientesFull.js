@@ -1,5 +1,5 @@
 function loadPacientesFull(element,array){
-  
+
   var localidade = (array.estado)?array.estado+' - '+array.cidade:"Não informado";
   var nascimento = (array.nascimento)?array.nascimento:"Não informado";  
   var telefone   = (array.telefone)?array.telefone:"Não informado";  

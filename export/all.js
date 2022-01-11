@@ -6604,7 +6604,13 @@ function loadItem(item,array){
   loadItemOptions(item,array);
   itemDetail(item,array);
   loadMedicos(item,array.jsonmedicos);
-  loadPacientesFull(item,array.jsonpacientes);
+
+  if(array.jsonpacientes){
+
+    loadPacientesFull(item,array.jsonpacientes);
+
+  }
+
   loadItemUpdateTime(item,array);
   loadShare(footer,array);
   
@@ -7236,7 +7242,7 @@ function loadItemDetail(elements,array){
 }
 
 function loadPacientesFull(element,array){
-  
+
   var localidade = (array.estado)?array.estado+' - '+array.cidade:"Não informado";
   var nascimento = (array.nascimento)?array.nascimento:"Não informado";  
   var telefone   = (array.telefone)?array.telefone:"Não informado";  
