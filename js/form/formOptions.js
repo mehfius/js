@@ -23,8 +23,6 @@ function formClose(){
 
 function formDelete(codigo){
 	
-
-
 	var xmlhttp;
 
 	xmlhttp = new XMLHttpRequest();
@@ -32,9 +30,7 @@ function formDelete(codigo){
 	xmlhttp.onreadystatechange = function() {
 
 		if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
-	
-
-						
+					
 		}
 		
 	};

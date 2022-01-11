@@ -3838,8 +3838,6 @@ function formClose(){
 
 function formDelete(codigo){
 	
-
-
 	var xmlhttp;
 
 	xmlhttp = new XMLHttpRequest();
@@ -3847,9 +3845,7 @@ function formDelete(codigo){
 	xmlhttp.onreadystatechange = function() {
 
 		if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
-	
-
-						
+					
 		}
 		
 	};
@@ -6608,7 +6604,7 @@ function loadItem(item,array){
   loadItemOptions(item,array);
   itemDetail(item,array);
   loadMedicos(item,array.jsonmedicos);
-  //loadPacientesFull(item,array);
+  loadPacientesFull(item,array.jsonpacientes);
   loadItemUpdateTime(item,array);
   loadShare(footer,array);
   
@@ -6698,16 +6694,10 @@ function loadMedicos(elements,array){
 }
 
 
-
 function modulesLoad(array) {
 
     let tabela   = createObject('{"tag":"tabela"}');
 
-/*     if(!tabela){
-
-      
-
-    } */
 
     var modules = document.body.getAttribute("modules");
 
@@ -6729,7 +6719,6 @@ function modulesLoad(array) {
 
     });
     
-
     return tabela;
 
 }
@@ -7246,20 +7235,28 @@ function loadItemDetail(elements,array){
 
 }
 
-
 function loadPacientesFull(element,array){
   
-  let pacientes = createObject('{"tag":"pacientes"}');
-  let div       = createObject('{"tag":"div"}');
-  let label     = createObject('{"tag":"label","innerhtml":"'+array.pacienteslabel+'"}');
+  var localidade = (array.estado)?array.estado+' - '+array.cidade:"Não informado";
+  var nascimento = (array.nascimento)?array.nascimento:"Não informado";  
+  var telefone   = (array.telefone)?array.telefone:"Não informado";  
+  var whatsapp   = (array.whatsapp)?array.whatsapp:"Não informado";  
+  var label      = (array.label)?array.label:"Não informado";  
 
-      div.append(label);
-      pacientes.append(div);
+  var eLocalidade = createObject('{"tag":"localidade","innerhtml":"Localidade : '+localidade+'"}');
+  var eNascimento = createObject('{"tag":"nascimento","innerhtml":"Idade : '+nascimento+'"}');
+  var eTelefone   = createObject('{"tag":"telefone","innerhtml":"Telefone : '+telefone+'"}');
+  var eWhatsapp   = createObject('{"tag":"whatsapp","innerhtml":"Whatsapp : '+whatsapp+'"}');
 
-      element.append(pacientes);
-  
+  let ePacientes = createObject('{"tag":"pacientes"}');
+  let eDiv       = createObject('{"tag":"div"}');
+  let eLabel     = createObject('{"tag":"label","innerhtml":"Paciente : '+label+'"}');
+
+  eDiv.append(eLabel,eLocalidade,eNascimento,eTelefone,eWhatsapp);
+  ePacientes.append(eDiv);
+  element.append(ePacientes);
+
 }
-
 
 
 function loadPacientesInfo(element,array){
@@ -7458,15 +7455,15 @@ function loadPacientes(element,array){
 
    if(array){
 
-      var paciente   = createObject('{"tag":"pacientes"}');
-      var div        = createObject('{"tag":"div"}');
-      var icon       = createObject('{"tag":"icon","class":"icon-user"}');
-      
-   //   div.append(createObject('{"tag":"label","innerhtml":"Paciente: "}'));
-      div.append(createObject('{"tag":"label","innerhtml":"'+array.label+'"}'));
+      var ePaciente   = createObject('{"tag":"pacientes"}');
+      var eDiv        = createObject('{"tag":"div"}');
+      var eIcon       = createObject('{"tag":"icon","class":"icon-user"}');
 
-      paciente.appendChild(div);
-      element.appendChild(paciente);
+
+      eDiv.append(createObject('{"tag":"label","innerhtml":"'+array.label+'"}'));
+
+      ePaciente.appendChild(eDiv);
+      element.appendChild(ePaciente);
      
    }
 

@@ -2,15 +2,15 @@ function loadPacientes(element,array){
 
    if(array){
 
-      var paciente   = createObject('{"tag":"pacientes"}');
-      var div        = createObject('{"tag":"div"}');
-      var icon       = createObject('{"tag":"icon","class":"icon-user"}');
-      
-   //   div.append(createObject('{"tag":"label","innerhtml":"Paciente: "}'));
-      div.append(createObject('{"tag":"label","innerhtml":"'+array.label+'"}'));
+      var ePaciente   = createObject('{"tag":"pacientes"}');
+      var eDiv        = createObject('{"tag":"div"}');
+      var eIcon       = createObject('{"tag":"icon","class":"icon-user"}');
 
-      paciente.appendChild(div);
-      element.appendChild(paciente);
+
+      eDiv.append(createObject('{"tag":"label","innerhtml":"'+array.label+'"}'));
+
+      ePaciente.appendChild(eDiv);
+      element.appendChild(ePaciente);
      
    }
 

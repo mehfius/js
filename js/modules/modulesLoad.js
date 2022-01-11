@@ -1,13 +1,7 @@
-
 function modulesLoad(array) {
 
     let tabela   = createObject('{"tag":"tabela"}');
 
-/*     if(!tabela){
-
-      
-
-    } */
 
     var modules = document.body.getAttribute("modules");
 
@@ -29,7 +23,6 @@ function modulesLoad(array) {
 
     });
     
-
     return tabela;
 
 }
