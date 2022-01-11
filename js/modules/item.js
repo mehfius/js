@@ -42,8 +42,10 @@ function loadItem(item,array){
 
   }
 
-  loadItemUpdateTime(item,array);
-  loadShare(footer,array);
+  loadShare(item,array);
+
+  loadItemUpdateTime(footer,array);
+
   
   if(footer.innerHTML!=""){item.appendChild(footer);}
 
