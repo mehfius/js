@@ -13,7 +13,7 @@ function formSave(codigo){
     let valueid     = value.getAttribute('valueid') || value.value ;
        
         data[id]=valueid;
-
+    
         if(required=="true"){
 
           if(!valueid){
@@ -22,7 +22,8 @@ function formSave(codigo){
             value.setAttribute("error","1");
 
           }else{
-            value.removeAttritube("error");
+               
+            value.setAttribute("error","0");
           }
          
         }

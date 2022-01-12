@@ -20,13 +20,29 @@ function fields(data,header,pagedata){
 
   if(data.attributes){
 
-    if(data.attributes.title){
+/*     if(data.attributes.title){
 
       let input = e.querySelector("input");
 
       input.setAttribute('title',data.attributes.title);
       
-    }
+    } */
+
+    Object.entries(data.attributes).forEach(([key, value]) => {
+
+
+
+      let input = e.querySelector("input");
+
+      input.setAttribute(key,value); 
+
+
+/* 
+      let input = e.querySelector("input");
+
+      input.setAttribute('title',data.attributes.title); */
+
+    });
 
   }
 

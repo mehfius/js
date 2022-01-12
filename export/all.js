@@ -2944,20 +2944,21 @@ function profile(){
 	attribute.tag 		= "uploadedFiles";
 
 	var result = cEA(attribute);
-		
-	if(user.figures!==undefined){
+	
+	if(user.profileimage!==undefined){
 
-		for(var x=0;x<user.figures.length;x++){
 
-			addUploadFilesProfile(result,user.figures[x]);
+    //Object.entries(user.profileimage).forEach(([key, value]) => {
 
-		}
+      addUploadFilesProfile(result,user.profileimage[0]);
+
+    //});
 
 	}
 
 	div.appendChild(result);
 
-	addUploadFilesProfile(result,null);
+	//addUploadFilesProfile(result,null);
 	
 	profile.appendChild(div);
 	profile.appendChild(label);
@@ -2967,7 +2968,7 @@ function profile(){
 
 }
 
-function profileUpload(array){
+function profileUploadOld(array){
 
 
 	/*
@@ -3038,7 +3039,7 @@ function profileUpload(array){
 	var icon = cEA(attribute);	
 	
 	icon.onclick=(function(){
-		console.log(array);
+
 		formEdit("users",array.codigo);
 		navClose();
 	});
@@ -3053,7 +3054,7 @@ function profileUpload(array){
 
 		for(var x=0;x<array.figures.length;x++){
 
-			addUploadFilesProfile(result,array.figures[x]);
+			addUploadFilesProfile(result,array.figures[x].filename);
 
 		}
 
@@ -3068,14 +3069,18 @@ function profileUpload(array){
   
 }
 
-function addUploadFilesProfile(local,filename){
+function addUploadFilesProfile(local,file){
+
+  let filename = file.filename;
+  let key      = file.key;
+  var config = JSON.parse(localStorage.config);
 
 	var div 				= cE("div");
 	var figure 			= cE("figure");
 
 	if(filename!==null){
 
-		sA(figure,"style","background-image:url('"+localStorage.getItem("imgp")+filename+"');");
+		sA(figure,"style","background-image:url('"+config.imgp+filename+"');");
 
 		div.appendChild(figure);
 
@@ -3092,7 +3097,7 @@ function addUploadFilesProfile(local,filename){
 
 	}
 	
-	local.insertBefore(div, local.childNodes[0]);
+	local.insertBefore(div, local.childNodes[0]); 
 
 }
 
@@ -4143,7 +4148,7 @@ function formSave(codigo){
     let valueid     = value.getAttribute('valueid') || value.value ;
        
         data[id]=valueid;
-
+    
         if(required=="true"){
 
           if(!valueid){
@@ -4152,7 +4157,8 @@ function formSave(codigo){
             value.setAttribute("error","1");
 
           }else{
-            value.removeAttritube("error");
+               
+            value.setAttribute("error","0");
           }
          
         }
@@ -4339,13 +4345,29 @@ function fields(data,header,pagedata){
 
   if(data.attributes){
 
-    if(data.attributes.title){
+/*     if(data.attributes.title){
 
       let input = e.querySelector("input");
 
       input.setAttribute('title',data.attributes.title);
       
-    }
+    } */
+
+    Object.entries(data.attributes).forEach(([key, value]) => {
+
+
+
+      let input = e.querySelector("input");
+
+      input.setAttribute(key,value); 
+
+
+/* 
+      let input = e.querySelector("input");
+
+      input.setAttribute('title',data.attributes.title); */
+
+    });
 
   }
 
