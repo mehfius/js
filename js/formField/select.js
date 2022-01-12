@@ -5,8 +5,8 @@ function selectAjax(data,header){
 
   var plugin      = getAttValue(data,"plugin");
   var btshare     = createObject('{"tag":"compartilhar","innerhtml":"Compartilhar"}');
-  var finder  = selectAjaxSetInputValue(data);
-  var valueid = finder.getAttribute("valueid");
+  var finder      = selectAjaxSetInputValue(data);
+  var valueid     = finder.getAttribute("valueid");
 
       div.append(label,finder); 
 
@@ -39,9 +39,6 @@ function selectAjax(data,header){
   //fieldTooltip(label,data.attributes);   
 
   var select = createObject('{"tag":"selectajax"}');
-
-
-
 
   return div;
 	

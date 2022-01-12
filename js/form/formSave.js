@@ -7,16 +7,24 @@ function formSave(codigo){
 	Object.entries(formfields).forEach(([key, value]) => {
 
     let id          = value.getAttribute('id');
-    let required    = value.parentElement.getAttribute('required');
-    let title       = value.getAttribute('title');
+    let required    = value.getAttribute('required');
+    let label       = value.parentElement.querySelector("label").innerHTML;
+    let title       = (value.getAttribute('title'))?value.getAttribute('title'):label;
     let valueid     = value.getAttribute('valueid') || value.value ;
-        //data[id] = [];
+       
         data[id]=valueid;
 
         if(required=="true"){
 
-          error+= (valueid)?"":"Campo "+title+" está vazio \n";
+          if(!valueid){
 
+            error+="Campo "+title+" está vazio \n";
+            value.setAttribute("error","1");
+
+          }else{
+            value.removeAttritube("error");
+          }
+         
         }
 
 	});
@@ -26,6 +34,7 @@ function formSave(codigo){
     swal("Erro",error, "error");
 
   }else{
+
     formSend(data,codigo); 
 
   }

@@ -1558,7 +1558,7 @@ function modal(){
   let p       = createObject('{"tag":"p","innerhtml":"Bem-vindo ao Doctor8, clique abaixo para começar"}');
   let button  = createObject('{"tag":"button","type":"button","innerhtml":"Acessar meus arquivos"}');
   
-      button.onclick=(function(){document.querySelector('a[c="132"]').click();});
+      button.onclick=(function(){document.querySelector('a[c="133"]').click();});
   
   header.append(title);
   content.append(p);
@@ -4137,16 +4137,24 @@ function formSave(codigo){
 	Object.entries(formfields).forEach(([key, value]) => {
 
     let id          = value.getAttribute('id');
-    let required    = value.parentElement.getAttribute('required');
-    let title       = value.getAttribute('title');
+    let required    = value.getAttribute('required');
+    let label       = value.parentElement.querySelector("label").innerHTML;
+    let title       = (value.getAttribute('title'))?value.getAttribute('title'):label;
     let valueid     = value.getAttribute('valueid') || value.value ;
-        //data[id] = [];
+       
         data[id]=valueid;
 
         if(required=="true"){
 
-          error+= (valueid)?"":"Campo "+title+" está vazio \n";
+          if(!valueid){
 
+            error+="Campo "+title+" está vazio \n";
+            value.setAttribute("error","1");
+
+          }else{
+            value.removeAttritube("error");
+          }
+         
         }
 
 	});
@@ -4156,6 +4164,7 @@ function formSave(codigo){
     swal("Erro",error, "error");
 
   }else{
+
     formSend(data,codigo); 
 
   }
@@ -4314,12 +4323,13 @@ function fields(data,header,pagedata){
     
     switch(data.type) {
 
-    case "textarea":return textarea(data);
-    case "selectajax":return selectAjax(data,header);
-    case "date":return date(data);
-  /*   case "multiplehidden":return multipleHidden(data);
-   case "share":return share(data);header.append(btOptionsBtShare());*/
-    case "fileupload":return fileupload(data,header,pagedata);
+    case "textarea":    return textarea(data);
+    case "selectajax":  return selectAjax(data,header);
+    case "date":        return date(data);
+    case "fileupload":  return fileupload(data,header,pagedata);
+
+/*  case "multiplehidden":return multipleHidden(data); */
+/*  case "share":return share(data);header.append(btOptionsBtShare()); */
  
     default:return text(data);
       
@@ -4327,6 +4337,17 @@ function fields(data,header,pagedata){
 
   }())
 
+  if(data.attributes){
+
+    if(data.attributes.title){
+
+      let input = e.querySelector("input");
+
+      input.setAttribute('title',data.attributes.title);
+      
+    }
+
+  }
 
   //e.setAttribute('required',data.required);
   e.setAttribute('id','div'+data.url);
@@ -4672,8 +4693,8 @@ function selectAjax(data,header){
 
   var plugin      = getAttValue(data,"plugin");
   var btshare     = createObject('{"tag":"compartilhar","innerhtml":"Compartilhar"}');
-  var finder  = selectAjaxSetInputValue(data);
-  var valueid = finder.getAttribute("valueid");
+  var finder      = selectAjaxSetInputValue(data);
+  var valueid     = finder.getAttribute("valueid");
 
       div.append(label,finder); 
 
@@ -4706,9 +4727,6 @@ function selectAjax(data,header){
   //fieldTooltip(label,data.attributes);   
 
   var select = createObject('{"tag":"selectajax"}');
-
-
-
 
   return div;
 	
@@ -4917,8 +4935,19 @@ function selectBoxOpt(data,modules){
 
   })
 
-  opt.append(selectBoxCells('files',data.files,data.color),selectBoxCells('id',data.id),selectBoxCells('label',data.label));
+  let eFiles = selectBoxCells('files',data.files,data.color);
+  let eId    = selectBoxCells('id',data.id);
+  let eAreas = selectBoxCells('areas',data.areas);
+  let eLabel = selectBoxCells('label',data.label);
 
+  opt.append(eFiles);
+  opt.append(eId);
+  if(data.areas){
+
+  opt.append(eAreas);
+  }
+  opt.append(eLabel);
+  
   return opt;
 
 }
@@ -4949,7 +4978,7 @@ function selectBoxCells(type,data,color){
       case "id"     :return createObject('{"tag":"'+type+'","innerhtml":"'+data+'"}');
       case "label"  :return createObject('{"tag":"'+type+'","innerhtml":"'+data+'"}');
       case "files"  :return selectBoxCellsFigure(data,color);
-
+      case "areas"  :return createObject('{"tag":"'+type+'","innerhtml":"'+data+'"}');
    }
 
   }())
@@ -6290,7 +6319,7 @@ function login(){
 function loginSetStep1(authentic){
   
   document.body.setAttribute('logged',authentic.status);
-  document.body.setAttribute('areas',authentic.areas);
+  document.body.setAttribute('areas',authentic.user.areas);
   document.body.setAttribute('open',"1");
 
 }
@@ -7245,8 +7274,6 @@ function loadItemDetail(elements,array){
 
 function loadPacientesFull(element,array){
 
-
-
   var now      = new Date().getFullYear();
   var birthday = new Date(array.nascimento).getFullYear();
   var age      = (now - birthday);
@@ -7270,7 +7297,6 @@ function loadPacientesFull(element,array){
   let eLabel     = createObject('{"tag":"label","innerhtml":"Paciente : '+label+'"}');
 
   eDiv.append(eLabel,eLocalidade,eNascimento,eTelefone);
-
 
   if(whatsapp.length==13){
 

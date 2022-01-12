@@ -80,8 +80,22 @@ function selectBoxOpt(data,modules){
 
   })
 
-  opt.append(selectBoxCells('files',data.files,data.color),selectBoxCells('id',data.id),selectBoxCells('label',data.label));
+  let eFiles = selectBoxCells('files',data.files,data.color);
+  let eId    = selectBoxCells('id',data.id);
+  let eAreas = selectBoxCells('areas',data.areas);
+  let eLabel = selectBoxCells('label',data.label);
 
+  opt.append(eFiles);
+  opt.append(eId);
+
+  if(data.areas){
+
+    opt.append(eAreas);
+
+  }
+  
+  opt.append(eLabel);
+  
   return opt;
 
 }
@@ -112,7 +126,7 @@ function selectBoxCells(type,data,color){
       case "id"     :return createObject('{"tag":"'+type+'","innerhtml":"'+data+'"}');
       case "label"  :return createObject('{"tag":"'+type+'","innerhtml":"'+data+'"}');
       case "files"  :return selectBoxCellsFigure(data,color);
-
+      case "areas"  :return createObject('{"tag":"'+type+'","innerhtml":"'+data+'"}');
    }
 
   }())

@@ -63,7 +63,7 @@ function login(){
 function loginSetStep1(authentic){
   
   document.body.setAttribute('logged',authentic.status);
-  document.body.setAttribute('areas',authentic.areas);
+  document.body.setAttribute('areas',authentic.user.areas);
   document.body.setAttribute('open',"1");
 
 }

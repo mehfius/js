@@ -12,7 +12,7 @@ function modal(){
   let p       = createObject('{"tag":"p","innerhtml":"Bem-vindo ao Doctor8, clique abaixo para começar"}');
   let button  = createObject('{"tag":"button","type":"button","innerhtml":"Acessar meus arquivos"}');
   
-      button.onclick=(function(){document.querySelector('a[c="132"]').click();});
+      button.onclick=(function(){document.querySelector('a[c="133"]').click();});
   
   header.append(title);
   content.append(p);
