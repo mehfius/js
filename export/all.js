@@ -4942,10 +4942,13 @@ function selectBoxOpt(data,modules){
 
   opt.append(eFiles);
   opt.append(eId);
+
   if(data.areas){
 
-  opt.append(eAreas);
+    opt.append(eAreas);
+
   }
+  
   opt.append(eLabel);
   
   return opt;
@@ -5234,7 +5237,7 @@ function fileupload(data,header,pagedata){
   var span   = createObject('{"tag":"uploadedStatus"}');
   var result = createObject('{"tag":"uploadedFiles"}');
     
-    div.append(object,result,span);
+    div.append(label,object,result,span);
 
     if(data.value){
 
