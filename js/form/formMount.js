@@ -23,9 +23,4 @@ function formMount(modules,id,header){
 
   send();
 
- /*   const data = await rawResponse.json();
-
-		await formMountFields(modules,data); */
-
-
 }

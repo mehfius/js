@@ -12,7 +12,9 @@ function profile(){
 
 			label.appendChild(cT(user.label));
 	
-	div.onclick=(function(){		
+	div.onclick=(function(){	
+
+    document.body.setAttribute("loading","1");
 
 		formEdit("users");
 		navClose();
@@ -46,107 +48,6 @@ function profile(){
 	
 	return profile;
 
-}
-
-function profileUploadOld(array){
-
-
-	/*
-	var object = cE("input");
-
-	object.setAttribute("type","hidden");
-	object.setAttribute("value",array.files);	
-	object.setAttribute("name","files");
-	
-	var attribute = [];
-
-		attribute.tag 		= "input";
-		attribute.type 		= "file";
-		attribute.name 		= "fileupload";
-		attribute.anexos 	= object.getAttribute('value');
-		attribute.gwidth 	= "900";
-		attribute.multiple	= "";
-		attribute.onchange	= "formUpload(this);";	
-
-	var fileupload = cEA(attribute);
-	
-		
-	var attribute = [];
-
-		attribute.tag 		= "div";
-		attribute.class 	= "fileupload";
-
-	var divFileUpload = cEA(attribute);	
-
-	var attribute = [];
-
-		attribute.tag 		= "icon";
-		attribute.class 	= "icon-upload3";
-
-	var divFileUploadEnviar = cEA(attribute);					
-
-	var attribute = [];
-
-		attribute.tag 		= "label";
-		attribute.text 		= "enviar foto";
-
-	var divFileUploadEnviar = cEA(attribute);	
-
-	var attribute = [];
-
-		attribute.tag 		= "uploadedStatus";
-
-	var span = cEA(attribute);	
-		
-
-		
-	div.appendChild(object);
-		
-	divFileUpload.appendChild(divFileUploadEnviar);
-	divFileUpload.appendChild(fileupload);
-		
-	div.appendChild(divFileUpload);
-
-	div.appendChild(span);	
-		
-	*/
-	
-	var attribute = [];
-
-		attribute.tag 		= "icon";
-		attribute.class 	= "icon-pencil";
-	
-	var icon = cEA(attribute);	
-	
-	icon.onclick=(function(){
-
-		formEdit("users",array.codigo);
-		navClose();
-	});
-	
-	var attribute = [];
-
-	attribute.tag 		= "uploadedFiles";
-
-	var result = cEA(attribute);
-		
-	if(array.figures!==undefined){
-
-		for(var x=0;x<array.figures.length;x++){
-
-			addUploadFilesProfile(result,array.figures[x].filename);
-
-		}
-
-	}
-
-	div.appendChild(result);
-	div.appendChild(icon);
-	
-	addUploadFilesProfile(result,null);
-	
-	return div;	
-  
 }
 
 function addUploadFilesProfile(local,file){

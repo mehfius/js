@@ -1544,13 +1544,61 @@ var MD5 = function (string) {
 
 }
 
-function modal(){
-  
-  var customform 	= JSON.parse(localStorage.getItem("customform"));
+const modal = async function(){
   
   var body    = got(document,'body')[0];
   
-  var div     = createObject('{"tag":"modal"}');
+  var modal   = createObject('{"tag":"modal"}');
+
+      modal.append(modalProntuarios());
+
+      modalUsers();
+
+
+  body.append(modal);
+  
+}
+
+const modalUsersCheckFields = async function() {
+
+  var config    = JSON.parse(localStorage.config);
+	var user      = JSON.parse(localStorage.user);
+
+  const rawResponse = await fetch(config.form, {
+
+    method: 'POST',
+    headers: {'Accept': 'application/json','Content-Type': 'application/json'},
+    body: JSON.stringify({session:user.session,modules:"users"})
+
+  });
+
+  const data = await rawResponse.json();
+
+  let x = 0;
+  let text = "";
+
+  Object.entries(data.form.fields).forEach(([key, value]) => {
+
+    if(value.value){
+
+        x++;
+
+    }else{
+
+        text+="<li>"+value.label+"</li>";
+
+    }
+
+  });
+
+  return text;
+
+}
+
+function modalProntuarios(){
+
+  var div     = createObject('{"tag":"div"}');
+
   var header  = createObject('{"tag":"header","style":"background-color:#176B89;"}');
   var title   = createObject('{"tag":"label","innerhtml":"Aviso"}');
   
@@ -1560,30 +1608,50 @@ function modal(){
   
       button.onclick=(function(){document.querySelector('a[c="133"]').click();});
   
-  header.append(title);
-  content.append(p);
-  content.append(button);
-  div.append(header,content);
-  
- if(customform!=undefined){
-   
-  
-  for(var x=0;x<customform.length;x++){
-  
-     let content = createObject('{"tag":"content"}');
-     let p       = createObject('{"tag":"p","innerhtml":"'+customform[x].label+'"}');
-     let button  = createObject('{"tag":"button","type":"button","innerhtml":"'+customform[x].buttonlabel+'"}');
+      header.append(title);
+      content.append(p,button);
+
+      div.append(header,content);
+
+  return div;
+
+}
+
+const modalUsers = async function(){
+
+  let text = await modalUsersCheckFields();
+
+  if(text){
+
+    let li = "<ul>"+text+"</ul>";
+
+    var div     = createObject('{"tag":"div"}');
+
+    var header  = createObject('{"tag":"header","style":"background-color:#176B89;"}');
+    var title   = createObject('{"tag":"label","innerhtml":"Aviso"}');
     
-    content.append(p);
-    content.append(button);
-        
-    div.append(content);
-    //console.log(customform[x].content);
+    let content = createObject('{"tag":"content"}');
+    let p       = createObject('{"tag":"p","innerhtml":"Seu cadastro está incompleto'+li+'"}');
+    let button  = createObject('{"tag":"button","type":"button","innerhtml":"Completar cadastro"}');
     
+        button.onclick=(function(){
+
+          document.querySelector('profile > div').click();
+
+          rE(this.parentElement.parentElement);
+
+          });
+    
+    header.append(title);
+    content.append(p,button);
+
+    div.append(header,content);
+
+    document.querySelector("modal").append(div);
+
   }
- }
-  body.append(div);
-  
+
+
 }
 
 function modalFormCovid(){
@@ -2932,7 +3000,9 @@ function profile(){
 
 			label.appendChild(cT(user.label));
 	
-	div.onclick=(function(){		
+	div.onclick=(function(){	
+
+    document.body.setAttribute("loading","1");
 
 		formEdit("users");
 		navClose();
@@ -2966,107 +3036,6 @@ function profile(){
 	
 	return profile;
 
-}
-
-function profileUploadOld(array){
-
-
-	/*
-	var object = cE("input");
-
-	object.setAttribute("type","hidden");
-	object.setAttribute("value",array.files);	
-	object.setAttribute("name","files");
-	
-	var attribute = [];
-
-		attribute.tag 		= "input";
-		attribute.type 		= "file";
-		attribute.name 		= "fileupload";
-		attribute.anexos 	= object.getAttribute('value');
-		attribute.gwidth 	= "900";
-		attribute.multiple	= "";
-		attribute.onchange	= "formUpload(this);";	
-
-	var fileupload = cEA(attribute);
-	
-		
-	var attribute = [];
-
-		attribute.tag 		= "div";
-		attribute.class 	= "fileupload";
-
-	var divFileUpload = cEA(attribute);	
-
-	var attribute = [];
-
-		attribute.tag 		= "icon";
-		attribute.class 	= "icon-upload3";
-
-	var divFileUploadEnviar = cEA(attribute);					
-
-	var attribute = [];
-
-		attribute.tag 		= "label";
-		attribute.text 		= "enviar foto";
-
-	var divFileUploadEnviar = cEA(attribute);	
-
-	var attribute = [];
-
-		attribute.tag 		= "uploadedStatus";
-
-	var span = cEA(attribute);	
-		
-
-		
-	div.appendChild(object);
-		
-	divFileUpload.appendChild(divFileUploadEnviar);
-	divFileUpload.appendChild(fileupload);
-		
-	div.appendChild(divFileUpload);
-
-	div.appendChild(span);	
-		
-	*/
-	
-	var attribute = [];
-
-		attribute.tag 		= "icon";
-		attribute.class 	= "icon-pencil";
-	
-	var icon = cEA(attribute);	
-	
-	icon.onclick=(function(){
-
-		formEdit("users",array.codigo);
-		navClose();
-	});
-	
-	var attribute = [];
-
-	attribute.tag 		= "uploadedFiles";
-
-	var result = cEA(attribute);
-		
-	if(array.figures!==undefined){
-
-		for(var x=0;x<array.figures.length;x++){
-
-			addUploadFilesProfile(result,array.figures[x].filename);
-
-		}
-
-	}
-
-	div.appendChild(result);
-	div.appendChild(icon);
-	
-	addUploadFilesProfile(result,null);
-	
-	return div;	
-  
 }
 
 function addUploadFilesProfile(local,file){
@@ -3684,11 +3653,6 @@ function formMount(modules,id,header){
   }
 
   send();
-
- /*   const data = await rawResponse.json();
-
-		await formMountFields(modules,data); */
-
 
 }
 

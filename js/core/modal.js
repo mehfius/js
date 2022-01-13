@@ -1,10 +1,58 @@
-function modal(){
-  
-  var customform 	= JSON.parse(localStorage.getItem("customform"));
+const modal = async function(){
   
   var body    = got(document,'body')[0];
   
-  var div     = createObject('{"tag":"modal"}');
+  var modal   = createObject('{"tag":"modal"}');
+
+      modal.append(modalProntuarios());
+
+      modalUsers();
+
+
+  body.append(modal);
+  
+}
+
+const modalUsersCheckFields = async function() {
+
+  var config    = JSON.parse(localStorage.config);
+	var user      = JSON.parse(localStorage.user);
+
+  const rawResponse = await fetch(config.form, {
+
+    method: 'POST',
+    headers: {'Accept': 'application/json','Content-Type': 'application/json'},
+    body: JSON.stringify({session:user.session,modules:"users"})
+
+  });
+
+  const data = await rawResponse.json();
+
+  let x = 0;
+  let text = "";
+
+  Object.entries(data.form.fields).forEach(([key, value]) => {
+
+    if(value.value){
+
+        x++;
+
+    }else{
+
+        text+="<li>"+value.label+"</li>";
+
+    }
+
+  });
+
+  return text;
+
+}
+
+function modalProntuarios(){
+
+  var div     = createObject('{"tag":"div"}');
+
   var header  = createObject('{"tag":"header","style":"background-color:#176B89;"}');
   var title   = createObject('{"tag":"label","innerhtml":"Aviso"}');
   
@@ -14,30 +62,50 @@ function modal(){
   
       button.onclick=(function(){document.querySelector('a[c="133"]').click();});
   
-  header.append(title);
-  content.append(p);
-  content.append(button);
-  div.append(header,content);
-  
- if(customform!=undefined){
-   
-  
-  for(var x=0;x<customform.length;x++){
-  
-     let content = createObject('{"tag":"content"}');
-     let p       = createObject('{"tag":"p","innerhtml":"'+customform[x].label+'"}');
-     let button  = createObject('{"tag":"button","type":"button","innerhtml":"'+customform[x].buttonlabel+'"}');
+      header.append(title);
+      content.append(p,button);
+
+      div.append(header,content);
+
+  return div;
+
+}
+
+const modalUsers = async function(){
+
+  let text = await modalUsersCheckFields();
+
+  if(text){
+
+    let li = "<ul>"+text+"</ul>";
+
+    var div     = createObject('{"tag":"div"}');
+
+    var header  = createObject('{"tag":"header","style":"background-color:#176B89;"}');
+    var title   = createObject('{"tag":"label","innerhtml":"Aviso"}');
     
-    content.append(p);
-    content.append(button);
-        
-    div.append(content);
-    //console.log(customform[x].content);
+    let content = createObject('{"tag":"content"}');
+    let p       = createObject('{"tag":"p","innerhtml":"Seu cadastro está incompleto'+li+'"}');
+    let button  = createObject('{"tag":"button","type":"button","innerhtml":"Completar cadastro"}');
     
+        button.onclick=(function(){
+
+          document.querySelector('profile > div').click();
+
+          rE(this.parentElement.parentElement);
+
+          });
+    
+    header.append(title);
+    content.append(p,button);
+
+    div.append(header,content);
+
+    document.querySelector("modal").append(div);
+
   }
- }
-  body.append(div);
-  
+
+
 }
 
 function modalFormCovid(){
