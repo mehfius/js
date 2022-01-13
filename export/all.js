@@ -2945,7 +2945,7 @@ function profile(){
 
 	var result = cEA(attribute);
 	
-	if(user.profileimage!==undefined){
+	if(user.profileimage){
 
 
     //Object.entries(user.profileimage).forEach(([key, value]) => {
@@ -2958,7 +2958,7 @@ function profile(){
 
 	div.appendChild(result);
 
-	//addUploadFilesProfile(result,null);
+	addUploadFilesProfile(result,null);
 	
 	profile.appendChild(div);
 	profile.appendChild(label);
@@ -3071,16 +3071,18 @@ function profileUploadOld(array){
 
 function addUploadFilesProfile(local,file){
 
-  let filename = file.filename;
-  let key      = file.key;
+
   var config = JSON.parse(localStorage.config);
 
 	var div 				= cE("div");
 	var figure 			= cE("figure");
 
-	if(filename!==null){
+	if(file!==null){
 
-		sA(figure,"style","background-image:url('"+config.imgp+filename+"');");
+    let filename = file.filename;
+    let key      = file.key;
+
+		sA(figure,"style","background-image:url('"+config.imgp+filename+"?key="+key+"');");
 
 		div.appendChild(figure);
 
