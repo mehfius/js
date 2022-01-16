@@ -4165,7 +4165,7 @@ function formSend(data,id){
 
       method: 'POST',
       headers: {'Accept': 'application/json','Content-Type': 'application/json'},
-      body: JSON.stringify({data:data})
+      body: JSON.stringify({session:user.session,data:data})
 
     });
 
@@ -5386,7 +5386,9 @@ function addUploadFilesPDF(local,filename){
 	var figure 			= createObject('{"tag":"figure","style":"background-image:url('+config.imgp+split[0]+'.jpg);"}');
 	var divLabel 		= createObject('{"tag":"h3"}');
 
-	
+
+
+
   spanDelete.onclick=(function(){
 
       if(confirm('Deseja remover este arquivo?')){removeAnexos(this.parentNode.parentNode,filename)}
@@ -5596,10 +5598,11 @@ function sendFile(file,anexos,url,cb){
 	
 	var divLoading=cE("div");
 	var labelLoading=cE("label");
-	divLoading.appendChild(labelLoading);
+  var iconLoading     = createObject('{"tag":"icon","class":"icon-spinner3"}');
+
+	divLoading.append(iconLoading,labelLoading);
 	uploadedfiles.insertBefore(divLoading, uploadedfiles.childNodes[0]);
 	
-
 	
 	xhr.upload.addEventListener("progress", function(e) {
 		
@@ -7536,7 +7539,7 @@ function tabelaLoad(json){
 
       method: 'POST',
       headers: {'Accept': 'application/json','Content-Type': 'application/json'},
-      body: JSON.stringify({match:match, modules: modules})
+      body: JSON.stringify({session:user.session,match:match, modules: modules})
 
     });
 

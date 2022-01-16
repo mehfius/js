@@ -15,7 +15,7 @@ function tabelaLoad(json){
 
       method: 'POST',
       headers: {'Accept': 'application/json','Content-Type': 'application/json'},
-      body: JSON.stringify({match:match, modules: modules})
+      body: JSON.stringify({session:user.session,match:match, modules: modules})
 
     });
 

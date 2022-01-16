@@ -15,10 +15,11 @@ function sendFile(file,anexos,url,cb){
 	
 	var divLoading=cE("div");
 	var labelLoading=cE("label");
-	divLoading.appendChild(labelLoading);
+  var iconLoading     = createObject('{"tag":"icon","class":"icon-spinner3"}');
+
+	divLoading.append(iconLoading,labelLoading);
 	uploadedfiles.insertBefore(divLoading, uploadedfiles.childNodes[0]);
 	
-
 	
 	xhr.upload.addEventListener("progress", function(e) {
 		

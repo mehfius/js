@@ -20,7 +20,7 @@ function formSend(data,id){
 
       method: 'POST',
       headers: {'Accept': 'application/json','Content-Type': 'application/json'},
-      body: JSON.stringify({data:data})
+      body: JSON.stringify({session:user.session,data:data})
 
     });
 

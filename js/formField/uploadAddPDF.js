@@ -13,7 +13,9 @@ function addUploadFilesPDF(local,filename){
 	var figure 			= createObject('{"tag":"figure","style":"background-image:url('+config.imgp+split[0]+'.jpg);"}');
 	var divLabel 		= createObject('{"tag":"h3"}');
 
-	
+
+
+
   spanDelete.onclick=(function(){
 
       if(confirm('Deseja remover este arquivo?')){removeAnexos(this.parentNode.parentNode,filename)}
