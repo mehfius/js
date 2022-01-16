@@ -16,7 +16,9 @@ function itemDetailFigure(data){
 
       case "jpg": 
 
-          onclick="window.open('"+config.jsonanexos+data.anexos+"','_blank');"
+          let url = config.img+filename+".jpg?key="+data.key;
+
+          onclick="window.open('"+url+"','_blank');"
           figure.setAttribute("onclick",onclick);
 
         break;
@@ -34,7 +36,7 @@ function itemDetailFigure(data){
         break;
       }        
 
-			figure.style.backgroundImage="url("+config.imgp+filename+".jpg?key="+data.key;
+			figure.style.backgroundImage="url("+config.imgp+filename+".jpg?key="+data.key+")";
 		
 return figure;
 }
