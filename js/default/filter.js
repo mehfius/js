@@ -8,7 +8,7 @@ function boxFilter(){
     var box           = document.createElement("boxfilter");
     var filter        = document.createElement("filter");
     var header        = document.createElement("header");
-    var menu = document.getElementsByTagName("menu")[0];
+    var menu          = document.getElementsByTagName("menu")[0];
     
         box.appendChild(header);
         box.appendChild(filter);

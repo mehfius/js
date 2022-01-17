@@ -1687,7 +1687,7 @@ function boxFilter(){
     var box           = document.createElement("boxfilter");
     var filter        = document.createElement("filter");
     var header        = document.createElement("header");
-    var menu = document.getElementsByTagName("menu")[0];
+    var menu          = document.getElementsByTagName("menu")[0];
     
         box.appendChild(header);
         box.appendChild(filter);
@@ -4165,7 +4165,7 @@ function formSend(data,id){
 
       method: 'POST',
       headers: {'Accept': 'application/json','Content-Type': 'application/json'},
-      body: JSON.stringify({session:user.session,data:data})
+      body: JSON.stringify({session:user.session,modules:modules,data:data})
 
     });
 
@@ -7600,7 +7600,7 @@ match["uuid"]=user.session;
 
       method: 'POST',
       headers: {'Accept': 'application/json','Content-Type': 'application/json'},
-      body: JSON.stringify({modules: modules, match: match})
+      body: JSON.stringify({session:user.session,modules: modules, match: match})
 
     });
 
