@@ -907,7 +907,6 @@ function removeAcento(strToReplace) {
 
           match["uuid"]=user.session;
 
-          console.log(match);
 
           var limit = got(got(document,"tabela")[0],"item").length;
 
@@ -921,7 +920,7 @@ function removeAcento(strToReplace) {
                 method: 'POST',
                 headers: {'Accept': 'application/json','Content-Type': 'application/json'},
                 body: JSON.stringify({
-
+                  session: user.session, 
                   modules: modules, 
                   match: match, 
                   page: limit
@@ -936,6 +935,7 @@ function removeAcento(strToReplace) {
 
 
                 let item = createObject('{"tag":"item","c":"'+value.id+'"}');
+
 
                 loadItem(item,value);
                 tabela.appendChild(item);
@@ -1542,131 +1542,6 @@ var MD5 = function (string) {
 
     return temp.toLowerCase();
 
-}
-
-const modal = async function(){
-  
-  var body    = got(document,'body')[0];
-  
-  var modal   = createObject('{"tag":"modal"}');
-
-      modal.append(modalProntuarios());
-
-      modalUsers();
-
-
-  body.append(modal);
-  
-}
-
-const modalUsersCheckFields = async function() {
-
-  var config    = JSON.parse(localStorage.config);
-	var user      = JSON.parse(localStorage.user);
-
-  const rawResponse = await fetch(config.form, {
-
-    method: 'POST',
-    headers: {'Accept': 'application/json','Content-Type': 'application/json'},
-    body: JSON.stringify({session:user.session,modules:"users"})
-
-  });
-
-  const data = await rawResponse.json();
-
-  let x = 0;
-  let text = "";
-
-  Object.entries(data.form.fields).forEach(([key, value]) => {
-
-    if(value.value){
-
-        x++;
-
-    }else{
-
-        text+="<li>"+value.label+"</li>";
-
-    }
-
-  });
-
-  return text;
-
-}
-
-function modalProntuarios(){
-
-  var div     = createObject('{"tag":"div"}');
-
-  var header  = createObject('{"tag":"header","style":"background-color:#176B89;"}');
-  var title   = createObject('{"tag":"label","innerhtml":"Aviso"}');
-  
-  let content = createObject('{"tag":"content"}');
-  let p       = createObject('{"tag":"p","innerhtml":"Bem-vindo ao Doctor8, clique abaixo para começar"}');
-  let button  = createObject('{"tag":"button","type":"button","innerhtml":"Acessar meus arquivos"}');
-  
-      button.onclick=(function(){document.querySelector('a[c="133"]').click();});
-  
-      header.append(title);
-      content.append(p,button);
-
-      div.append(header,content);
-
-  return div;
-
-}
-
-const modalUsers = async function(){
-
-  let text = await modalUsersCheckFields();
-
-  if(text){
-
-    let li = "<ul>"+text+"</ul>";
-
-    var div     = createObject('{"tag":"div"}');
-
-    var header  = createObject('{"tag":"header","style":"background-color:#176B89;"}');
-    var title   = createObject('{"tag":"label","innerhtml":"Aviso"}');
-    
-    let content = createObject('{"tag":"content"}');
-    let p       = createObject('{"tag":"p","innerhtml":"Seu cadastro está incompleto'+li+'"}');
-    let button  = createObject('{"tag":"button","type":"button","innerhtml":"Completar cadastro"}');
-    
-        button.onclick=(function(){
-
-          document.querySelector('profile > div').click();
-
-          rE(this.parentElement.parentElement);
-
-          });
-    
-    header.append(title);
-    content.append(p,button);
-
-    div.append(header,content);
-
-    document.querySelector("modal").append(div);
-
-  }
-
-
-}
-
-function modalFormCovid(){
-  
-  var content = createObject('{"tag":"content"}');
-  var p       = createObject('{"tag":"p","innerhtml":"Clique abaixo caso você queira receber um tratamento para covid-19"}');
-  var button  = createObject('{"tag":"button","type":"button","innerhtml":"Preencher formulário"}');
-  
-      button.onclick=(function(){formCustomEdit("formcovid")});
-  
-      content.append(p);
-      content.append(button);
-  
-  return content;
-  
 }
 
 function uuidv4() {
@@ -4171,7 +4046,7 @@ function formSend(data,id){
 
     const post = await rawResponse.json();
 
-    if(modules!=="users"){
+    if(modules=="prontuarios"){
 
       itemReload(id)
 
@@ -5826,16 +5701,13 @@ function loadLogged(authentic){
     localStorage.customform = JSON.stringify(authentic.customform);
   }
   
-  //debugIphone(authentic);
-  
-  //jsonToWebSQL(authentic.shortcut[0].json);
-  
+
 	mountHeader(authentic);
 	mountPrint(authentic);
 	mountSection();
 
 	navMount();
-	//modulesLoadCalendar();
+
   loadNavSuite();
   modal();
   document.getElementsByTagName("body")[0].setAttribute("modules","");
@@ -5847,17 +5719,14 @@ function loadLogged(authentic){
 
       setTimeout(function(){
         document.getElementsByTagName("body")[0].setAttribute("openlogin","0");
-         //document.getElementsByTagName("body")[0].setAttribute("ad","1");
+
         
          loginSetStep1(authentic);
 
          setTimeout(function () {
                    rE(got(document,"login"));
                    rE(got(document,"pages"));
-           
-                    //document.getElementsByTagName("body")[0].setAttribute("ad","0");
-           
-                    //document.getElementsByTagName("body")[0].setAttribute("openlogin","0");
+ 
            
                 }, 5000);
   
@@ -6563,6 +6432,160 @@ function getLoginStatus(){
 	xmlhttp.open("GET", url, true);
 	xmlhttp.send();
 	
+}
+
+const modal = async function(){
+  
+  var body    = got(document,'body')[0];
+  
+  var modal   = createObject('{"tag":"modal"}');
+
+      modal.append(modalProntuarios());
+
+      modalUsers();
+
+
+  body.append(modal);
+  
+}
+
+
+
+
+const modalMVB = async function(){
+
+  let text = await modalUsersCheckFields();
+
+  if(text){
+
+    let li = "<ul>"+text+"</ul>";
+
+    var div     = createObject('{"tag":"div"}');
+
+    var header  = createObject('{"tag":"header","style":"background-color:#176B89;"}');
+    var title   = createObject('{"tag":"label","innerhtml":"Aviso"}');
+    
+    let content = createObject('{"tag":"content"}');
+    let p       = createObject('{"tag":"p","innerhtml":"Seu cadastro está incompleto'+li+'"}');
+    let button  = createObject('{"tag":"button","type":"button","innerhtml":"Completar cadastro"}');
+    
+        button.onclick=(function(){
+
+          document.querySelector('profile > div').click();
+
+          rE(this.parentElement.parentElement);
+
+          });
+    
+    header.append(title);
+    content.append(p,button);
+
+    div.append(header,content);
+
+    document.querySelector("modal").append(div);
+
+  }
+
+
+}
+
+
+
+function modalProntuarios(){
+
+  var div     = createObject('{"tag":"div"}');
+
+  var header  = createObject('{"tag":"header","style":"background-color:#176B89;"}');
+  var title   = createObject('{"tag":"label","innerhtml":"Aviso"}');
+  
+  let content = createObject('{"tag":"content"}');
+  let p       = createObject('{"tag":"p","innerhtml":"Bem-vindo ao Doctor8, clique abaixo para começar"}');
+  let button  = createObject('{"tag":"button","type":"button","innerhtml":"Acessar meus arquivos"}');
+  
+      button.onclick=(function(){document.querySelector('a[c="133"]').click();});
+  
+      header.append(title);
+      content.append(p,button);
+
+      div.append(header,content);
+
+  return div;
+
+}
+
+
+const modalUsers = async function(){
+
+  let text = await modalUsersCheckFields();
+
+  if(text){
+
+    let li = "<ul>"+text+"</ul>";
+
+    var div     = createObject('{"tag":"div"}');
+
+    var header  = createObject('{"tag":"header","style":"background-color:#176B89;"}');
+    var title   = createObject('{"tag":"label","innerhtml":"Aviso"}');
+    
+    let content = createObject('{"tag":"content"}');
+    let p       = createObject('{"tag":"p","innerhtml":"Seu cadastro está incompleto'+li+'"}');
+    let button  = createObject('{"tag":"button","type":"button","innerhtml":"Completar cadastro"}');
+    
+        button.onclick=(function(){
+
+          document.querySelector('profile > div').click();
+
+          rE(this.parentElement.parentElement);
+
+          });
+    
+    header.append(title);
+    content.append(p,button);
+
+    div.append(header,content);
+
+    document.querySelector("modal").append(div);
+
+  }
+
+
+}
+
+
+const modalUsersCheckFields = async function() {
+
+  var config    = JSON.parse(localStorage.config);
+	var user      = JSON.parse(localStorage.user);
+
+  const rawResponse = await fetch(config.form, {
+
+    method: 'POST',
+    headers: {'Accept': 'application/json','Content-Type': 'application/json'},
+    body: JSON.stringify({session:user.session,modules:"users"})
+
+  });
+
+  const data = await rawResponse.json();
+
+  let x = 0;
+  let text = "";
+
+  Object.entries(data.form.fields).forEach(([key, value]) => {
+
+    if(value.value){
+
+        x++;
+
+    }else{
+
+        text+="<li>"+value.label+"</li>";
+
+    }
+
+  });
+
+  return text;
+
 }
 
 function category(header,item,id,label){
@@ -7488,15 +7511,15 @@ function modulesOpen(url){
     menu.appendChild(btFilter());
     view.appendChild(menu); 
   
- if(modules.url=="prontuarios" || modules.url=="prontuariosmedicos" || modules.url=="pacientes"){
+/*  if(modules.url=="prontuarios" || modules.url=="prontuariosmedicos" || modules.url=="pacientes"){
 
-    window.onscroll=lazyload;    
-   
+    window.onscroll=lazyload;   
+
  }else{
    
     window.onscroll=null;
     
- }
+ } */
 
   sA(body,'modules',modules.url);
 	tabelaLoad(modules);
@@ -7523,6 +7546,8 @@ function loadPacientes(element,array){
 }
 
 function tabelaLoad(json){
+
+  window.onscroll=null;
 
   var config        = JSON.parse(localStorage.config);
   var user          = JSON.parse(localStorage.user);
@@ -7554,6 +7579,12 @@ function tabelaLoad(json){
     const tabela = modulesLoad(data);
 
     view.append(tabela); 
+
+    if(modules=="prontuarios" || modules=="prontuariosmedicos" || modules=="pacientes"){
+
+        window.onscroll=lazyload;   
+
+    }
     
   })();
 

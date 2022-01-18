@@ -31,7 +31,6 @@
 
           match["uuid"]=user.session;
 
-          console.log(match);
 
           var limit = got(got(document,"tabela")[0],"item").length;
 
@@ -45,7 +44,7 @@
                 method: 'POST',
                 headers: {'Accept': 'application/json','Content-Type': 'application/json'},
                 body: JSON.stringify({
-
+                  session: user.session, 
                   modules: modules, 
                   match: match, 
                   page: limit
@@ -60,6 +59,7 @@
 
 
                 let item = createObject('{"tag":"item","c":"'+value.id+'"}');
+
 
                 loadItem(item,value);
                 tabela.appendChild(item);

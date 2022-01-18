@@ -26,7 +26,7 @@ function formSend(data,id){
 
     const post = await rawResponse.json();
 
-    if(modules!=="users"){
+    if(modules=="prontuarios"){
 
       itemReload(id)
 

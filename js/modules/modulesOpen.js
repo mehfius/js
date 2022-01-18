@@ -18,15 +18,15 @@ function modulesOpen(url){
     menu.appendChild(btFilter());
     view.appendChild(menu); 
   
- if(modules.url=="prontuarios" || modules.url=="prontuariosmedicos" || modules.url=="pacientes"){
+/*  if(modules.url=="prontuarios" || modules.url=="prontuariosmedicos" || modules.url=="pacientes"){
 
-    window.onscroll=lazyload;    
-   
+    window.onscroll=lazyload;   
+
  }else{
    
     window.onscroll=null;
     
- }
+ } */
 
   sA(body,'modules',modules.url);
 	tabelaLoad(modules);

@@ -1,5 +1,7 @@
 function tabelaLoad(json){
 
+  window.onscroll=null;
+
   var config        = JSON.parse(localStorage.config);
   var user          = JSON.parse(localStorage.user);
   let view          = got(document,'view')[0];
@@ -30,6 +32,12 @@ function tabelaLoad(json){
     const tabela = modulesLoad(data);
 
     view.append(tabela); 
+
+    if(modules=="prontuarios" || modules=="prontuariosmedicos" || modules=="pacientes"){
+
+        window.onscroll=lazyload;   
+
+    }
     
   })();
 
