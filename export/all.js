@@ -3976,9 +3976,11 @@ function btSeeAttach(){
 
 function formSave(codigo){
 
+  var modules       = document.querySelector("window").getAttribute("modules");
 	var formfields    = document.querySelectorAll("window > form input,textarea");
   var data          = {};
   let error         = '';
+  var fieldlabel    = {};
 
 	Object.entries(formfields).forEach(([key, value]) => {
 
@@ -3988,21 +3990,23 @@ function formSave(codigo){
     let title       = (value.getAttribute('title'))?value.getAttribute('title'):label;
     let valueid     = value.getAttribute('valueid') || value.value ;
        
-        data[id]=valueid;
-    
-        if(required=="true"){
+    data[id]        = valueid;
 
-          if(!valueid){
+    fieldlabel[id]  = label;
 
-            error+="Campo "+title+" está vazio \n";
-            value.setAttribute("error","1");
+    if(required=="true"){
 
-          }else{
-               
-            value.setAttribute("error","0");
-          }
-         
-        }
+      if(!valueid){
+
+        error+="Campo "+title+" está vazio \n";
+        value.setAttribute("error","1");
+
+      }else{
+            
+        value.setAttribute("error","0");
+      }
+      
+    }
 
 	});
 
@@ -4011,6 +4015,12 @@ function formSave(codigo){
     swal("Erro",error, "error");
 
   }else{
+
+    if(modules=='mvb'){
+
+      data["fieldlabel"] = fieldlabel;
+
+   }
 
     formSend(data,codigo); 
 
@@ -4021,14 +4031,13 @@ function formSave(codigo){
 function formSend(data,id){
 
   const modules     = document.querySelector("window").getAttribute("modules");
-  const config        = JSON.parse(localStorage.config);
-  const user          = JSON.parse(localStorage.user);
+  const config      = JSON.parse(localStorage.config);
+  const user        = JSON.parse(localStorage.user);
 
-  data.session=user.session;
-  data.modules=modules;
-  data.id=id;
+  const url         = (modules=="mvb")?config.formsavemvb:config.formsave;
 
-  var url  = config.formsave;
+  data.modules      = modules;
+  data.id           = id;
 
   document.body.setAttribute("loading","1");
 
@@ -4036,7 +4045,7 @@ function formSend(data,id){
 
   const send = async function(data) {
 
-    const rawResponse = await fetch(config.formsave, {
+    const rawResponse = await fetch(url, {
 
       method: 'POST',
       headers: {'Accept': 'application/json','Content-Type': 'application/json'},
@@ -4069,7 +4078,6 @@ function itemReload(id){
 
     if(id){
       
-  
         const send = async function() {
 
             const rawResponse = await fetch(config.urlmodules, {
@@ -4095,7 +4103,6 @@ function itemReload(id){
 
     }else{
 
-   
       modulesOpen(gA());
 
     }
@@ -4982,7 +4989,7 @@ function text(data){
   var value       = (data.value!==undefined)?data.value:"";
   var placeholder = (data.placeholder!==undefined)?data.placeholder:"";
 
-  var label       = createObject('{"tag":"label","innerhtml":"'+data.label+'"}');
+  var label       = createObject('{"tag":"label","innerhtml":""}');
 	var div         = createObject('{"tag":"div"}');
 	var object      = createObject('{"tag":"input","value":"'+value+'","id":"'+data.url+'"}');
 
@@ -4996,7 +5003,7 @@ function text(data){
 
 	}
 	 */
-
+  label.innerHTML=data.label;
 	object.setAttribute("autocomplete","new-password");
 	object.setAttribute("type","text");
 	object.setAttribute("class","default");
@@ -5697,9 +5704,9 @@ function loadLogged(authentic){
   localStorage.nav        = JSON.stringify(authentic.nav);
   localStorage.shortcut   = JSON.stringify(authentic.shortcut);
 
-  if(authentic.customform!=undefined){
-    localStorage.customform = JSON.stringify(authentic.customform);
-  }
+/*   if(authentic.customforms!=undefined){
+    localStorage.customform = JSON.stringify(authentic.customforms);
+  } */
   
 
 	mountHeader(authentic);
@@ -6435,57 +6442,89 @@ function getLoginStatus(){
 }
 
 const modal = async function(){
-  
+
+  var user      = JSON.parse(localStorage.user);
+
   var body    = got(document,'body')[0];
   
   var modal   = createObject('{"tag":"modal"}');
 
       modal.append(modalProntuarios());
 
-      modalUsers();
+    if(user.customforms){
+     
+          if(user.customforms.includes('mvb') && user.areas=='100') {
 
+            modal.append(modalMVB());
+
+          }
+
+          modalUsers();
+
+    }
 
   body.append(modal);
   
 }
 
 
+const modalMVB = function(){
+
+  var div     = createObject('{"tag":"div"}');
+
+  var header  = createObject('{"tag":"header","style":"background-color:#176B89;"}');
+  var title   = createObject('{"tag":"label","innerhtml":"Médicos voluntários do Brasil"}');
+  
+  let content = createObject('{"tag":"content"}');
+  let p       = createObject('{"tag":"p","innerhtml":"Formulário para atendimento Médicos voluntários do Brasil"}');
+  let button  = createObject('{"tag":"button","type":"button","innerhtml":"Preencher"}');
+  
+      button.onclick=(function(){formEdit("mvb")});
+  
+      header.append(title);
+      content.append(p,button);
+
+      div.append(header,content);
+
+  return div;
 
 
-const modalMVB = async function(){
+}
 
-  let text = await modalUsersCheckFields();
 
-  if(text){
+const modalMVBCheckFields = async function() {
 
-    let li = "<ul>"+text+"</ul>";
+  var config    = JSON.parse(localStorage.config);
+	var user      = JSON.parse(localStorage.user);
 
-    var div     = createObject('{"tag":"div"}');
+  const rawResponse = await fetch(config.form, {
 
-    var header  = createObject('{"tag":"header","style":"background-color:#176B89;"}');
-    var title   = createObject('{"tag":"label","innerhtml":"Aviso"}');
-    
-    let content = createObject('{"tag":"content"}');
-    let p       = createObject('{"tag":"p","innerhtml":"Seu cadastro está incompleto'+li+'"}');
-    let button  = createObject('{"tag":"button","type":"button","innerhtml":"Completar cadastro"}');
-    
-        button.onclick=(function(){
+    method: 'POST',
+    headers: {'Accept': 'application/json','Content-Type': 'application/json'},
+    body: JSON.stringify({session:user.session,modules:"users"})
 
-          document.querySelector('profile > div').click();
+  });
 
-          rE(this.parentElement.parentElement);
+  const data = await rawResponse.json();
 
-          });
-    
-    header.append(title);
-    content.append(p,button);
+  let x = 0;
+  let text = "";
 
-    div.append(header,content);
+  Object.entries(data.form.fields).forEach(([key, value]) => {
 
-    document.querySelector("modal").append(div);
+    if(value.value){
 
-  }
+        x++;
 
+    }else{
+
+        text+="<li>"+value.label+"</li>";
+
+    }
+
+  });
+
+  return text;
 
 }
 

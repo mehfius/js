@@ -1,8 +1,10 @@
 function formSave(codigo){
 
+  var modules       = document.querySelector("window").getAttribute("modules");
 	var formfields    = document.querySelectorAll("window > form input,textarea");
   var data          = {};
   let error         = '';
+  var fieldlabel    = {};
 
 	Object.entries(formfields).forEach(([key, value]) => {
 
@@ -12,21 +14,23 @@ function formSave(codigo){
     let title       = (value.getAttribute('title'))?value.getAttribute('title'):label;
     let valueid     = value.getAttribute('valueid') || value.value ;
        
-        data[id]=valueid;
-    
-        if(required=="true"){
+    data[id]        = valueid;
 
-          if(!valueid){
+    fieldlabel[id]  = label;
 
-            error+="Campo "+title+" está vazio \n";
-            value.setAttribute("error","1");
+    if(required=="true"){
 
-          }else{
-               
-            value.setAttribute("error","0");
-          }
-         
-        }
+      if(!valueid){
+
+        error+="Campo "+title+" está vazio \n";
+        value.setAttribute("error","1");
+
+      }else{
+            
+        value.setAttribute("error","0");
+      }
+      
+    }
 
 	});
 
@@ -35,6 +39,12 @@ function formSave(codigo){
     swal("Erro",error, "error");
 
   }else{
+
+    if(modules=='mvb'){
+
+      data["fieldlabel"] = fieldlabel;
+
+   }
 
     formSend(data,codigo); 
 

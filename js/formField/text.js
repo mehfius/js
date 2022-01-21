@@ -3,7 +3,7 @@ function text(data){
   var value       = (data.value!==undefined)?data.value:"";
   var placeholder = (data.placeholder!==undefined)?data.placeholder:"";
 
-  var label       = createObject('{"tag":"label","innerhtml":"'+data.label+'"}');
+  var label       = createObject('{"tag":"label","innerhtml":""}');
 	var div         = createObject('{"tag":"div"}');
 	var object      = createObject('{"tag":"input","value":"'+value+'","id":"'+data.url+'"}');
 
@@ -17,7 +17,7 @@ function text(data){
 
 	}
 	 */
-
+  label.innerHTML=data.label;
 	object.setAttribute("autocomplete","new-password");
 	object.setAttribute("type","text");
 	object.setAttribute("class","default");

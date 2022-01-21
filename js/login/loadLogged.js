@@ -5,9 +5,9 @@ function loadLogged(authentic){
   localStorage.nav        = JSON.stringify(authentic.nav);
   localStorage.shortcut   = JSON.stringify(authentic.shortcut);
 
-  if(authentic.customform!=undefined){
-    localStorage.customform = JSON.stringify(authentic.customform);
-  }
+/*   if(authentic.customforms!=undefined){
+    localStorage.customform = JSON.stringify(authentic.customforms);
+  } */
   
 
 	mountHeader(authentic);

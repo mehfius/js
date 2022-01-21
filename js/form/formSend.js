@@ -1,14 +1,13 @@
 function formSend(data,id){
 
   const modules     = document.querySelector("window").getAttribute("modules");
-  const config        = JSON.parse(localStorage.config);
-  const user          = JSON.parse(localStorage.user);
+  const config      = JSON.parse(localStorage.config);
+  const user        = JSON.parse(localStorage.user);
 
-  data.session=user.session;
-  data.modules=modules;
-  data.id=id;
+  const url         = (modules=="mvb")?config.formsavemvb:config.formsave;
 
-  var url  = config.formsave;
+  data.modules      = modules;
+  data.id           = id;
 
   document.body.setAttribute("loading","1");
 
@@ -16,7 +15,7 @@ function formSend(data,id){
 
   const send = async function(data) {
 
-    const rawResponse = await fetch(config.formsave, {
+    const rawResponse = await fetch(url, {
 
       method: 'POST',
       headers: {'Accept': 'application/json','Content-Type': 'application/json'},
@@ -49,7 +48,6 @@ function itemReload(id){
 
     if(id){
       
-  
         const send = async function() {
 
             const rawResponse = await fetch(config.urlmodules, {
@@ -75,7 +73,6 @@ function itemReload(id){
 
     }else{
 
-   
       modulesOpen(gA());
 
     }
