@@ -4181,7 +4181,8 @@ function fields(data,header,pagedata){
     case "selectajax":  return selectAjax(data,header);
     case "date":        return date(data);
     case "fileupload":  return fileupload(data,header,pagedata);
-
+    case "checkbox":    return checkbox(data);
+    case "radio":       return radio(data);
 /*  case "multiplehidden":return multipleHidden(data); */
 /*  case "share":return share(data);header.append(btOptionsBtShare()); */
  
@@ -4555,6 +4556,71 @@ function multipleHiddenFinder(object){
 	object.appendChild(finder);
 	
 }
+
+
+const radioReset = function(e){
+
+  Object.entries(e).forEach(([key, value]) => {
+
+      value.setAttribute("class","icon-radio-unchecked");
+     
+
+  });
+
+}
+
+const radio = function(data){
+
+  var value       = (data.value!==undefined)?data.value:"";
+  var placeholder = (data.placeholder!==undefined)?data.placeholder:"";
+
+  var label       = createObject('{"tag":"label","innerhtml":""}');
+	var div         = createObject('{"tag":"div"}');
+	var object      = createObject('{"tag":"input","value":"'+value+'","id":"'+data.url+'"}');
+
+  div.append(label);
+
+  if(data.attributes){
+
+    if(data.attributes.options){
+
+      var options = data.attributes.options
+
+      Object.entries(options).forEach(([key, value]) => {
+
+        var opt    = createObject('{"tag":"opt"}')
+        var icon   = createObject('{"tag":"icon","class":"icon-radio-unchecked"}');
+        var label  = createObject('{"tag":"label","innerhtml":"'+value+'"}')
+
+          opt.append(icon,label);
+          div.append(opt);
+
+          opt.onclick=(function(){
+
+            radioReset(this.parentElement.getElementsByTagName("icon"));
+
+            this.querySelector("icon").setAttribute("class","icon-radio-checked");
+
+          })
+
+      });
+
+    }
+
+  }
+      
+  label.innerHTML=data.label;
+
+	object.setAttribute("type","hidden");
+	object.setAttribute("class","default");
+	object.setAttribute("required",data.required);
+		
+  div.appendChild(object);
+
+  return div;
+  
+}
+
 
 function selectAjax(data,header){
 
@@ -6685,16 +6751,16 @@ function loadItem(item,array){
   if(array.label!==""){
 	  modulesLoadItemContent(item,array);
   }
-  
-  loadItemOptions(item,array);
-  itemDetail(item,array);
-  loadMedicos(item,array.jsonmedicos);
-
-  if(array.jsonpacientes){
+    if(array.jsonpacientes){
 
     loadPacientesFull(item,array.jsonpacientes);
 
   }
+  loadItemOptions(item,array);
+  itemDetail(item,array);
+  loadMedicos(item,array.jsonmedicos);
+
+
 
   loadShare(item,array);
 
@@ -7342,9 +7408,13 @@ function loadPacientesFull(element,array){
   var whatsapp   = (array.whatsapp)?new String(array.whatsapp):"";  
   var label      = (array.label)?array.label:"Não informado";  
 
+  var email      = (array.email)?array.email:"Não informado";  
+
+
   var eLocalidade = createObject('{"tag":"localidade","innerhtml":"Localidade : '+localidade+'"}');
   var eNascimento = createObject('{"tag":"nascimento","innerhtml":"Idade : '+nascimento+'"}');
   var eTelefone   = createObject('{"tag":"telefone","innerhtml":"Telefone : '+telefone+'"}');
+  var eEmail      = createObject('{"tag":"email","innerhtml":"Email : '+email+'"}');
 
   //var eWhatsapp   = createObject('{"tag":"whatsapp","innerhtml":"Whatsapp : '+whatsapp+'"}');
 
@@ -7354,7 +7424,7 @@ function loadPacientesFull(element,array){
   let eDiv       = createObject('{"tag":"div"}');
   let eLabel     = createObject('{"tag":"label","innerhtml":"Paciente : '+label+'"}');
 
-  eDiv.append(eLabel,eLocalidade,eNascimento,eTelefone);
+  eDiv.append(eLabel,eEmail,eLocalidade,eNascimento,eTelefone);
 
   if(whatsapp.length==13){
 

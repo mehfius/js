@@ -8,7 +8,8 @@ function fields(data,header,pagedata){
     case "selectajax":  return selectAjax(data,header);
     case "date":        return date(data);
     case "fileupload":  return fileupload(data,header,pagedata);
-
+    case "checkbox":    return checkbox(data);
+    case "radio":       return radio(data);
 /*  case "multiplehidden":return multipleHidden(data); */
 /*  case "share":return share(data);header.append(btOptionsBtShare()); */
  

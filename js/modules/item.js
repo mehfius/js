@@ -31,16 +31,16 @@ function loadItem(item,array){
   if(array.label!==""){
 	  modulesLoadItemContent(item,array);
   }
-  
-  loadItemOptions(item,array);
-  itemDetail(item,array);
-  loadMedicos(item,array.jsonmedicos);
-
-  if(array.jsonpacientes){
+    if(array.jsonpacientes){
 
     loadPacientesFull(item,array.jsonpacientes);
 
   }
+  loadItemOptions(item,array);
+  itemDetail(item,array);
+  loadMedicos(item,array.jsonmedicos);
+
+
 
   loadShare(item,array);
 

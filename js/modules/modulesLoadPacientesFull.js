@@ -10,9 +10,13 @@ function loadPacientesFull(element,array){
   var whatsapp   = (array.whatsapp)?new String(array.whatsapp):"";  
   var label      = (array.label)?array.label:"Não informado";  
 
+  var email      = (array.email)?array.email:"Não informado";  
+
+
   var eLocalidade = createObject('{"tag":"localidade","innerhtml":"Localidade : '+localidade+'"}');
   var eNascimento = createObject('{"tag":"nascimento","innerhtml":"Idade : '+nascimento+'"}');
   var eTelefone   = createObject('{"tag":"telefone","innerhtml":"Telefone : '+telefone+'"}');
+  var eEmail      = createObject('{"tag":"email","innerhtml":"Email : '+email+'"}');
 
   //var eWhatsapp   = createObject('{"tag":"whatsapp","innerhtml":"Whatsapp : '+whatsapp+'"}');
 
@@ -22,7 +26,7 @@ function loadPacientesFull(element,array){
   let eDiv       = createObject('{"tag":"div"}');
   let eLabel     = createObject('{"tag":"label","innerhtml":"Paciente : '+label+'"}');
 
-  eDiv.append(eLabel,eLocalidade,eNascimento,eTelefone);
+  eDiv.append(eLabel,eEmail,eLocalidade,eNascimento,eTelefone);
 
   if(whatsapp.length==13){
 
