@@ -12,7 +12,7 @@ var pinsert     = createObject('{"tag":"p","innerhtml":"Criar conta","class":"pi
 var pinsertm    = createObject('{"tag":"p","innerhtml":"Cadastro de Médico","class":"pinsertm"}');
 var precovery   = createObject('{"tag":"p","innerhtml":"Recuperar senha","class":"precovery"}');  
 var login 	    = createObject('{"tag":"login","class":"login","name":"login"}');
-var formLogin   = createObject('{"tag":"form","onsubmit":"login();return false;"}');
+var formLogin   = createObject('{"tag":"form","onsubmit":"login();return false;","autocomplete":"off"}');
 
 
   
@@ -24,7 +24,7 @@ var inputEmail       = createObject('{"tag":"input","id":"email","placeholder":"
 var inputPass        = createObject('{"tag":"input","id":"password","type":"password","placeholder":"Senha"}');
 //var inputPass2       = createObject('{"tag":"input","id":"password2","type":"password","placeholder":"Confirmação da senha"}');
 var pattern          = encodeURI("\\d{11}");
-//var inputEstado      = createObject('{"tag":"input","id":"estado","placeholder":"Estado"}'); 
+var inputWhatsapp         = createObject('{"tag":"input","id":"whatsapp","title":"Exemplo: 5531987654321","placeholder":"Whatsapp (ex: 5531987654321)","pattern":"[0-9]{2}[0-9]{2}[0-9]{9}"}'); 
 var inputCRM         = createObject('{"tag":"input","id":"crm","placeholder":"Registro profissional","type":"text","onkeydown":"return inputTypeNumber(event);"}');
 //var inputSuite       = createObject('{"tag":"input","id":"suite","type":"hidden","value":"'+config.id+'"}');  
 // Fim input
@@ -65,7 +65,7 @@ bLogin.onclick=(function(){
 
 bInsert.onclick=(function(){
 
-  setRequired('label,email,password');
+  setRequired('label,email,password,whatsapp');
   sA(login,'class','insert');
   sA(formLogin,'onsubmit','insert();return false;');
   goi('areas').value="100";
@@ -74,7 +74,7 @@ bInsert.onclick=(function(){
   
 bInsertPaciente.onclick=(function(){
   
-  setRequired('label,email,password');
+  setRequired('label,email,password,whatsapp');
   
   sA(login,'class','insertpaciente');
   sA(goi('name'),'required','required');
@@ -85,7 +85,7 @@ bInsertPaciente.onclick=(function(){
   
 bInsertMedico.onclick=(function(){
   
-  setRequired('label,email,password,crm');
+  setRequired('label,email,password,crm,password,whatsapp');
   
   sA(login,'class','insertmedico');
   sA(goi('name'),'required','required');
@@ -104,7 +104,7 @@ bRecovery.onclick=(function(){
 
 })
 
-formLogin.append(btclose,h1,plogin,pinsert,pinsertm,precovery,inputName,inputEmail,inputPass);
+formLogin.append(btclose,h1,plogin,pinsert,pinsertm,precovery,inputName,inputEmail,inputPass,inputWhatsapp);
   
 formLogin.appendChild(bInsertPaciente);
 formLogin.appendChild(bInsertMedico);
