@@ -12,11 +12,35 @@ function formSave(codigo){
     let required    = value.getAttribute('required');
     let label       = value.parentElement.querySelector("label").innerHTML;
     let title       = (value.getAttribute('title'))?value.getAttribute('title'):label;
-    let valueid     = value.getAttribute('valueid') || value.value ;
-       
+    let valueid     = value.getAttribute('valueid') || value.value;
+    let type        = value.parentElement.getAttribute("type");
+    let div         = value.parentElement;
+
     data[id]        = valueid;
 
-    fieldlabel[id]  = label;
+    fieldlabel[id]={}
+    fieldlabel[id].label  = label;
+
+    if(type=='checkbox' || type=='radio'){
+
+      let optlabel = div.querySelectorAll("opt[checked='1'] > label");
+
+      let textLabel = "";
+
+	    Object.entries(optlabel).forEach(([k, v]) => {
+
+        textLabel+=v.innerHTML;
+        textLabel+=", ";
+
+      });
+
+      fieldlabel[id].value = textLabel;
+
+    }else{
+
+      fieldlabel[id].value = valueid;
+
+    }
 
     if(required=="true"){
 
@@ -28,6 +52,7 @@ function formSave(codigo){
       }else{
             
         value.setAttribute("error","0");
+        
       }
       
     }

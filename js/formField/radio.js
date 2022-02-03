@@ -1,11 +1,10 @@
 
 const radioReset = function(e){
 
-  Object.entries(e).forEach(([key, value]) => {
+  Object.entries(e.querySelectorAll("opt")).forEach(([key, value]) => {
 
-      value.setAttribute("class","icon-radio-unchecked");
+      value.setAttribute("checked","0");
      
-
   });
 
 }
@@ -27,20 +26,25 @@ const radio = function(data){
 
       var options = data.attributes.options
 
-      Object.entries(options).forEach(([key, value]) => {
+      Object.entries(options).forEach(([k, v]) => {
 
-        var opt    = createObject('{"tag":"opt"}')
-        var icon   = createObject('{"tag":"icon","class":"icon-radio-unchecked"}');
-        var label  = createObject('{"tag":"label","innerhtml":"'+value+'"}')
+
+        let checked = (value==k)?"1":"0";
+
+        var opt    = createObject('{"tag":"opt","value":"'+k+'","checked":"'+checked+'"}');
+        var icon   = createObject('{"tag":"icon","class":"icon-"}');
+
+        var label  = createObject('{"tag":"label","innerhtml":"'+v+'"}')
 
           opt.append(icon,label);
           div.append(opt);
 
           opt.onclick=(function(){
 
-            radioReset(this.parentElement.getElementsByTagName("icon"));
+            radioReset(this.parentElement);
 
-            this.querySelector("icon").setAttribute("class","icon-radio-checked");
+            this.setAttribute("checked","1");
+            this.parentElement.querySelector("input").value = this.getAttribute("value");
 
           })
 

@@ -3988,11 +3988,35 @@ function formSave(codigo){
     let required    = value.getAttribute('required');
     let label       = value.parentElement.querySelector("label").innerHTML;
     let title       = (value.getAttribute('title'))?value.getAttribute('title'):label;
-    let valueid     = value.getAttribute('valueid') || value.value ;
-       
+    let valueid     = value.getAttribute('valueid') || value.value;
+    let type        = value.parentElement.getAttribute("type");
+    let div         = value.parentElement;
+
     data[id]        = valueid;
 
-    fieldlabel[id]  = label;
+    fieldlabel[id]={}
+    fieldlabel[id].label  = label;
+
+    if(type=='checkbox' || type=='radio'){
+
+      let optlabel = div.querySelectorAll("opt[checked='1'] > label");
+
+      let textLabel = "";
+
+	    Object.entries(optlabel).forEach(([k, v]) => {
+
+        textLabel+=v.innerHTML;
+        textLabel+=", ";
+
+      });
+
+      fieldlabel[id].value = textLabel;
+
+    }else{
+
+      fieldlabel[id].value = valueid;
+
+    }
 
     if(required=="true"){
 
@@ -4004,6 +4028,7 @@ function formSave(codigo){
       }else{
             
         value.setAttribute("error","0");
+        
       }
       
     }
@@ -4128,6 +4153,90 @@ function formView(areas,codigo){
 
 }
 
+const checkbox = function(data){
+
+  var value       = (data.value!==undefined)?data.value:"";
+  var placeholder = (data.placeholder!==undefined)?data.placeholder:"";
+
+  var label       = createObject('{"tag":"label","innerhtml":""}');
+	var div         = createObject('{"tag":"div"}');
+	var object      = createObject('{"tag":"input","value":"'+value+'","id":"'+data.url+'"}');
+
+  div.append(label);
+
+  if(data.attributes){
+
+    if(data.attributes.options){
+
+      var options = data.attributes.options
+
+      Object.entries(options).forEach(([k, v]) => {
+
+        
+
+        let arrayValue = (value)?JSON.parse(value.replace('{', '[').replace('}', ']')):"";
+
+        let checked = (arrayValue.indexOf(parseInt(k))>-1)?"1":"0";
+
+        var opt       = createObject('{"tag":"opt","value":"'+k+'","checked":"'+checked+'"}')
+
+        var label     = createObject('{"tag":"label","innerhtml":"'+v+'"}')
+
+        var icon      = createObject('{"tag":"icon","class":"icon-"}');
+
+            opt.append(icon,label);
+            div.append(opt);
+
+            opt.onclick=(function(){
+
+              let input = this.parentElement.querySelector("input");
+
+              let text  = input.value;
+
+              let array = (text)?JSON.parse(input.value.replace('{', '[').replace('}', ']')):[];
+  
+                  value = parseInt(this.getAttribute("value"));
+
+                 
+
+              let find  = (array)?array.indexOf(value):-1;
+
+              if(find>-1){
+
+                array.splice(find, 1);
+                opt.setAttribute("checked","0");
+
+              }else{
+
+                array.push(parseInt(this.getAttribute("value")));
+                opt.setAttribute("checked","1");
+
+              } 
+              
+              
+              
+              input.value=(array.length)?"{"+array+"}":""; 
+
+            })
+
+      });
+
+    }
+
+  }
+      
+  label.innerHTML=data.label;
+
+	object.setAttribute("type","hidden");
+	object.setAttribute("class","default");
+	object.setAttribute("required",data.required);
+		
+  div.appendChild(object);
+
+  return div;
+  
+}
+
 function date(data){
   
   var value       = (data.value!==undefined)?data.value:"";
@@ -4183,6 +4292,7 @@ function fields(data,header,pagedata){
     case "fileupload":  return fileupload(data,header,pagedata);
     case "checkbox":    return checkbox(data);
     case "radio":       return radio(data);
+    case "number":      return number(data);  
 /*  case "multiplehidden":return multipleHidden(data); */
 /*  case "share":return share(data);header.append(btOptionsBtShare()); */
  
@@ -4557,14 +4667,41 @@ function multipleHiddenFinder(object){
 	
 }
 
+function number(data){
+
+  var value       = (data.value!==undefined)?data.value:"";
+  var placeholder = (data.placeholder!==undefined)?data.placeholder:"";
+
+  var label       = createObject('{"tag":"label","innerhtml":""}');
+	var div         = createObject('{"tag":"div"}');
+	var object      = createObject('{"tag":"input","value":"'+value+'","id":"'+data.url+'"}');
+
+  div.appendChild(label);
+
+  label.innerHTML=data.label;
+	object.setAttribute("autocomplete","new-password");
+	object.setAttribute("type","number");
+	object.setAttribute("class","default");
+
+  if(placeholder){
+	  object.setAttribute("placeholder",placeholder);
+  }
+
+	object.setAttribute("required",data.required);
+		
+  div.appendChild(object);
+
+  return div;
+  
+}
+
 
 const radioReset = function(e){
 
-  Object.entries(e).forEach(([key, value]) => {
+  Object.entries(e.querySelectorAll("opt")).forEach(([key, value]) => {
 
-      value.setAttribute("class","icon-radio-unchecked");
+      value.setAttribute("checked","0");
      
-
   });
 
 }
@@ -4586,20 +4723,25 @@ const radio = function(data){
 
       var options = data.attributes.options
 
-      Object.entries(options).forEach(([key, value]) => {
+      Object.entries(options).forEach(([k, v]) => {
 
-        var opt    = createObject('{"tag":"opt"}')
-        var icon   = createObject('{"tag":"icon","class":"icon-radio-unchecked"}');
-        var label  = createObject('{"tag":"label","innerhtml":"'+value+'"}')
+
+        let checked = (value==k)?"1":"0";
+
+        var opt    = createObject('{"tag":"opt","value":"'+k+'","checked":"'+checked+'"}');
+        var icon   = createObject('{"tag":"icon","class":"icon-"}');
+
+        var label  = createObject('{"tag":"label","innerhtml":"'+v+'"}')
 
           opt.append(icon,label);
           div.append(opt);
 
           opt.onclick=(function(){
 
-            radioReset(this.parentElement.getElementsByTagName("icon"));
+            radioReset(this.parentElement);
 
-            this.querySelector("icon").setAttribute("class","icon-radio-checked");
+            this.setAttribute("checked","1");
+            this.parentElement.querySelector("input").value = this.getAttribute("value");
 
           })
 
@@ -4620,7 +4762,6 @@ const radio = function(data){
   return div;
   
 }
-
 
 function selectAjax(data,header){
 
@@ -5760,6 +5901,7 @@ document.onkeydown = function(evt) {
 	}
 	
 }
+
 
 window.onload=load;
 

@@ -10,6 +10,7 @@ function fields(data,header,pagedata){
     case "fileupload":  return fileupload(data,header,pagedata);
     case "checkbox":    return checkbox(data);
     case "radio":       return radio(data);
+    case "number":      return number(data);  
 /*  case "multiplehidden":return multipleHidden(data); */
 /*  case "share":return share(data);header.append(btOptionsBtShare()); */
  
