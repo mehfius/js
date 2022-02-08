@@ -60,7 +60,9 @@ const checkbox = function(data){
               
               
               
-              input.value=(array.length)?"{"+array+"}":""; 
+              input.value=(array.length)?"{"+array+"}":"{}"; 
+
+              console.log(input.value);
 
             })
 

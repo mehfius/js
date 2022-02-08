@@ -18,8 +18,8 @@ function formSave(codigo){
 
     data[id]        = valueid;
 
-    fieldlabel[id]={}
-    fieldlabel[id].label  = label;
+
+
 
     if(type=='checkbox' || type=='radio'){
 
@@ -33,18 +33,26 @@ function formSave(codigo){
         textLabel+=", ";
 
       });
-
+      
+      fieldlabel[id]={}
+      fieldlabel[id].label  = label;
       fieldlabel[id].value = textLabel;
+
+    }else if(type=='termos'){
+
+
 
     }else{
 
+      fieldlabel[id]={}
+      fieldlabel[id].label  = label;
       fieldlabel[id].value = valueid;
 
     }
 
     if(required=="true"){
 
-      if(!valueid){
+      if(!valueid || valueid=="{}" || valueid==="false"){
 
         error+="Campo "+title+" está vazio \n";
         value.setAttribute("error","1");

@@ -3994,8 +3994,8 @@ function formSave(codigo){
 
     data[id]        = valueid;
 
-    fieldlabel[id]={}
-    fieldlabel[id].label  = label;
+
+
 
     if(type=='checkbox' || type=='radio'){
 
@@ -4009,18 +4009,26 @@ function formSave(codigo){
         textLabel+=", ";
 
       });
-
+      
+      fieldlabel[id]={}
+      fieldlabel[id].label  = label;
       fieldlabel[id].value = textLabel;
+
+    }else if(type=='termos'){
+
+
 
     }else{
 
+      fieldlabel[id]={}
+      fieldlabel[id].label  = label;
       fieldlabel[id].value = valueid;
 
     }
 
     if(required=="true"){
 
-      if(!valueid){
+      if(!valueid || valueid=="{}" || valueid==="false"){
 
         error+="Campo "+title+" está vazio \n";
         value.setAttribute("error","1");
@@ -4153,6 +4161,54 @@ function formView(areas,codigo){
 
 }
 
+const fieldCep = function(data){
+/* 
+  const send = async function(data) {
+
+    const config = JSON.parse(localStorage.config);
+
+    const rawResponse = await fetch(config.url_fetchcep, {
+
+      method: 'POST',
+      headers: {'Accept': 'application/json','Content-Type': 'application/json'},
+      body: JSON.stringify({cep:'31170660'})
+
+    });
+
+  }
+
+  var value       = (data.value!==undefined)?data.value:"";
+  var placeholder = (data.placeholder!==undefined)?data.placeholder:"";
+
+  var label       = createObject('{"tag":"label","innerhtml":""}');
+	var div         = createObject('{"tag":"div"}');
+	var object      = createObject('{"tag":"input","value":"'+value+'","id":"'+data.url+'"}');
+
+      object.onkeypress = (function(){
+
+        console.log("teste"+this.value);
+        
+      });
+
+  div.appendChild(label);
+
+  label.innerHTML=data.label;
+	object.setAttribute("autocomplete","new-password");
+	object.setAttribute("type","text");
+	object.setAttribute("class","default");
+
+  if(placeholder){
+	  object.setAttribute("placeholder",placeholder);
+  }
+
+	object.setAttribute("required",data.required);
+		
+  div.appendChild(object);
+
+  return div; */
+  
+}
+
 const checkbox = function(data){
 
   var value       = (data.value!==undefined)?data.value:"";
@@ -4215,7 +4271,9 @@ const checkbox = function(data){
               
               
               
-              input.value=(array.length)?"{"+array+"}":""; 
+              input.value=(array.length)?"{"+array+"}":"{}"; 
+
+              console.log(input.value);
 
             })
 
@@ -4292,7 +4350,10 @@ function fields(data,header,pagedata){
     case "fileupload":  return fileupload(data,header,pagedata);
     case "checkbox":    return checkbox(data);
     case "radio":       return radio(data);
-    case "number":      return number(data);  
+    case "number":      return number(data); 
+    case "password":    return password(data);  
+    case "termos":      return termos(data);  
+   /*  case "cep":         return fieldCep(data);   */
 /*  case "multiplehidden":return multipleHidden(data); */
 /*  case "share":return share(data);header.append(btOptionsBtShare()); */
  
@@ -4304,27 +4365,13 @@ function fields(data,header,pagedata){
 
   if(data.attributes){
 
-/*     if(data.attributes.title){
 
-      let input = e.querySelector("input");
-
-      input.setAttribute('title',data.attributes.title);
-      
-    } */
 
     Object.entries(data.attributes).forEach(([key, value]) => {
-
-
 
       let input = e.querySelector("input");
 
       input.setAttribute(key,value); 
-
-
-/* 
-      let input = e.querySelector("input");
-
-      input.setAttribute('title',data.attributes.title); */
 
     });
 
@@ -4340,45 +4387,6 @@ function fields(data,header,pagedata){
   return e;
   
 }
-
-/*
-
-
-//   case "hide":            var div = formMountHide(attribute);div.setAttribute('type',type);           break;
- //   case "hideinput":       var div = formMountHideInput(attribute);div.setAttribute('type',type);      break; 
-////    case "textareapreset":  var div = formMountTextareaPreset(attribute);div.setAttribute('type',type);       break;
- //   case "data":            var div = formMountData(attribute);div.setAttribute('type',type);           break;
-//    case "text":            var div = formMountText(attribute);div.setAttribute('type',type);           break;
- //   case "password":        var div = formMountPassword(attribute);div.setAttribute('type',type);       break;
- //   case "youtube":         var div = formMountYoutube(attribute);div.setAttribute('type',type);        break;  
-  //  case "trueorfalse":     var div = formMountTrueFalse(attribute);div.setAttribute('type',type);      break;	
-   // case "texturl":         var div = formMountTexturl(attribute);div.setAttribute('type',type);        break;
-   // case "selectcolor":     var div = formMountSelectColor(attribute);                                  break;   
-  //  case "search":          var div = formMountSelectCustom(attribute);                                 break;
-  //  case "multiple":        var div = formMountMultiple(attribute);div.setAttribute('type',type);       break;
-   // case "tag":             var div = formMountTag(attribute);div.setAttribute('type',type);            break;
-  //  case "taggroup":        var div = formMountTagGroup(attribute);div.setAttribute('type',type);       break; 
-   // case "keywords":        var div = formMountKeywords(attribute);div.setAttribute('type',type);       break;        
-
-
-       case "select":
-                
-        if(data.value=='undefined'){
-
-            if(data.value.length<30){
-                var div = select(attribute);
-            }else{
-                var div = selectCustom(attribute);
-            }
-
-        }else{
-            
-            var div = formMountSelect(attribute);
-            
-        }
-
-      break;
-   */
 
 function getAttValue(data,att){
 
@@ -4690,6 +4698,47 @@ function number(data){
 	object.setAttribute("required",data.required);
 		
   div.appendChild(object);
+
+  return div;
+  
+}
+
+function password(data){
+
+  var value       = (data.value!==undefined)?data.value:"";
+  var placeholder = (data.placeholder!==undefined)?data.placeholder:"";
+
+  var label       = createObject('{"tag":"label","innerhtml":""}');
+	var div         = createObject('{"tag":"div","pass":"1"}');
+	var icon        = createObject('{"tag":"icon","class":"icon-"}');
+	var object      = createObject('{"tag":"input","value":"'+value+'","id":"'+data.url+'"}');
+
+  div.appendChild(label);
+
+  label.innerHTML = data.label;
+	object.setAttribute("autocomplete","new-password");
+	object.setAttribute("type","text");
+	object.setAttribute("class","default");
+
+  if(placeholder){
+	  object.setAttribute("placeholder",placeholder);
+  }
+
+	object.setAttribute("required",data.required);
+		
+  div.append(object,icon);
+
+  icon.onclick=(function(){
+
+    let pass = this.parentElement.getAttribute("pass");
+
+    if(pass=="1"){
+      this.parentElement.setAttribute("pass","0");
+    }else{
+      this.parentElement.setAttribute("pass","1");
+    }
+
+  });
 
   return div;
   
@@ -5189,6 +5238,60 @@ function share(attribute){
   
   return div;
 	
+}
+
+const termos = function(data){
+
+  var value       = (data.value)?data.value:"false";
+
+  var label       = createObject('{"tag":"label","innerhtml":"'+data.label+'"}');
+
+	var div         = createObject('{"tag":"div"}');
+
+	var object      = createObject('{"tag":"input","value":"'+value+'","id":"'+data.url+'"}');
+
+      div.append(label);
+
+  let checked = (value==="true")?"1":"0";
+
+  var opt       = createObject('{"tag":"opt","value":"","checked":"'+checked+'"}')
+
+  var icon      = createObject('{"tag":"icon","class":"icon-"}');
+
+  opt.append(icon,createObject('{"tag":"label","innerhtml":"'+data.attributes.options[0]+'"}'));
+  div.append(opt);
+
+  opt.onclick=(function(){
+
+    let input = this.parentElement.querySelector("input");
+
+    let text  = input.value;
+
+    if(text=="true"){
+
+      input.value="false";
+      opt.setAttribute("checked","0");
+
+    }else{
+
+      input.value="true";
+      opt.setAttribute("checked","1");
+
+    } 
+    
+
+  })
+
+  //label.innerHTML=data.label;
+
+	object.setAttribute("type","hidden");
+	object.setAttribute("class","default");
+	object.setAttribute("required",data.required);
+		
+  div.appendChild(object);
+
+  return div;
+  
 }
 
 function text(data){
@@ -5961,13 +6064,11 @@ function debugIphone(array){
 
 function mountLogin(){
 
-
 var config      = JSON.parse(localStorage.config); 
 
 var logo        = config.urllogo;
   
-var btclose     = createObject('{"tag":"btclose","innerhtml":"x","onclick":"document.body.setAttribute(\'openlogin\',\'0\');"}');  
-var h1          = createObject('{"tag":"h1","innerhtml":"'+config.login+'","style":"background-image:url('+logo+');"}');  
+var btclose     = createObject('{"tag":"btclose","innerhtml":"x","onclick":"document.body.setAttribute(\'openlogin\',\'0\');"}');    
 var plogin      = createObject('{"tag":"p","innerhtml":"Login","class":"plogin"}');
 var pinsert     = createObject('{"tag":"p","innerhtml":"Criar conta","class":"pinsert"}');
 var pinsertm    = createObject('{"tag":"p","innerhtml":"Cadastro de Médico","class":"pinsertm"}');
@@ -5975,32 +6076,32 @@ var precovery   = createObject('{"tag":"p","innerhtml":"Recuperar senha","class"
 var login 	    = createObject('{"tag":"login","class":"login","name":"login"}');
 var formLogin   = createObject('{"tag":"form","onsubmit":"login();return false;","autocomplete":"off"}');
 
-
-  
 // Inicio Input  
   
 var inputName        = createObject('{"tag":"input","id":"label","placeholder":"Nome completo"}');
 var pattern          = encodeURI("[a-z0-9._%+-]+@[a-z0-9.-]+\\.[a-z]{2,4}$");  
 var inputEmail       = createObject('{"tag":"input","id":"email","placeholder":"seu@email.com","pattern":"'+pattern+'"}');
 var inputPass        = createObject('{"tag":"input","id":"password","type":"password","placeholder":"Senha"}');
-//var inputPass2       = createObject('{"tag":"input","id":"password2","type":"password","placeholder":"Confirmação da senha"}');
 var pattern          = encodeURI("\\d{11}");
-var inputWhatsapp         = createObject('{"tag":"input","id":"whatsapp","title":"Exemplo: 5531987654321","placeholder":"Whatsapp (ex: 5531987654321)","pattern":"[0-9]{2}[0-9]{2}[0-9]{9}"}'); 
+var inputWhatsapp    = createObject('{"tag":"input","id":"whatsapp","title":"Exemplo: 5531987654321","placeholder":"Whatsapp (ex: 5531987654321)","type":"number","min":"0","pattern":"[0-9]{2}[0-9]{2}[0-9]{9}"}'); 
+var inputCep              = createObject('{"tag":"input","id":"cep","type":"number","placeholder":"CEP","min":"0","maxlength":"8"}');
+var inputEstado           = createObject('{"tag":"input","id":"estado","type":"text","disabled":"true"}');
+var inputCidade           = createObject('{"tag":"input","id":"cidade","type":"text","disabled":"true"}');
 var inputCRM         = createObject('{"tag":"input","id":"crm","placeholder":"Registro profissional","type":"text","onkeydown":"return inputTypeNumber(event);"}');
-//var inputSuite       = createObject('{"tag":"input","id":"suite","type":"hidden","value":"'+config.id+'"}');  
+
 // Fim input
   
-//var text = 'Ao clicar em Cadastrar, você concorda com <a href=https://docs.google.com/document/d/1i_-hQXcuPfCH48fUNvC-GN60zZas8eqSjrzoHPZtnPc/edit?usp=sharing target=_blank>nossos termos</a>, Política de Dados e Política de Cookies.';  
-var text = 'Ao clicar em cadastrar, você concorda com a <a href=https://docs.google.com/document/d/1i_-hQXcuPfCH48fUNvC-GN60zZas8eqSjrzoHPZtnPc/edit?usp=sharing target=_blank>política de privacidade</a>, <a href=https://docs.google.com/document/d/1EsgYKoX4mG40kd0oXfwbuID1t9Oi1oFvEGlxfZ9SAsw/edit target=_blank>termos de uso</a> e <a href=https://docs.google.com/document/d/1EsgYKoX4mG40kd0oXfwbuID1t9Oi1oFvEGlxfZ9SAsw/ target=_blank>acordo do usuário</a> e <a href=https://docs.google.com/document/d/1i_-hQXcuPfCH48fUNvC-GN60zZas8eqSjrzoHPZtnPc/edit?usp=sharing target=_blank>política de cookies</a>.'; 
-var pTermos = createObject('{"tag":"p","innerhtml":"'+text+'","class":"ptermos"}');
-  
+var text = 'Ao clicar em cadastrar, você concorda com a ';
+    text+= '<a href='+config.login_politicaprivacidade+'  target=_blank>política de privacidade</a>, ';
+    text+= '<a href='+config.login_termosdeuso+'          target=_blank>termos de uso</a> e ';
+    text+= '<a href='+config.login_acordodousuario+'      target=_blank>acordo do usuário</a> e ';
+    text+= '<a href='+config.login_loiticadecookies+'     target=_blank>política de cookies</a>.'; 
 
+var pTermos = createObject('{"tag":"p","innerhtml":"'+text+'","class":"ptermos"}');
   
 var inputAreas  = createObject('{"tag":"input","id":"areas","type":"hidden"}');
   
 var div         = createObject('{"tag":"div","id":"status","class":"status"}');
-  
-//var button      = createObject('{"tag":"button","id":"status","innerhtml":""}');
   
 var btEntrar           = createObject('{"tag":"button","id":"btEntrar","innerhtml":"Entrar"}'); 
 var btCadastrar        = createObject('{"tag":"button","id":"btCadastrar","innerhtml":"Cadastrar"}');  
@@ -6013,8 +6114,7 @@ var bInsertPaciente    = createObject('{"tag":"button","id":"btInsertPaciente","
 var bInsertMedico      = createObject('{"tag":"button","id":"btInsertMedico","type":"button","textnode":"Sou profissional da saúde"}');
   
 var bRecovery          = createObject('{"tag":"button","id":"btRecovery","type":"button","textnode":"Esqueci minha senha"}');
-  
-//var menu        = createObject('{"tag":"options"}');
+
   
 bLogin.onclick=(function(){
 
@@ -6065,7 +6165,19 @@ bRecovery.onclick=(function(){
 
 })
 
-formLogin.append(btclose,h1,plogin,pinsert,pinsertm,precovery,inputName,inputEmail,inputPass,inputWhatsapp);
+inputCep.onkeyup=(function(){
+
+    let cep =  this.value.replace(/\D/g, '');
+
+    if(cep.length >= 8){
+
+      loginInsetCheckCep(this.value)
+
+    }
+
+});
+
+formLogin.append(btclose,plogin,pinsert,pinsertm,precovery,inputName,inputEmail,inputPass,inputCep,inputEstado,inputCidade,inputWhatsapp);
   
 formLogin.appendChild(bInsertPaciente);
 formLogin.appendChild(bInsertMedico);
@@ -6113,144 +6225,6 @@ function setRequired(list){
   
 }
 
-
-function mountLoginOld(){
-
-
-var config      = JSON.parse(localStorage.config); 
-
-var logo        = config.urllogo;
-  
-var btclose     = createObject('{"tag":"btclose","innerhtml":"x","onclick":"document.body.setAttribute(\'openlogin\',\'0\');"}');  
-var h1          = createObject('{"tag":"h1","innerhtml":"'+config.login+'","style":"background-image:url('+logo+');"}');  
-var plogin      = createObject('{"tag":"p","innerhtml":"Login","class":"plogin"}');
-var pinsert     = createObject('{"tag":"p","innerhtml":"Criar conta","class":"pinsert"}');
-var pinsertm    = createObject('{"tag":"p","innerhtml":"Cadastro de Médico","class":"pinsertm"}');
-var precovery   = createObject('{"tag":"p","innerhtml":"Recuperar senha","class":"precovery"}');  
-var login 	    = createObject('{"tag":"login","class":"login","name":"login"}');
-var formLogin   = createObject('{"tag":"form","onsubmit":"login();return false;"}');
-
-
-  
-// Inicio Input  
-  
-var inputName        = createObject('{"tag":"input","id":"label","placeholder":"Nome completo"}');
-var pattern          = encodeURI("[a-z0-9._%+-]+@[a-z0-9.-]+\\.[a-z]{2,4}$");  
-var inputEmail       = createObject('{"tag":"input","id":"email","placeholder":"seu@email.com","pattern":"'+pattern+'"}');
-var inputPass        = createObject('{"tag":"input","id":"password","type":"password","placeholder":"Senha"}');
-var pattern          = encodeURI("\\d{11}");
-var inputCPF         = createObject('{"tag":"input","id":"cpf","placeholder":"CPF","type":"number","title":"'+message("620")+'","pattern":"'+pattern+'"}');
-var inputRG          = createObject('{"tag":"input","id":"identidade","placeholder":"RG Identidade"}');  
-var inputTelefone    = createObject('{"tag":"input","id":"telefone","placeholder":"Telefone","type":"number"}');
-var inputCEP         = createObject('{"tag":"input","id":"cep","placeholder":"CEP"}');    
-var inputEndereco    = createObject('{"tag":"input","id":"endereco","placeholder":"Rua, número"}');  
-var inputBairro      = createObject('{"tag":"input","id":"bairro","placeholder":"Bairro"}'); 
-var inputCidade      = createObject('{"tag":"input","id":"cidade","placeholder":"Cidade"}'); 
-var inputEstado      = createObject('{"tag":"input","id":"estado","placeholder":"Estado"}'); 
-var inputCRM         = createObject('{"tag":"input","id":"crm","placeholder":"Registro profissional","type":"text","onkeydown":"return inputTypeNumber(event);"}');
-var inputSuite       = createObject('{"tag":"input","id":"suite","type":"hidden","value":"'+config.id+'"}');  
-// Fim input
-  
-//var text = 'Ao clicar em Cadastrar, você concorda com <a href=https://docs.google.com/document/d/1i_-hQXcuPfCH48fUNvC-GN60zZas8eqSjrzoHPZtnPc/edit?usp=sharing target=_blank>nossos termos</a>, Política de Dados e Política de Cookies.';  
-var text = 'Ao clicar em cadastrar, você concorda com a <a href=https://docs.google.com/document/d/1i_-hQXcuPfCH48fUNvC-GN60zZas8eqSjrzoHPZtnPc/edit?usp=sharing target=_blank>política de privacidade</a>, <a href=https://docs.google.com/document/d/1EsgYKoX4mG40kd0oXfwbuID1t9Oi1oFvEGlxfZ9SAsw/edit target=_blank>termos de uso</a> e <a href=https://docs.google.com/document/d/1EsgYKoX4mG40kd0oXfwbuID1t9Oi1oFvEGlxfZ9SAsw/ target=_blank>acordo do usuário</a> e <a href=https://docs.google.com/document/d/1i_-hQXcuPfCH48fUNvC-GN60zZas8eqSjrzoHPZtnPc/edit?usp=sharing target=_blank>política de cookies</a>.'; 
-var pTermos = createObject('{"tag":"p","innerhtml":"'+text+'","class":"ptermos"}');
-  
-
-  
-var inputAreas  = createObject('{"tag":"input","id":"areas","type":"hidden"}');
-  
-var div         = createObject('{"tag":"div","id":"status","class":"status"}');
-  
-//var button      = createObject('{"tag":"button","id":"status","innerhtml":""}');
-  
-var btEntrar           = createObject('{"tag":"button","id":"btEntrar","innerhtml":"Entrar"}'); 
-var btCadastrar        = createObject('{"tag":"button","id":"btCadastrar","innerhtml":"Cadastrar"}');  
-var btRecuperar        = createObject('{"tag":"button","id":"btRecuperar","innerhtml":"Recuperar"}'); 
-  
-var bLogin             = createObject('{"tag":"button","id":"btLogin","type":"button","textnode":"Fazer login"}');
-var bInsert            = createObject('{"tag":"button","id":"btInsert","type":"button","textnode":"Criar conta"}');
-  
-var bInsertPaciente    = createObject('{"tag":"button","id":"btInsertPaciente","type":"button","textnode":"Sou paciente"}');
-var bInsertMedico      = createObject('{"tag":"button","id":"btInsertMedico","type":"button","textnode":"Sou profissional da saúde"}');
-  
-var bRecovery          = createObject('{"tag":"button","id":"btRecovery","type":"button","textnode":"Esqueci minha senha"}');
-  
-//var menu        = createObject('{"tag":"options"}');
-  
-bLogin.onclick=(function(){
-
-  sA(login,'class','login');
-  setRequired('email,password')
-  sA(formLogin,'onsubmit','login();return false;');
-  
-})
-
-bInsert.onclick=(function(){
-
-  setRequired('label,email,password,cpf,identidade,telefone,cep,endereco,bairro,cidade,estado');
-  sA(login,'class','insert');
-  sA(formLogin,'onsubmit','insert();return false;');
-  goi('areas').value="100";
-  
-})
-  
-bInsertPaciente.onclick=(function(){
-  
-  setRequired('label,email,password,cpf');
-  
-  sA(login,'class','insertpaciente');
-  sA(goi('name'),'required','required');
-  sA(formLogin,'onsubmit','insert();return false;');
-  goi('areas').value="100";
-  
-})  
-  
-bInsertMedico.onclick=(function(){
-  
-  setRequired('label,email,password,cpf,identidade,telefone,cep,endereco,bairro,cidade,estado,crm');
-  
-  sA(login,'class','insertmedico');
-  sA(goi('name'),'required','required');
-  sA(formLogin,'onsubmit','insert();return false;');
-  goi('areas').value="50";
-  
-})  
-  
-bRecovery.onclick=(function(){
-  
-  setRequired('email');
-  
-  sA(login,'class','recovery');
-
-  sA(formLogin,'onsubmit','recovery();return false;');
-
-})
-
-formLogin.append(btclose,h1,plogin,pinsert,pinsertm,precovery,inputName,inputEmail,inputPass,inputCPF,inputRG,inputTelefone,inputCEP,inputEndereco,inputBairro,inputCidade,inputEstado,inputSuite);
-  
-formLogin.appendChild(bInsertPaciente);
-formLogin.appendChild(bInsertMedico);
-
-formLogin.append(inputCRM,inputAreas,pTermos,btEntrar,btCadastrar,btRecuperar,div);
-
-if(config.newusers==1){
-
-    formLogin.appendChild(bInsert);
-
-}
-
-formLogin.append(bLogin,bRecovery);
-  
-login.append(formLogin);
-  
-return login;
-  
-  	/*
-  	login.appendChild(adsense());
-	(adsbygoogle = window.adsbygoogle || []).push({});
-*/
-	
-}
 
 
 function insert(){
@@ -6314,6 +6288,41 @@ function insert(){
     }
 
     send(data);
+
+}
+
+
+function loginInsertCepFillFields(data){
+
+  let login = document.querySelector("login")
+
+  let cidade = login.querySelector("#cidade");
+  let estado = login.querySelector("#estado");
+
+  cidade.value = "";
+  estado.value = "";
+  //let bairro = login.querySelector("bairro");
+
+if(!("erro" in data)){
+  cidade.value = data.localidade;
+  estado.value = data.uf;
+}else{
+  alert("CEP não encontrado");
+}
+
+  //bairro.value = data.bairro;
+
+}
+
+
+
+function loginInsetCheckCep(cep) {
+
+  var script = document.createElement('script');
+
+      script.src = 'https://viacep.com.br/ws/'+ cep + '/json/?callback=loginInsertCepFillFields';
+
+  document.body.appendChild(script);
 
 }
 
