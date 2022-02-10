@@ -6296,6 +6296,7 @@ function loginInsertCepFillFields(data){
 
   let login = document.querySelector("login")
 
+  let cep = login.querySelector("#cep");
   let cidade = login.querySelector("#cidade");
   let estado = login.querySelector("#estado");
 
@@ -6304,10 +6305,16 @@ function loginInsertCepFillFields(data){
   //let bairro = login.querySelector("bairro");
 
 if(!("erro" in data)){
+
   cidade.value = data.localidade;
   estado.value = data.uf;
+
 }else{
+
   alert("CEP não encontrado");
+  
+  cep.value = "";
+
 }
 
   //bairro.value = data.bairro;
