@@ -21,8 +21,8 @@ var inputPass        = createObject('{"tag":"input","id":"password","type":"pass
 var pattern          = encodeURI("\\d{11}");
 var inputWhatsapp    = createObject('{"tag":"input","id":"whatsapp","title":"Exemplo: 5531987654321","placeholder":"Whatsapp (ex: 5531987654321)","type":"number","min":"0","pattern":"[0-9]{2}[0-9]{2}[0-9]{9}"}'); 
 var inputCep              = createObject('{"tag":"input","id":"cep","type":"number","placeholder":"CEP","min":"0","maxlength":"8"}');
-var inputEstado           = createObject('{"tag":"input","id":"estado","type":"text","disabled":"true"}');
-var inputCidade           = createObject('{"tag":"input","id":"cidade","type":"text","disabled":"true"}');
+var inputEstado           = createObject('{"tag":"input","id":"estado","type":"text","readonly":"true"}');
+var inputCidade           = createObject('{"tag":"input","id":"cidade","type":"text","readonly":"true"}');
 var inputCRM         = createObject('{"tag":"input","id":"crm","placeholder":"Registro profissional","type":"text","onkeydown":"return inputTypeNumber(event);"}');
 
 // Fim input
@@ -62,7 +62,7 @@ bLogin.onclick=(function(){
 
 bInsert.onclick=(function(){
 
-  setRequired('label,email,password,whatsapp');
+  setRequired('label,email,password,whatsapp,cep,cidade,estado');
   sA(login,'class','insert');
   sA(formLogin,'onsubmit','insert();return false;');
   goi('areas').value="100";
@@ -71,7 +71,7 @@ bInsert.onclick=(function(){
   
 bInsertPaciente.onclick=(function(){
   
-  setRequired('label,email,password,whatsapp');
+  setRequired('label,email,password,whatsapp,cep,cidade,estado');
   
   sA(login,'class','insertpaciente');
   sA(goi('name'),'required','required');
@@ -82,7 +82,7 @@ bInsertPaciente.onclick=(function(){
   
 bInsertMedico.onclick=(function(){
   
-  setRequired('label,email,password,crm,password,whatsapp');
+  setRequired('label,email,password,crm,password,whatsapp,cep,cidade,estado');
   
   sA(login,'class','insertmedico');
   sA(goi('name'),'required','required');

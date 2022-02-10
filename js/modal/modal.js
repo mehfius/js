@@ -10,7 +10,7 @@ const modal = async function(){
 
     if(user.customforms){
      
-          if(user.customforms.includes('mvb') && user.areas=='100') {
+          if(user.areas=='100') {
 
             modal.append(modalMVB());
 

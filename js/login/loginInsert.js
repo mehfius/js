@@ -20,7 +20,7 @@ function insert(){
       
         data[id]=valueid;
 
-        if(required=="true"){
+        if(required=="required"){
 
           error+= (valueid)?"":"Campo "+title+" está vazio \n";
 
