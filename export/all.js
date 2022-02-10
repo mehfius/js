@@ -6668,9 +6668,9 @@ const modal = async function(){
 
       modal.append(modalProntuarios());
 
-    if(user.customforms){
+    //if(user.customforms){
      
-          if(user.customforms.includes('mvb') && user.areas=='100') {
+          if(user.areas=='100') {
 
             modal.append(modalMVB());
 
@@ -6678,7 +6678,7 @@ const modal = async function(){
 
           modalUsers();
 
-    }
+    //}
 
   body.append(modal);
   
@@ -6690,10 +6690,10 @@ const modalMVB = function(){
   var div     = createObject('{"tag":"div"}');
 
   var header  = createObject('{"tag":"header","style":"background-color:#176B89;"}');
-  var title   = createObject('{"tag":"label","innerhtml":"Médicos voluntários do Brasil"}');
+  var title   = createObject('{"tag":"label","innerhtml":"Médicos do Brasil"}');
   
   let content = createObject('{"tag":"content"}');
-  let p       = createObject('{"tag":"p","innerhtml":"Formulário para atendimento Médicos voluntários do Brasil"}');
+  let p       = createObject('{"tag":"p","innerhtml":"Formulário para ser preenchido antes do atendimento médico."}');
   let button  = createObject('{"tag":"button","type":"button","innerhtml":"Preencher"}');
   
       button.onclick=(function(){formEdit("mvb")});
