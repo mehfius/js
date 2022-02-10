@@ -8,7 +8,7 @@ const modal = async function(){
 
       modal.append(modalProntuarios());
 
-    if(user.customforms){
+    //if(user.customforms){
      
           if(user.areas=='100') {
 
@@ -18,7 +18,7 @@ const modal = async function(){
 
           modalUsers();
 
-    }
+    //}
 
   body.append(modal);
   
