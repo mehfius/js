@@ -6083,6 +6083,7 @@ var pattern          = encodeURI("[a-z0-9._%+-]+@[a-z0-9.-]+\\.[a-z]{2,4}$");
 var inputEmail       = createObject('{"tag":"input","id":"email","placeholder":"seu@email.com","pattern":"'+pattern+'"}');
 var inputPass        = createObject('{"tag":"input","id":"password","type":"password","placeholder":"Senha"}');
 var pattern          = encodeURI("\\d{11}");
+var inputCpf    = createObject('{"tag":"input","id":"cpf","title":"Exemplo: 98776543220","placeholder":"CPF (ex: 98776543220)","type":"number","min":"0","pattern":"[0-9]{3}[0-9]{3}[0-9]{3}[0-9]{11}"}'); 
 var inputWhatsapp    = createObject('{"tag":"input","id":"whatsapp","title":"Exemplo: 5531987654321","placeholder":"Whatsapp (ex: 5531987654321)","type":"number","min":"0","pattern":"[0-9]{2}[0-9]{2}[0-9]{9}"}'); 
 var inputCep              = createObject('{"tag":"input","id":"cep","type":"number","placeholder":"CEP","min":"0","maxlength":"8"}');
 var inputEstado           = createObject('{"tag":"input","id":"estado","type":"text","readonly":"true"}');
@@ -6126,7 +6127,7 @@ bLogin.onclick=(function(){
 
 bInsert.onclick=(function(){
 
-  setRequired('label,email,password,whatsapp,cep,cidade,estado');
+  setRequired('label,email,password,whatsapp,cep,cidade,estado,cpf');
   sA(login,'class','insert');
   sA(formLogin,'onsubmit','insert();return false;');
   goi('areas').value="100";
@@ -6135,7 +6136,7 @@ bInsert.onclick=(function(){
   
 bInsertPaciente.onclick=(function(){
   
-  setRequired('label,email,password,whatsapp,cep,cidade,estado');
+  setRequired('label,email,password,whatsapp,cep,cidade,estado,cpf');
   
   sA(login,'class','insertpaciente');
   sA(goi('name'),'required','required');
@@ -6146,7 +6147,7 @@ bInsertPaciente.onclick=(function(){
   
 bInsertMedico.onclick=(function(){
   
-  setRequired('label,email,password,crm,password,whatsapp,cep,cidade,estado');
+  setRequired('label,email,password,crm,password,whatsapp,cep,cidade,estado,cpf');
   
   sA(login,'class','insertmedico');
   sA(goi('name'),'required','required');
@@ -6177,7 +6178,7 @@ inputCep.onkeyup=(function(){
 
 });
 
-formLogin.append(btclose,plogin,pinsert,pinsertm,precovery,inputName,inputEmail,inputPass,inputCep,inputEstado,inputCidade,inputWhatsapp);
+formLogin.append(btclose,plogin,pinsert,pinsertm,precovery,inputName,inputEmail,inputPass,inputCep,inputEstado,inputCidade,inputWhatsapp,inputCpf);
   
 formLogin.appendChild(bInsertPaciente);
 formLogin.appendChild(bInsertMedico);
@@ -7912,4 +7913,43 @@ match["uuid"]=user.session;
   })();
 
 }
+
+const testinsert = function(){
+
+  document.querySelector("bt1").click();
+  document.querySelector("#btinsert").click();
+  document.querySelector("#label").value=MD5(rnd(20));
+  document.querySelector("#email").value=MD5(rnd(20))+"@testeinsert.com";
+  document.querySelector("#password").value=MD5(rnd(20));
+  document.querySelector("#cep").value="31170660";
+  document.querySelector("#cidade").value="Belo Horizonte";
+  document.querySelector("#estado").value="Minas Gerais";
+  document.querySelector("#whatsapp").value="5531984757974";
+  document.querySelector("#cpf").value="98776554321";
+
+
+
+}
+
+const rnd = (() => {
+
+    const gen = (min, max) => max++ && [...Array(max-min)].map((s, i) => String.fromCharCode(min+i));
+
+    const sets = {
+        num: gen(48,57),
+        alphaLower: gen(97,122),
+        alphaUpper: gen(65,90),
+        special: [...`~!@#$%^&*()_+-=[]\{}|;:'",./<>?`]
+    };
+
+    function* iter(len, set) {
+
+        if (set.length < 1) set = Object.values(sets).flat(); 
+        for (let i = 0; i < len; i++) yield set[Math.random() * set.length|0]
+
+    }
+
+    return Object.assign(((len, ...set) => [...iter(len, set.flat())].join('')), sets);
+
+})();
 

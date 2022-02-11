@@ -19,6 +19,7 @@ var pattern          = encodeURI("[a-z0-9._%+-]+@[a-z0-9.-]+\\.[a-z]{2,4}$");
 var inputEmail       = createObject('{"tag":"input","id":"email","placeholder":"seu@email.com","pattern":"'+pattern+'"}');
 var inputPass        = createObject('{"tag":"input","id":"password","type":"password","placeholder":"Senha"}');
 var pattern          = encodeURI("\\d{11}");
+var inputCpf    = createObject('{"tag":"input","id":"cpf","title":"Exemplo: 98776543220","placeholder":"CPF (ex: 98776543220)","type":"number","min":"0","pattern":"[0-9]{3}[0-9]{3}[0-9]{3}[0-9]{11}"}'); 
 var inputWhatsapp    = createObject('{"tag":"input","id":"whatsapp","title":"Exemplo: 5531987654321","placeholder":"Whatsapp (ex: 5531987654321)","type":"number","min":"0","pattern":"[0-9]{2}[0-9]{2}[0-9]{9}"}'); 
 var inputCep              = createObject('{"tag":"input","id":"cep","type":"number","placeholder":"CEP","min":"0","maxlength":"8"}');
 var inputEstado           = createObject('{"tag":"input","id":"estado","type":"text","readonly":"true"}');
@@ -62,7 +63,7 @@ bLogin.onclick=(function(){
 
 bInsert.onclick=(function(){
 
-  setRequired('label,email,password,whatsapp,cep,cidade,estado');
+  setRequired('label,email,password,whatsapp,cep,cidade,estado,cpf');
   sA(login,'class','insert');
   sA(formLogin,'onsubmit','insert();return false;');
   goi('areas').value="100";
@@ -71,7 +72,7 @@ bInsert.onclick=(function(){
   
 bInsertPaciente.onclick=(function(){
   
-  setRequired('label,email,password,whatsapp,cep,cidade,estado');
+  setRequired('label,email,password,whatsapp,cep,cidade,estado,cpf');
   
   sA(login,'class','insertpaciente');
   sA(goi('name'),'required','required');
@@ -82,7 +83,7 @@ bInsertPaciente.onclick=(function(){
   
 bInsertMedico.onclick=(function(){
   
-  setRequired('label,email,password,crm,password,whatsapp,cep,cidade,estado');
+  setRequired('label,email,password,crm,password,whatsapp,cep,cidade,estado,cpf');
   
   sA(login,'class','insertmedico');
   sA(goi('name'),'required','required');
@@ -113,7 +114,7 @@ inputCep.onkeyup=(function(){
 
 });
 
-formLogin.append(btclose,plogin,pinsert,pinsertm,precovery,inputName,inputEmail,inputPass,inputCep,inputEstado,inputCidade,inputWhatsapp);
+formLogin.append(btclose,plogin,pinsert,pinsertm,precovery,inputName,inputEmail,inputPass,inputCep,inputEstado,inputCidade,inputWhatsapp,inputCpf);
   
 formLogin.appendChild(bInsertPaciente);
 formLogin.appendChild(bInsertMedico);
