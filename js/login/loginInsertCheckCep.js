@@ -11,10 +11,10 @@ function loginInsertCepFillFields(data){
   estado.value = "";
   //let bairro = login.querySelector("bairro");
 
-if(!("erro" in data)){
+if(!("errors" in data)){
 
-  cidade.value = data.localidade;
-  estado.value = data.uf;
+  cidade.value = data.city;
+  estado.value = data.state;
 
 }else{
 
@@ -29,7 +29,7 @@ if(!("erro" in data)){
 }
 
 
-
+/* 
 function loginInsetCheckCep(cep) {
 
   var script = document.createElement('script');
@@ -38,4 +38,4 @@ function loginInsetCheckCep(cep) {
 
   document.body.appendChild(script);
 
-}
+} */

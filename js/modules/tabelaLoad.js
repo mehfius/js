@@ -7,7 +7,7 @@ function tabelaLoad(json){
   let view          = got(document,'view')[0];
 
   let modules       = (json)?json.url:gA();
-  let match = {};
+  let match         = {};
 
   match["uuid"]=user.session;
 

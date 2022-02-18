@@ -1,3 +1,12 @@
+  function filterInput(e) {
+
+
+
+   regAllow = eval(e.getAttribute('allow'));
+
+   if (!String.fromCharCode(event.keyCode).match(regAllow)) event.returnValue=false;
+  }
+
 function mountLogin(){
 
 var config      = JSON.parse(localStorage.config); 
@@ -14,17 +23,17 @@ var formLogin   = createObject('{"tag":"form","onsubmit":"login();return false;"
 
 // Inicio Input  
   
-var inputName        = createObject('{"tag":"input","id":"label","placeholder":"Nome completo"}');
+var inputName        = inputObject('{"tag":"input","id":"label","placeholder":"Nome completo"}');
 var pattern          = encodeURI("[a-z0-9._%+-]+@[a-z0-9.-]+\\.[a-z]{2,4}$");  
-var inputEmail       = createObject('{"tag":"input","id":"email","placeholder":"seu@email.com","pattern":"'+pattern+'"}');
-var inputPass        = createObject('{"tag":"input","id":"password","type":"password","placeholder":"Senha"}');
-var pattern          = encodeURI("\\d{11}");
-var inputCpf    = createObject('{"tag":"input","id":"cpf","title":"Exemplo: 98776543220","placeholder":"CPF (ex: 98776543220)","type":"number","min":"0","pattern":"[0-9]{3}[0-9]{3}[0-9]{3}[0-9]{11}"}'); 
-var inputWhatsapp    = createObject('{"tag":"input","id":"whatsapp","title":"Exemplo: 5531987654321","placeholder":"Whatsapp (ex: 5531987654321)","type":"number","min":"0","pattern":"[0-9]{2}[0-9]{2}[0-9]{9}"}'); 
-var inputCep              = createObject('{"tag":"input","id":"cep","type":"number","placeholder":"CEP","min":"0","maxlength":"8"}');
-var inputEstado           = createObject('{"tag":"input","id":"estado","type":"text","readonly":"true"}');
-var inputCidade           = createObject('{"tag":"input","id":"cidade","type":"text","readonly":"true"}');
-var inputCRM         = createObject('{"tag":"input","id":"crm","placeholder":"Registro profissional","type":"text","onkeydown":"return inputTypeNumber(event);"}');
+var inputEmail       = inputObject('{"tag":"input","id":"email","placeholder":"seu@email.com","pattern":"'+pattern+'"}');
+var inputPass        = inputObject('{"tag":"input","id":"password","type":"password","placeholder":"Senha"}');
+
+var inputCpf    = inputObject('{"tag":"input","id":"cpf","title":"Exemplo: 98776543220","placeholder":"CPF (ex: 98776543220)","type":"text","pattern":"[0-9]{11}","onkeypress":"filterInput(this)","allow":"/[0-9]/"}'); 
+var inputWhatsapp    = inputObject('{"tag":"input","id":"whatsapp","title":"Exemplo: 5531987654321","placeholder":"Whatsapp (ex: 5531987654321)","type":"text","pattern":"[0-9]{13}","onkeypress":"filterInput(this)","allow":"/[0-9]/"}'); 
+var inputCep              = inputObject('{"tag":"input","id":"cep","title":"Exemplo: 31222300"}');
+var inputEstado           = inputObject('{"tag":"input","id":"estado","type":"text","readonly":"true"}');
+var inputCidade           = inputObject('{"tag":"input","id":"cidade","type":"text","readonly":"true"}');
+var inputCRM         = inputObject('{"tag":"input","id":"crm","placeholder":"Registro profissional","type":"text","onkeydown":"return inputTypeNumber(event);"}');
 
 // Fim input
   
@@ -36,7 +45,7 @@ var text = 'Ao clicar em cadastrar, você concorda com a ';
 
 var pTermos = createObject('{"tag":"p","innerhtml":"'+text+'","class":"ptermos"}');
   
-var inputAreas  = createObject('{"tag":"input","id":"areas","type":"hidden"}');
+var inputAreas  = inputObject('{"tag":"input","id":"areas","type":"hidden"}');
   
 var div         = createObject('{"tag":"div","id":"status","class":"status"}');
   
@@ -102,19 +111,8 @@ bRecovery.onclick=(function(){
 
 })
 
-inputCep.onkeyup=(function(){
 
-    let cep =  this.value.replace(/\D/g, '');
-
-    if(cep.length >= 8){
-
-      loginInsetCheckCep(this.value)
-
-    }
-
-});
-
-formLogin.append(btclose,plogin,pinsert,pinsertm,precovery,inputName,inputEmail,inputPass,inputCep,inputEstado,inputCidade,inputWhatsapp,inputCpf);
+formLogin.append(btclose,plogin,pinsert,pinsertm,precovery,inputName,inputEmail,inputPass,inputWhatsapp,inputCpf,inputCep,inputEstado,inputCidade);
   
 formLogin.appendChild(bInsertPaciente);
 formLogin.appendChild(bInsertMedico);
