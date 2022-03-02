@@ -1,6 +1,6 @@
 function load(){
 
-    if (window.innerWidth <= 480) {
+    if (window.innerWidth <= 480 || window.innerHeight<=800) {
 
       document.body.setAttribute('mobile', '1');
 
@@ -37,7 +37,7 @@ function load(){
       //localStorage.languages    = JSON.stringify(data.languages);
       //localStorage.language    = "ptbr";
 
-      document.getElementsByTagName("pages")[0].append(mountLogin());
+      mountLogin();
       grade();
 
       //formEdit('prontuarios',21233);

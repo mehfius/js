@@ -1,17 +1,21 @@
 const testinsert = function(){
 
+  let label    = MD5(rnd(20)).slice(0, 12);
+  let email    = MD5(rnd(20)).slice(0, 6)+"@testeinsert.com";
+  let password = MD5(rnd(20)).slice(0, 6);
+  let cep      = "31170660";
+  let whatsapp = "5531998765432";
+  let cpf      = "90070060050";
+
   document.querySelector("bt1").click();
   document.querySelector("#btinsert").click();
-  document.querySelector("#label").value=MD5(rnd(20));
-  document.querySelector("#email").value=MD5(rnd(20))+"@testeinsert.com";
-  document.querySelector("#password").value=MD5(rnd(20));
-  document.querySelector("#cep").value="31170660";
-  document.querySelector("#cidade").value="Belo Horizonte";
-  document.querySelector("#estado").value="Minas Gerais";
-  document.querySelector("#whatsapp").value="5531984757974";
-  document.querySelector("#cpf").value="98776554321";
 
-
+  document.querySelector("#label").value    = label;
+  document.querySelector("#email").value    = email;
+  document.querySelector("#password").value = password;
+  document.querySelector("#cep").value      = cep;
+  document.querySelector("#whatsapp").value = whatsapp;
+  document.querySelector("#cpf").value      = cpf;
 
 }
 

@@ -1,0 +1,1 @@
+const jsonBtClose = '{"tag":"btclose","innerhtml":"x","onclick":"document.body.setAttribute(\'openlogin\',\'0\');"}';

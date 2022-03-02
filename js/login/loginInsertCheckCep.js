@@ -7,15 +7,24 @@ function loginInsertCepFillFields(data){
   let cidade = login.querySelector("#cidade");
   let estado = login.querySelector("#estado");
 
+  let bairro = login.querySelector("#bairro");
+  let rua    = login.querySelector("#rua");
+
+
   cidade.value = "";
   estado.value = "";
+  bairro.value = "";
+  rua.value = "";
+
+
   //let bairro = login.querySelector("bairro");
 
 if(!("errors" in data)){
 
   cidade.value = data.city;
   estado.value = data.state;
-
+  bairro.value = data.neighborhood;
+  rua.value = data.street;
 }else{
 
   alert("CEP não encontrado");

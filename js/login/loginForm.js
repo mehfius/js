@@ -1,162 +1,101 @@
-  function filterInput(e) {
+const mountLogin = async function(){
+
+  const  login 	    = createObject('{"tag":"login","class":"login","name":"login"}');
+  const  formLogin   = createObject('{"tag":"form","onsubmit":"login();return false;","autocomplete":"off"}');
+
+  const myRequest = new Request('https://json.mehfius.repl.co/formlogin.json');
 
 
 
-   regAllow = eval(e.getAttribute('allow'));
+  fetch(myRequest)
+  .then(response => response.json())
+  .then(data => {
 
-   if (!String.fromCharCode(event.keyCode).match(regAllow)) event.returnValue=false;
-  }
+    Object.entries(data).forEach(([key, value]) => {
 
-function mountLogin(){
+      if(value.tag=='input'){
 
-var config      = JSON.parse(localStorage.config); 
+        formLogin.append(jsonToElement(value));
 
-var logo        = config.urllogo;
-  
-var btclose     = createObject('{"tag":"btclose","innerhtml":"x","onclick":"document.body.setAttribute(\'openlogin\',\'0\');"}');    
-var plogin      = createObject('{"tag":"p","innerhtml":"Login","class":"plogin"}');
-var pinsert     = createObject('{"tag":"p","innerhtml":"Criar conta","class":"pinsert"}');
-var pinsertm    = createObject('{"tag":"p","innerhtml":"Cadastro de Médico","class":"pinsertm"}');
-var precovery   = createObject('{"tag":"p","innerhtml":"Recuperar senha","class":"precovery"}');  
-var login 	    = createObject('{"tag":"login","class":"login","name":"login"}');
-var formLogin   = createObject('{"tag":"form","onsubmit":"login();return false;","autocomplete":"off"}');
+      }else{
 
-// Inicio Input  
-  
-var inputName        = inputObject('{"tag":"input","id":"label","placeholder":"Nome completo"}');
-var pattern          = encodeURI("[a-z0-9._%+-]+@[a-z0-9.-]+\\.[a-z]{2,4}$");  
-var inputEmail       = inputObject('{"tag":"input","id":"email","placeholder":"seu@email.com","pattern":"'+pattern+'"}');
-var inputPass        = inputObject('{"tag":"input","id":"password","type":"password","placeholder":"Senha"}');
+        formLogin.append(jsonToObject(value));
 
-var inputCpf    = inputObject('{"tag":"input","id":"cpf","title":"Exemplo: 98776543220","placeholder":"CPF (ex: 98776543220)","type":"text","pattern":"[0-9]{11}","onkeypress":"filterInput(this)","allow":"/[0-9]/"}'); 
-var inputWhatsapp    = inputObject('{"tag":"input","id":"whatsapp","title":"Exemplo: 5531987654321","placeholder":"Whatsapp (ex: 5531987654321)","type":"text","pattern":"[0-9]{13}","onkeypress":"filterInput(this)","allow":"/[0-9]/"}'); 
-var inputCep              = inputObject('{"tag":"input","id":"cep","title":"Exemplo: 31222300"}');
-var inputEstado           = inputObject('{"tag":"input","id":"estado","type":"text","readonly":"true"}');
-var inputCidade           = inputObject('{"tag":"input","id":"cidade","type":"text","readonly":"true"}');
-var inputCRM         = inputObject('{"tag":"input","id":"crm","placeholder":"Registro profissional","type":"text","onkeydown":"return inputTypeNumber(event);"}');
+      }
+  
+    });
 
-// Fim input
-  
-var text = 'Ao clicar em cadastrar, você concorda com a ';
-    text+= '<a href='+config.login_politicaprivacidade+'  target=_blank>política de privacidade</a>, ';
-    text+= '<a href='+config.login_termosdeuso+'          target=_blank>termos de uso</a> e ';
-    text+= '<a href='+config.login_acordodousuario+'      target=_blank>acordo do usuário</a> e ';
-    text+= '<a href='+config.login_loiticadecookies+'     target=_blank>política de cookies</a>.'; 
+    login.append(formLogin);
 
-var pTermos = createObject('{"tag":"p","innerhtml":"'+text+'","class":"ptermos"}');
-  
-var inputAreas  = inputObject('{"tag":"input","id":"areas","type":"hidden"}');
-  
-var div         = createObject('{"tag":"div","id":"status","class":"status"}');
-  
-var btEntrar           = createObject('{"tag":"button","id":"btEntrar","innerhtml":"Entrar"}'); 
-var btCadastrar        = createObject('{"tag":"button","id":"btCadastrar","innerhtml":"Cadastrar"}');  
-var btRecuperar        = createObject('{"tag":"button","id":"btRecuperar","innerhtml":"Recuperar"}'); 
-  
-var bLogin             = createObject('{"tag":"button","id":"btLogin","type":"button","textnode":"Fazer login"}');
-var bInsert            = createObject('{"tag":"button","id":"btInsert","type":"button","textnode":"Criar conta"}');
-  
-var bInsertPaciente    = createObject('{"tag":"button","id":"btInsertPaciente","type":"button","textnode":"Sou paciente"}');
-var bInsertMedico      = createObject('{"tag":"button","id":"btInsertMedico","type":"button","textnode":"Sou profissional da saúde"}');
-  
-var bRecovery          = createObject('{"tag":"button","id":"btRecovery","type":"button","textnode":"Esqueci minha senha"}');
+    document.getElementsByTagName("pages")[0].append(login);
 
-  
-bLogin.onclick=(function(){
-
-  sA(login,'class','login');
-  setRequired('email,password')
-  sA(formLogin,'onsubmit','login();return false;');
-  
-})
-
-bInsert.onclick=(function(){
-
-  setRequired('label,email,password,whatsapp,cep,cidade,estado,cpf');
-  sA(login,'class','insert');
-  sA(formLogin,'onsubmit','insert();return false;');
-  goi('areas').value="100";
-  
-})
-  
-bInsertPaciente.onclick=(function(){
-  
-  setRequired('label,email,password,whatsapp,cep,cidade,estado,cpf');
-  
-  sA(login,'class','insertpaciente');
-  sA(goi('name'),'required','required');
-  sA(formLogin,'onsubmit','insert();return false;');
-  goi('areas').value="100";
-  
-})  
-  
-bInsertMedico.onclick=(function(){
-  
-  setRequired('label,email,password,crm,password,whatsapp,cep,cidade,estado,cpf');
-  
-  sA(login,'class','insertmedico');
-  sA(goi('name'),'required','required');
-  sA(formLogin,'onsubmit','insert();return false;');
-  goi('areas').value="50";
-  
-})  
-  
-bRecovery.onclick=(function(){
-  
-  setRequired('email');
-  
-  sA(login,'class','recovery');
-
-  sA(formLogin,'onsubmit','recovery();return false;');
-
-})
-
-
-formLogin.append(btclose,plogin,pinsert,pinsertm,precovery,inputName,inputEmail,inputPass,inputWhatsapp,inputCpf,inputCep,inputEstado,inputCidade);
-  
-formLogin.appendChild(bInsertPaciente);
-formLogin.appendChild(bInsertMedico);
-
-formLogin.append(inputCRM,inputAreas,pTermos,btEntrar,btCadastrar,btRecuperar,div);
-
-if(config.newusers==1){
-
-    formLogin.appendChild(bInsert);
+  })
+  .catch(console.error);
 
 }
 
-formLogin.append(bLogin,bRecovery);
-  
-login.append(formLogin);
-  
-return login;
-  
-  	/*
-  	login.appendChild(adsense());
-	(adsbygoogle = window.adsbygoogle || []).push({});
-*/
-	
-}
 
-function setRequired(list){
-  
-  var form = got(document,"form");
 
-  var input    = got(form[0],"input");
-
-  for (var x = 0; x < input.length;x++){
-    
-    input[x].removeAttribute('required');
-    
+  const closeFormLogin = function(){
+    document.body.setAttribute('openlogin',0);
   }
-  
-  var split = list.split(",");
-  
-  for(x=0;x<split.length;x++){
-    
-    goi(split[x]).setAttribute("required","required");
-    
-  }
-  
-}
 
+  const clickBtLogin = function(){
+
+    var login     = document.querySelector("login");
+    var formLogin = login.querySelector("form");
+
+    sA(login,'class','login');
+    setRequired('email,password')
+    sA(formLogin,'onsubmit','login();return false;');
+
+  }
+
+  const clickBtInsert = function(){
+
+    var login     = document.querySelector("login");
+    var formLogin = login.querySelector("form");
+
+    setRequired('label,email,password,whatsapp,cep,cidade,estado,cpf');
+    sA(login,'class','insert');
+    sA(formLogin,'onsubmit','insert();return false;');
+    goi('areas').value="100";
+
+  }
+
+  const clickBtInsertPaciente = function(){
+
+    var login     = document.querySelector("login");
+    var formLogin = login.querySelector("form");
+
+    setRequired('label,email,password,whatsapp,cep,cidade,estado,cpf');
+    sA(login,'class','insertpaciente');
+    sA(goi('name'),'required','required');
+    sA(formLogin,'onsubmit','insert();return false;');
+    goi('areas').value="100";
+
+  }
+
+  const clickBtInsertMedico = function(){
+
+    var login     = document.querySelector("login");
+    var formLogin = login.querySelector("form");
+
+    setRequired('label,email,password,crm,password,whatsapp,cep,cidade,estado,cpf');
+    sA(login,'class','insertmedico');
+    sA(goi('name'),'required','required');
+    sA(formLogin,'onsubmit','insert();return false;');
+    goi('areas').value="50";
+
+  }
+
+  const clickBtRecovery = function(){
+
+    var login     = document.querySelector("login");
+    var formLogin = login.querySelector("form");
+
+    setRequired('email');
+    sA(login,'class','recovery');
+    sA(formLogin,'onsubmit','recovery();return false;');
+
+  }
