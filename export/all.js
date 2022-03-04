@@ -6215,7 +6215,7 @@ const jsonBtClose = '{"tag":"btclose","innerhtml":"x","onclick":"document.body.s
 
 function load(){
 
-    if (window.innerWidth <= 480 || window.innerHeight<=800) {
+    if (window.innerWidth <= 480) {
 
       document.body.setAttribute('mobile', '1');
 
@@ -7799,7 +7799,9 @@ function loadPacientesFull(element,array){
   var birthday = new Date(array.nascimento).getFullYear();
   var age      = (now - birthday);
 
-  var localidade = (array.estado)?array.estado+' - '+array.cidade:"Não informado";
+  var estado     = (array.estado)?array.estado:"";
+  var cidade     = (array.cidade)?array.cidade:"";
+  var cidade     = (array.cidade)?array.cidade:"";
   var nascimento = (array.nascimento)?age:"Não informado";  
   var telefone   = (array.telefone)?array.telefone:"Não informado";  
   var whatsapp   = (array.whatsapp)?new String(array.whatsapp):"";  
@@ -7807,12 +7809,21 @@ function loadPacientesFull(element,array){
 
   var email      = (array.email)?array.email:"Não informado";  
 
-
-  var eLocalidade = createObject('{"tag":"localidade","innerhtml":"Localidade : '+localidade+'"}');
+  var rua           = (array.rua)?array.rua:"";
+  var complemento   = (array.complemento)?array.complemento:"";
+  var numero        = (array.numero)?array.numero:"";  
+  var bairro        = (array.bairro)?array.bairro:"";  
+  
+  //var eLocalidade = createObject('{"tag":"localidade","innerhtml":"Localidade : '+localidade+'"}');
   var eNascimento = createObject('{"tag":"nascimento","innerhtml":"Idade : '+nascimento+'"}');
   var eTelefone   = createObject('{"tag":"telefone","innerhtml":"Telefone : '+telefone+'"}');
   var eEmail      = createObject('{"tag":"email","innerhtml":"Email : '+email+'"}');
 
+  var eEndereco         = createObject('{"tag":"endereco","innerhtml":"Endereço : '+rua+numero+complemento+bairro+cidade+estado+'"}');
+/*   var eComplemento = createObject('{"tag":"complemento","innerhtml":"Complemento : '+complemento+'"}');
+  var eNumero      = createObject('{"tag":"numero","innerhtml":"Número : '+numero+'"}');
+  var eBairro      = createObject('{"tag":"bairro","innerhtml":"Bairro : '+bairro+'"}'); */
+  
   //var eWhatsapp   = createObject('{"tag":"whatsapp","innerhtml":"Whatsapp : '+whatsapp+'"}');
 
   var eWhatsapp   = createObject('{"tag":"icon","class":"icon-whatsapp"}');
@@ -7821,7 +7832,7 @@ function loadPacientesFull(element,array){
   let eDiv       = createObject('{"tag":"div"}');
   let eLabel     = createObject('{"tag":"label","innerhtml":"Paciente : '+label+'"}');
 
-  eDiv.append(eLabel,eEmail,eLocalidade,eNascimento,eTelefone);
+  eDiv.append(eLabel,eEmail,eNascimento,eTelefone,eEndereco);
 
   if(whatsapp.length==13){
 

@@ -1,6 +1,6 @@
 function load(){
 
-    if (window.innerWidth <= 480 || window.innerHeight<=800) {
+    if (window.innerWidth <= 480) {
 
       document.body.setAttribute('mobile', '1');
 
