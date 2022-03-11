@@ -9,70 +9,69 @@
 
     if ((rolled) > (height-10)) {
       
-          window.onscroll=null;
+      window.onscroll=null;
 
-            const selectsearch = document.querySelectorAll("selectsearch")
+      const selectsearch = document.querySelectorAll("selectsearch")
 
-            let match = {};
+      let match = {};
 
-            Object.entries(selectsearch).forEach(([key, value]) => {
+      Object.entries(selectsearch).forEach(([key, value]) => {
 
-              let i = value.getAttribute('id');
-              let m = value.getAttribute('modules');
+        let i = value.getAttribute('id');
+        let m = value.getAttribute('modules');
 
-              if(i){
+        if(i){
 
-                //f.push(JSON.parse('{"'+m+'":'+i+'}'));
-                match[m]=i;
+          //f.push(JSON.parse('{"'+m+'":'+i+'}'));
+          match[m]=i;
 
-              }
+        }
 
-            });
+      });
 
-          match["uuid"]=user.session;
+      match["uuid"]=user.session;
 
+      var limit = got(got(document,"tabela")[0],"item").length;
 
-          var limit = got(got(document,"tabela")[0],"item").length;
+      document.body.setAttribute("loading","1");
 
+      const loadLazyJson = async function(limit){
+        
+          const rawResponse = await fetch(config.urlmodules, {
 
-          document.body.setAttribute("loading","1");
-
-          const loadLazyJson = async function(limit){
+            method: 'POST',
+            headers: {'Accept': 'application/json','Content-Type': 'application/json'},
             
-              const rawResponse = await fetch(config.urlmodules, {
+            body: JSON.stringify({
+              
+              session: user.session, 
+              modules: modules, 
+              match: match, 
+              page: limit
+              
+            })
 
-                method: 'POST',
-                headers: {'Accept': 'application/json','Content-Type': 'application/json'},
-                body: JSON.stringify({
-                  session: user.session, 
-                  modules: modules, 
-                  match: match, 
-                  page: limit
-                  
-                  })
+          });
 
-              });
+          const data = await rawResponse.json();
 
-              const data = await rawResponse.json();
+          Object.entries(data).forEach(([key, value]) => {
 
-              Object.entries(data).forEach(([key, value]) => {
-
-
-                let item = createObject('{"tag":"item","c":"'+value.id+'"}');
+            let item = createObject('{"tag":"item","c":"'+value.id+'"}');
 
 
-                loadItem(item,value);
-                tabela.appendChild(item);
-                
-              });
+            loadItem(item,value);
+            tabela.appendChild(item);
+            
+          });
 
-              document.body.setAttribute("loading","0");
-              window.onscroll=lazyload;
-          }
+          document.body.setAttribute("loading","0");
+          window.onscroll=lazyload;
+        
+      }
 
-          loadLazyJson(limit);
+      loadLazyJson(limit);
 
-    
     }
 
 }

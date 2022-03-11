@@ -1153,74 +1153,72 @@ const jsonToElement = function(json){
 
     if ((rolled) > (height-10)) {
       
-          window.onscroll=null;
+      window.onscroll=null;
 
-            const selectsearch = document.querySelectorAll("selectsearch")
+      const selectsearch = document.querySelectorAll("selectsearch")
 
-            let match = {};
+      let match = {};
 
-            Object.entries(selectsearch).forEach(([key, value]) => {
+      Object.entries(selectsearch).forEach(([key, value]) => {
 
-              let i = value.getAttribute('id');
-              let m = value.getAttribute('modules');
+        let i = value.getAttribute('id');
+        let m = value.getAttribute('modules');
 
-              if(i){
+        if(i){
 
-                //f.push(JSON.parse('{"'+m+'":'+i+'}'));
-                match[m]=i;
+          //f.push(JSON.parse('{"'+m+'":'+i+'}'));
+          match[m]=i;
 
-              }
+        }
 
-            });
+      });
 
-          match["uuid"]=user.session;
+      match["uuid"]=user.session;
 
+      var limit = got(got(document,"tabela")[0],"item").length;
 
-          var limit = got(got(document,"tabela")[0],"item").length;
+      document.body.setAttribute("loading","1");
 
+      const loadLazyJson = async function(limit){
+        
+          const rawResponse = await fetch(config.urlmodules, {
 
-          document.body.setAttribute("loading","1");
-
-          const loadLazyJson = async function(limit){
+            method: 'POST',
+            headers: {'Accept': 'application/json','Content-Type': 'application/json'},
             
-              const rawResponse = await fetch(config.urlmodules, {
+            body: JSON.stringify({
+              
+              session: user.session, 
+              modules: modules, 
+              match: match, 
+              page: limit
+              
+            })
 
-                method: 'POST',
-                headers: {'Accept': 'application/json','Content-Type': 'application/json'},
-                body: JSON.stringify({
-                  session: user.session, 
-                  modules: modules, 
-                  match: match, 
-                  page: limit
-                  
-                  })
+          });
 
-              });
+          const data = await rawResponse.json();
 
-              const data = await rawResponse.json();
+          Object.entries(data).forEach(([key, value]) => {
 
-              Object.entries(data).forEach(([key, value]) => {
-
-
-                let item = createObject('{"tag":"item","c":"'+value.id+'"}');
+            let item = createObject('{"tag":"item","c":"'+value.id+'"}');
 
 
-                loadItem(item,value);
-                tabela.appendChild(item);
-                
-              });
+            loadItem(item,value);
+            tabela.appendChild(item);
+            
+          });
 
-              document.body.setAttribute("loading","0");
-              window.onscroll=lazyload;
-          }
+          document.body.setAttribute("loading","0");
+          window.onscroll=lazyload;
+        
+      }
 
-          loadLazyJson(limit);
+      loadLazyJson(limit);
 
-    
     }
 
 }
-
 
 function loadingMount(){
   
@@ -7799,7 +7797,17 @@ function loadPacientesFull(element,array){
   var birthday = new Date(array.nascimento).getFullYear();
   var age      = (now - birthday);
 
-  var localidade = (array.estado)?array.estado+' - '+array.cidade:"Não informado";
+
+  
+  var rua           = (array.rua)?array.rua:"";
+  var numero        = (array.numero)?" "+array.numero:"";
+  var complemento   = (array.complemento)?", "+array.complemento:"";
+  var bairro        = (array.bairro)?" - "+array.bairro:"";
+  var cidade        = (array.cidade)?" - "+array.cidade:"";
+  var estado        = (array.estado)?" - "+array.estado:"";
+
+  var endereco      = rua+numero+complemento+bairro+cidade+estado;
+  
   var nascimento = (array.nascimento)?age:"Não informado";  
   var telefone   = (array.telefone)?array.telefone:"Não informado";  
   var whatsapp   = (array.whatsapp)?new String(array.whatsapp):"";  
@@ -7808,7 +7816,7 @@ function loadPacientesFull(element,array){
   var email      = (array.email)?array.email:"Não informado";  
 
 
-  var eLocalidade = createObject('{"tag":"localidade","innerhtml":"Localidade : '+localidade+'"}');
+  var eEndereco = createObject('{"tag":"endereco","innerhtml":"Endereço : '+endereco+'"}');
   var eNascimento = createObject('{"tag":"nascimento","innerhtml":"Idade : '+nascimento+'"}');
   var eTelefone   = createObject('{"tag":"telefone","innerhtml":"Telefone : '+telefone+'"}');
   var eEmail      = createObject('{"tag":"email","innerhtml":"Email : '+email+'"}');
@@ -7821,7 +7829,7 @@ function loadPacientesFull(element,array){
   let eDiv       = createObject('{"tag":"div"}');
   let eLabel     = createObject('{"tag":"label","innerhtml":"Paciente : '+label+'"}');
 
-  eDiv.append(eLabel,eEmail,eLocalidade,eNascimento,eTelefone);
+  eDiv.append(eLabel,eEmail,eEndereco,eNascimento,eTelefone);
 
   if(whatsapp.length==13){
 
