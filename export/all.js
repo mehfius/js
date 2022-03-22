@@ -3766,6 +3766,54 @@ function formCustomView(areas,codigo){
 }
 
 
+function formDelete(codigo){
+	
+  const modules     = document.querySelector("window").getAttribute("modules");
+  const config      = JSON.parse(localStorage.config);
+  const user        = JSON.parse(localStorage.user);
+
+  const url         = config.formdelete;
+
+  document.body.setAttribute("loading","1");
+
+
+
+  const send = async function() {
+
+    const rawResponse = await fetch(url, {
+
+      method: 'POST',
+      headers: {'Accept': 'application/json','Content-Type': 'application/json'},
+      body: JSON.stringify({session:user.session,modules:modules,id:codigo})
+
+    });
+
+    const post = await rawResponse.json();
+
+    document.body.setAttribute("loading","0");
+        let item = document.querySelector("item[c='"+codigo+"']");
+     rE(item);
+    
+  }
+  
+	if (confirm("Tem certeza que deseja excluir?") === true) {
+
+
+
+    formClose();
+  
+    send();
+    
+ 
+    
+  }
+
+}
+
+
+
+
+
 function formEdit(modules,id){
   
   gridShow();
@@ -3844,6 +3892,9 @@ function formMountFields(modules,pagedata){
 		got(document,"body")[0].setAttribute("open","1");
 
     var jsonform = pagedata.form.fields;
+
+    header.append(btHeaderDelete(pagedata.id));
+ 
 
 	}else{
 
@@ -3969,45 +4020,6 @@ function formClose(){
 		
 	}
 	
-}
-
-function formDelete(codigo){
-	
-	var xmlhttp;
-
-	xmlhttp = new XMLHttpRequest();
- 
-	xmlhttp.onreadystatechange = function() {
-
-		if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
-					
-		}
-		
-	};
-
-	if (confirm("Tem certeza que deseja excluir?") === true) {
-
-    var url = localStorage.getItem("url")+'/admin/json/jsonUpdate.php';
-    
-    var data = new FormData();
-    
-        data.append('area',gA());
-        data.append('acao','delete');
-        data.append('codigo',codigo);
-        data.append('session',localStorage.session);
-    
-		xmlhttp.open("POST", url, true);
-		xmlhttp.send(data);
-		
-			rE(gibc(codigo));
-			formClose();
-		
-	} else {
-
-	
-
-	}
-
 }
 
 function formNew(){

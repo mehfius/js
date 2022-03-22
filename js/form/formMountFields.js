@@ -23,6 +23,9 @@ function formMountFields(modules,pagedata){
 
     var jsonform = pagedata.form.fields;
 
+    header.append(btHeaderDelete(pagedata.id));
+ 
+
 	}else{
 
 		window.setAttribute("tutorial","1");

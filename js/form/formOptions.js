@@ -21,45 +21,6 @@ function formClose(){
 	
 }
 
-function formDelete(codigo){
-	
-	var xmlhttp;
-
-	xmlhttp = new XMLHttpRequest();
- 
-	xmlhttp.onreadystatechange = function() {
-
-		if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
-					
-		}
-		
-	};
-
-	if (confirm("Tem certeza que deseja excluir?") === true) {
-
-    var url = localStorage.getItem("url")+'/admin/json/jsonUpdate.php';
-    
-    var data = new FormData();
-    
-        data.append('area',gA());
-        data.append('acao','delete');
-        data.append('codigo',codigo);
-        data.append('session',localStorage.session);
-    
-		xmlhttp.open("POST", url, true);
-		xmlhttp.send(data);
-		
-			rE(gibc(codigo));
-			formClose();
-		
-	} else {
-
-	
-
-	}
-
-}
-
 function formNew(){
 
   document.body.setAttribute("loading","1");
