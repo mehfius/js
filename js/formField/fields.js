@@ -13,9 +13,9 @@ function fields(data,header,pagedata){
     case "number":      return number(data); 
     case "password":    return password(data);  
     case "termos":      return termos(data);  
-   /*  case "cep":         return fieldCep(data);   */
-/*  case "multiplehidden":return multipleHidden(data); */
-/*  case "share":return share(data);header.append(btOptionsBtShare()); */
+    /*  case "cep":         return fieldCep(data);   */
+    /*  case "multiplehidden":return multipleHidden(data); */
+    /*  case "share":return share(data);header.append(btOptionsBtShare()); */
  
     default:return text(data);
       
@@ -24,8 +24,6 @@ function fields(data,header,pagedata){
   }())
 
   if(data.attributes){
-
-
 
     Object.entries(data.attributes).forEach(([key, value]) => {
 

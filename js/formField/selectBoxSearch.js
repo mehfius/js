@@ -4,12 +4,19 @@ function selectBoxSearch(string,modules){
 
   const config = JSON.parse(localStorage.config);
 
+  const url = (modules=='remedios')?localStorage.supabaseurl+'rest/v1/rpc/select_remedios':config.urlselect;
+
     const send = async function() {
       
-      const rawResponse = await fetch(config.urlselect, {
+      const rawResponse = await fetch(url, {
 
         method: 'POST',
-        headers: {'Accept': 'application/json','Content-Type': 'application/json'},
+        mode: 'cors',
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json',
+          'apikey':localStorage.supabasekey
+        },
         body: JSON.stringify({modules:modules,string:string})
 
       });

@@ -1,21 +1,20 @@
 function loadShare(element, array) {
 
-  if (array.share !== null) {
+  if (array.share !== null && array.share !== undefined) {
 
-  let share      = createObject('{"tag":"share"}');
+    let share      = createObject('{"tag":"share"}');
 
-
-Object.entries(array.share).forEach(([key, value]) => {
-
-  let div      = createObject('{"tag":"div"}');
-  let figure   = createObject('{"tag":"figure"}');
-  let label   = createObject('{"tag":"label","innerhtml":"'+value.label+'"}');
-
-    div.append(figure,label);  
-
-    share.append(div);
-
-});
+    Object.entries(array.share).forEach(([key, value]) => {
+    
+      let div      = createObject('{"tag":"div"}');
+      let figure   = createObject('{"tag":"figure"}');
+      let label   = createObject('{"tag":"label","innerhtml":"'+value.label+'"}');
+    
+        div.append(figure,label);  
+    
+        share.append(div);
+    
+    });
 
 
     element.appendChild(share);

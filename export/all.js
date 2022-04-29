@@ -3026,7 +3026,8 @@ function navMount(){
       let premium   = value1.premium;
       let id        = value1.id; 
       let attr      = value1.attributes; 
-
+      let beta      = value1.beta; 
+      
       var a         = createObject('{"tag":"a","innerhtml":"'+label+'","modules":"'+url+'","premium":"'+premium+'","c":"'+id+'"}');     
 
       a.onclick=(function(){
@@ -3052,8 +3053,10 @@ function navMount(){
 
 
       });
-
-      nav.append(a);
+      if(beta==false || (beta==true && user.beta==true)){
+        nav.append(a);
+      }
+      
 
     });
 
@@ -4295,9 +4298,6 @@ function formSave(codigo){
 
     data[id]        = valueid;
 
-
-
-
     if(type=='checkbox' || type=='radio'){
 
       let optlabel = div.querySelectorAll("opt[checked='1'] > label");
@@ -4351,12 +4351,20 @@ function formSave(codigo){
   }else{
 
     if(modules=='mvb'){
-
+    
       data["fieldlabel"] = fieldlabel;
+      
+      formSend(data,codigo);
+      
+    }else if(modules=='usersremedios'){
+      
+      usersremedios_send(data,codigo); 
+      
+    }else{
 
-   }
-
-    formSend(data,codigo); 
+      formSend(data,codigo); 
+      
+    }
 
   }
 
@@ -4389,15 +4397,24 @@ function formSend(data,id){
 
     const post = await rawResponse.json();
 
-    if(modules=="prontuarios"){
-
-      itemReload(id)
-
+   
+    if(post.status==1){
+      
+      switch(modules) {
+      
+        case "prontuarios":    return itemReload(id);
+        case "usersremedios":  return usersremedios_reload(id);
+        
+        default:return document.body.setAttribute("loading","0");
+      
+      } 
+      
     }else{
-
-      document.body.setAttribute("loading","0");
-
+      
+      console.log('falhou');
+      
     }
+
 
   }
 
@@ -4407,39 +4424,40 @@ function formSend(data,id){
 
 function itemReload(id){
 
-     var user    = JSON.parse(localStorage.user);
-     var config  = JSON.parse(localStorage.config);
+  var user    = JSON.parse(localStorage.user);
+  var config  = JSON.parse(localStorage.config);
 
-    if(id){
-      
-        const send = async function() {
+  if(id){
+    
+      const send = async function() {
 
-            const rawResponse = await fetch(config.urlmodules, {
+        const rawResponse = await fetch(config.urlmodules, {
+        
+              method: 'POST',
+              headers: {'Accept': 'application/json','Content-Type': 'application/json'},
+              body: JSON.stringify({session: user.session, modules: gA(),id:id})
+        
+            });
+        
+            const data = await rawResponse.json();
+        
+                  var item = document.querySelector("tabela item[c='"+id+"']");
+        
+                  race(item);
+                  loadItem(item,data[0]);
+        
+        
+        document.body.removeAttribute("loading");
+        
+      }
 
-                  method: 'POST',
-                  headers: {'Accept': 'application/json','Content-Type': 'application/json'},
-                  body: JSON.stringify({session: user.session, modules: gA(),id:id})
+      send();
 
-                });
+  }else{
 
-                const data = await rawResponse.json();
+    modulesOpen(gA());
 
-                      var item = document.querySelector("tabela item[c='"+id+"']");
-
-                      race(item);
-                      loadItem(item,data[0]);
-         
-
-          document.body.removeAttribute("loading");
-        }
-
-        send();
-
-    }else{
-
-      modulesOpen(gA());
-
-    }
+  }
 
 }
 
@@ -4529,11 +4547,12 @@ const checkbox = function(data){
 
       Object.entries(options).forEach(([k, v]) => {
 
+        let replaced = value.replace('{', '[').replace('}', ']');
+
+        let arrayValue = (value)?JSON.parse(replaced):"";
         
-
-        let arrayValue = (value)?JSON.parse(value.replace('{', '[').replace('}', ']')):"";
-
-        let checked = (arrayValue.indexOf(parseInt(k))>-1)?"1":"0";
+ 
+        let checked   = (arrayValue.indexOf(parseInt(k))>-1)?"1":"0";
 
         var opt       = createObject('{"tag":"opt","value":"'+k+'","checked":"'+checked+'"}')
 
@@ -4654,9 +4673,9 @@ function fields(data,header,pagedata){
     case "number":      return number(data); 
     case "password":    return password(data);  
     case "termos":      return termos(data);  
-   /*  case "cep":         return fieldCep(data);   */
-/*  case "multiplehidden":return multipleHidden(data); */
-/*  case "share":return share(data);header.append(btOptionsBtShare()); */
+    /*  case "cep":         return fieldCep(data);   */
+    /*  case "multiplehidden":return multipleHidden(data); */
+    /*  case "share":return share(data);header.append(btOptionsBtShare()); */
  
     default:return text(data);
       
@@ -4665,8 +4684,6 @@ function fields(data,header,pagedata){
   }())
 
   if(data.attributes){
-
-
 
     Object.entries(data.attributes).forEach(([key, value]) => {
 
@@ -5467,12 +5484,19 @@ function selectBoxSearch(string,modules){
 
   const config = JSON.parse(localStorage.config);
 
+  const url = (modules=='remedios')?localStorage.supabaseurl+'rest/v1/rpc/select_remedios':config.urlselect;
+
     const send = async function() {
       
-      const rawResponse = await fetch(config.urlselect, {
+      const rawResponse = await fetch(url, {
 
         method: 'POST',
-        headers: {'Accept': 'application/json','Content-Type': 'application/json'},
+        mode: 'cors',
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json',
+          'apikey':localStorage.supabasekey
+        },
         body: JSON.stringify({modules:modules,string:string})
 
       });
@@ -7130,10 +7154,15 @@ function loadItem(item,array){
   var header = cE("header");
   
   var footer = cE("footer");
-  
-        item.setAttribute('me',array.me);
-        item.setAttribute("a",array.a);
-        item.setAttribute("view","0");
+
+  if(array.me!==undefined){
+    item.setAttribute('me',array.me);
+  }
+  if(array.a!==undefined){
+    item.setAttribute("a",array.a);
+  }
+   
+  item.setAttribute("view","0");
   
   if(array.me==true){
     
@@ -7158,22 +7187,19 @@ function loadItem(item,array){
   if(array.label!==""){
 	  modulesLoadItemContent(item,array);
   }
-    if(array.jsonpacientes){
+  
+  if(array.jsonpacientes){
 
     loadPacientesFull(item,array.jsonpacientes);
 
   }
+  
   loadItemOptions(item,array);
   itemDetail(item,array);
   loadMedicos(item,array.jsonmedicos);
-
-
-
   loadShare(item,array);
-
   loadItemUpdateTime(footer,array);
 
-  
   if(footer.innerHTML!=""){item.appendChild(footer);}
 
 }
@@ -7265,7 +7291,6 @@ function loadMedicos(elements,array){
 function modulesLoad(array) {
 
     let tabela   = createObject('{"tag":"tabela"}');
-
 
     var modules = document.body.getAttribute("modules");
 
@@ -7459,31 +7484,36 @@ function loadItemUpdateTime(elements,array){
   let elementoupdated = document.createElement("updated");
   let elementodata    = document.createElement("data");
   
-  let data        = new Date(array.update);
-  let createddata = new Date(array.created_at);
+  let data            = new Date(array.update);
+  let createddata     = new Date(array.created_at);
   
   let options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
   
-  let update = data.toLocaleDateString('pt-BR', options);
+  let update  = data.toLocaleDateString('pt-BR', options);
   
   let created = createddata.toLocaleDateString('pt-BR', options);
   
-  let updatetext = "Editado "+update;
+  let updatetext  = "Editado "+update;
      
-  
   let createdtext = "Criado "+created;
 
-      elementoupdated.append(document.createTextNode(updatetext));
-      elementocreated.append(document.createTextNode(createdtext));
-  
-  
-      elementodata.appendChild(elementocreated);
+    elementoupdated.append(document.createTextNode(updatetext));
+    elementocreated.append(document.createTextNode(createdtext));
+
+    elementodata.append(elementocreated);
   
   if(array.created_at!==array.update){
-      elementodata.appendChild(elementoupdated); 
+    
+    elementodata.append(elementoupdated); 
+    
   }
-  
-  elements.appendChild(elementodata);
+
+  if(array.created_at!==null && array.created_at!==undefined){
+    
+      elements.append(elementodata);
+    
+  }
+
 }
 
 function loadItemView(item,array){
@@ -7942,22 +7972,21 @@ function loadPacientesInfo(element,array){
 
 function loadShare(element, array) {
 
-  if (array.share !== null) {
+  if (array.share !== null && array.share !== undefined) {
 
-  let share      = createObject('{"tag":"share"}');
+    let share      = createObject('{"tag":"share"}');
 
-
-Object.entries(array.share).forEach(([key, value]) => {
-
-  let div      = createObject('{"tag":"div"}');
-  let figure   = createObject('{"tag":"figure"}');
-  let label   = createObject('{"tag":"label","innerhtml":"'+value.label+'"}');
-
-    div.append(figure,label);  
-
-    share.append(div);
-
-});
+    Object.entries(array.share).forEach(([key, value]) => {
+    
+      let div      = createObject('{"tag":"div"}');
+      let figure   = createObject('{"tag":"figure"}');
+      let label   = createObject('{"tag":"label","innerhtml":"'+value.label+'"}');
+    
+        div.append(figure,label);  
+    
+        share.append(div);
+    
+    });
 
 
     element.appendChild(share);
@@ -8036,18 +8065,18 @@ function loadUser(elements,array){
 }
 
 
-function modulesOpen(url){
+
+
+const modulesOpen = async function(url){
+
+//function modulesOpen(url){
 	
 	var body    = got(document,'body')[0];
 
 	var modules = getModulesByUrl(url);
 
-	//e.appendChild(boxLoad());
-
 	race(got(document,"view")[0]);
 
-	//changeTitle(modules);
-  
 	var menu    = cE("menu");
 
 	var view    = got(document,'view')[0];
@@ -8056,18 +8085,19 @@ function modulesOpen(url){
     menu.appendChild(btFilter());
     view.appendChild(menu); 
   
-/*  if(modules.url=="prontuarios" || modules.url=="prontuariosmedicos" || modules.url=="pacientes"){
-
-    window.onscroll=lazyload;   
-
- }else{
-   
-    window.onscroll=null;
-    
- } */
-
   sA(body,'modules',modules.url);
-	tabelaLoad(modules);
+
+  if(modules.url=='usersremedios'){
+    
+    usersremedios();
+    
+  }else{
+    
+    	tabelaLoad(modules);
+    
+  }
+  
+
  
 }
 
@@ -8127,7 +8157,7 @@ function tabelaLoad(json){
 
     view.append(tabela); 
 
-    if(modules=="prontuarios" || modules=="prontuariosmedicos" || modules=="pacientes"){
+    if(modules=="prontuarios" || modules=="prontuariosmedicos" || modules=="pacientes" || modules=="usersremedios"){
 
         window.onscroll=lazyload;   
 
@@ -8189,6 +8219,202 @@ match["uuid"]=user.session;
     
   })();
 
+}
+
+const usersremedios = async function(data){
+
+  if(data==undefined){
+    
+    var json    = await usersremedios_json(null);
+    
+  }else{
+
+    var json    = data; 
+    
+  }
+  
+  let view    = document.querySelector('view');
+
+  if(view.querySelector('tabela')){
+
+    var tabela  = view.querySelector('tabela');
+
+    race(tabela);
+    
+  }else{
+    
+    var tabela  = createObject('{"tag":"tabela"}');
+    
+  }
+
+  var modules = document.body.getAttribute("modules");
+
+  Object.entries(json).forEach(([key, value]) => {
+
+    let eId = '{"tag":"item","c":"'+value.id+'"}';
+
+    let item   = createObject(eId);
+
+    usersremedios_item(item,value);
+        
+    tabela.append(item);
+
+  });
+
+  view.append(tabela);
+  
+  document.body.setAttribute("loading","0");
+  
+  window.onscroll=null;  
+
+}
+
+const usersremedios_item = (item,value) =>{
+
+  if(value.label!==""){
+
+    let eP = '{"tag":"p","innerhtml":"'+value.label+'"}';
+      
+    item.append(createObject(eP));
+  
+  }
+
+  if(value.posologia!==""){
+  
+    let P = '{"tag":"p","innerhtml":"'+value.posologia+'"}';
+      
+    item.append(createObject(P));
+    
+  }
+
+  loadItemOptions(item,value)
+
+  
+}
+
+const usersremedios_json = async function(id) {
+  
+  const user = JSON.parse(localStorage.user);
+  
+  const supabaseurl       = localStorage.supabaseurl;
+  const supabase_function = 'rest/v1/rpc/f4580485d482a9037af94f68af98adf23819cbdf4'
+  const supabase_param    = '?modules=usersremedios&euuid=ec0e1e20-d264-4114-b16f-7b408d2e8dc6'
+  const eId               = (id)?'&eid='+id:'&eid=0';
+  const supabasekey       = localStorage.supabasekey;
+  
+  const url  = supabaseurl + supabase_function + supabase_param + eId;
+
+  const response = await fetch(url, {
+
+    method: 'GET',
+    mode: 'cors',
+    headers: {
+      'Accept': 'application/json',
+      'Content-Type': 'application/json',
+      'apikey':supabasekey
+    }
+
+  });
+
+  return await response.json();
+  
+}
+
+const usersremedios_reload = (data) =>{
+
+    var user    = JSON.parse(localStorage.user);
+    var config  = JSON.parse(localStorage.config);
+
+     if(data.length==1){
+    
+        const send = async function() {
+        
+          var item = document.querySelector("tabela item[c='"+data[0].id+"']");
+        
+          race(item);
+          
+          usersremedios_item(item,data[0]);
+          
+          document.body.removeAttribute("loading");
+          
+        }
+        
+        send();
+       
+    }else if(data.length>1){
+       
+      usersremedios(data);
+       
+    }else{
+       
+      console.log('sem dados');
+      
+    } 
+
+}
+
+const usersremedios_send = (data,id) =>{
+
+  const config      = JSON.parse(localStorage.config);
+  const user        = JSON.parse(localStorage.user);
+
+  data.id           = id;
+
+  document.body.setAttribute("loading","1");
+
+  formClose();
+
+  const send = async function(data) {
+
+    const updated_data = await usersremedios_update(data);
+    
+    usersremedios_reload(updated_data);
+
+  }
+
+  send(data); 
+
+}
+
+
+const usersremedios_update = async function(data) {
+  
+  
+  const user = JSON.parse(localStorage.user);
+  
+  const supabaseurl       = localStorage.supabaseurl;
+  const supabase_function = 'rest/v1/rpc/update_usersremedios'
+  const supabase_param    = '?euuid='+user.session;
+  
+  const eId               = (data.id)?data.id:'0';
+
+  const supabasekey       = localStorage.supabasekey;
+  
+  const url  = supabaseurl + supabase_function;
+
+  let param = {
+    'eid':eId,
+    'eremedios':data.remedios,
+    'eposologia':data.posologia,
+    'euuid':user.session
+  }
+  
+  const response = await fetch(url, {
+
+    method: 'POST',
+    mode: 'cors',
+    headers: {
+      'Accept': 'application/json',
+      'Content-Type': 'application/json',
+      'apikey':supabasekey
+    },
+    
+    body:JSON.stringify(param)
+                               
+  });
+
+  return await response.json();
+  
 }
 
 const testinsert = function(){

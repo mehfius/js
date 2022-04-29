@@ -30,7 +30,8 @@ function navMount(){
       let premium   = value1.premium;
       let id        = value1.id; 
       let attr      = value1.attributes; 
-
+      let beta      = value1.beta; 
+      
       var a         = createObject('{"tag":"a","innerhtml":"'+label+'","modules":"'+url+'","premium":"'+premium+'","c":"'+id+'"}');     
 
       a.onclick=(function(){
@@ -56,8 +57,10 @@ function navMount(){
 
 
       });
-
-      nav.append(a);
+      if(beta==false || (beta==true && user.beta==true)){
+        nav.append(a);
+      }
+      
 
     });
 

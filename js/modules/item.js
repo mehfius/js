@@ -3,10 +3,15 @@ function loadItem(item,array){
   var header = cE("header");
   
   var footer = cE("footer");
-  
-        item.setAttribute('me',array.me);
-        item.setAttribute("a",array.a);
-        item.setAttribute("view","0");
+
+  if(array.me!==undefined){
+    item.setAttribute('me',array.me);
+  }
+  if(array.a!==undefined){
+    item.setAttribute("a",array.a);
+  }
+   
+  item.setAttribute("view","0");
   
   if(array.me==true){
     
@@ -31,22 +36,19 @@ function loadItem(item,array){
   if(array.label!==""){
 	  modulesLoadItemContent(item,array);
   }
-    if(array.jsonpacientes){
+  
+  if(array.jsonpacientes){
 
     loadPacientesFull(item,array.jsonpacientes);
 
   }
+  
   loadItemOptions(item,array);
   itemDetail(item,array);
   loadMedicos(item,array.jsonmedicos);
-
-
-
   loadShare(item,array);
-
   loadItemUpdateTime(footer,array);
 
-  
   if(footer.innerHTML!=""){item.appendChild(footer);}
 
 }

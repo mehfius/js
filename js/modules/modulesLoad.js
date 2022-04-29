@@ -2,7 +2,6 @@ function modulesLoad(array) {
 
     let tabela   = createObject('{"tag":"tabela"}');
 
-
     var modules = document.body.getAttribute("modules");
 
     Object.entries(array).forEach(([key, value]) => {

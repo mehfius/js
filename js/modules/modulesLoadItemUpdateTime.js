@@ -4,29 +4,34 @@ function loadItemUpdateTime(elements,array){
   let elementoupdated = document.createElement("updated");
   let elementodata    = document.createElement("data");
   
-  let data        = new Date(array.update);
-  let createddata = new Date(array.created_at);
+  let data            = new Date(array.update);
+  let createddata     = new Date(array.created_at);
   
   let options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
   
-  let update = data.toLocaleDateString('pt-BR', options);
+  let update  = data.toLocaleDateString('pt-BR', options);
   
   let created = createddata.toLocaleDateString('pt-BR', options);
   
-  let updatetext = "Editado "+update;
+  let updatetext  = "Editado "+update;
      
-  
   let createdtext = "Criado "+created;
 
-      elementoupdated.append(document.createTextNode(updatetext));
-      elementocreated.append(document.createTextNode(createdtext));
-  
-  
-      elementodata.appendChild(elementocreated);
+    elementoupdated.append(document.createTextNode(updatetext));
+    elementocreated.append(document.createTextNode(createdtext));
+
+    elementodata.append(elementocreated);
   
   if(array.created_at!==array.update){
-      elementodata.appendChild(elementoupdated); 
+    
+    elementodata.append(elementoupdated); 
+    
   }
-  
-  elements.appendChild(elementodata);
+
+  if(array.created_at!==null && array.created_at!==undefined){
+    
+      elements.append(elementodata);
+    
+  }
+
 }

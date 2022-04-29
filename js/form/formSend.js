@@ -25,15 +25,24 @@ function formSend(data,id){
 
     const post = await rawResponse.json();
 
-    if(modules=="prontuarios"){
-
-      itemReload(id)
-
+   
+    if(post.status==1){
+      
+      switch(modules) {
+      
+        case "prontuarios":    return itemReload(id);
+        case "usersremedios":  return usersremedios_reload(id);
+        
+        default:return document.body.setAttribute("loading","0");
+      
+      } 
+      
     }else{
-
-      document.body.setAttribute("loading","0");
-
+      
+      console.log('falhou');
+      
     }
+
 
   }
 
@@ -43,38 +52,39 @@ function formSend(data,id){
 
 function itemReload(id){
 
-     var user    = JSON.parse(localStorage.user);
-     var config  = JSON.parse(localStorage.config);
+  var user    = JSON.parse(localStorage.user);
+  var config  = JSON.parse(localStorage.config);
 
-    if(id){
-      
-        const send = async function() {
+  if(id){
+    
+      const send = async function() {
 
-            const rawResponse = await fetch(config.urlmodules, {
+        const rawResponse = await fetch(config.urlmodules, {
+        
+              method: 'POST',
+              headers: {'Accept': 'application/json','Content-Type': 'application/json'},
+              body: JSON.stringify({session: user.session, modules: gA(),id:id})
+        
+            });
+        
+            const data = await rawResponse.json();
+        
+                  var item = document.querySelector("tabela item[c='"+id+"']");
+        
+                  race(item);
+                  loadItem(item,data[0]);
+        
+        
+        document.body.removeAttribute("loading");
+        
+      }
 
-                  method: 'POST',
-                  headers: {'Accept': 'application/json','Content-Type': 'application/json'},
-                  body: JSON.stringify({session: user.session, modules: gA(),id:id})
+      send();
 
-                });
+  }else{
 
-                const data = await rawResponse.json();
+    modulesOpen(gA());
 
-                      var item = document.querySelector("tabela item[c='"+id+"']");
-
-                      race(item);
-                      loadItem(item,data[0]);
-         
-
-          document.body.removeAttribute("loading");
-        }
-
-        send();
-
-    }else{
-
-      modulesOpen(gA());
-
-    }
+  }
 
 }

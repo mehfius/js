@@ -33,7 +33,7 @@ function tabelaLoad(json){
 
     view.append(tabela); 
 
-    if(modules=="prontuarios" || modules=="prontuariosmedicos" || modules=="pacientes"){
+    if(modules=="prontuarios" || modules=="prontuariosmedicos" || modules=="pacientes" || modules=="usersremedios"){
 
         window.onscroll=lazyload;   
 

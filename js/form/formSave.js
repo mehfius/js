@@ -18,9 +18,6 @@ function formSave(codigo){
 
     data[id]        = valueid;
 
-
-
-
     if(type=='checkbox' || type=='radio'){
 
       let optlabel = div.querySelectorAll("opt[checked='1'] > label");
@@ -74,12 +71,20 @@ function formSave(codigo){
   }else{
 
     if(modules=='mvb'){
-
+    
       data["fieldlabel"] = fieldlabel;
+      
+      formSend(data,codigo);
+      
+    }else if(modules=='usersremedios'){
+      
+      usersremedios_send(data,codigo); 
+      
+    }else{
 
-   }
-
-    formSend(data,codigo); 
+      formSend(data,codigo); 
+      
+    }
 
   }
 
