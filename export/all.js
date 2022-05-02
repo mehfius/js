@@ -8223,16 +8223,8 @@ match["uuid"]=user.session;
 
 const usersremedios = async function(data){
 
-  if(data==undefined){
-    
-    var json    = await usersremedios_json(null);
-    
-  }else{
+  let json    = (data==undefined)?await usersremedios_json(null):data;
 
-    var json    = data; 
-    
-  }
-  
   let view    = document.querySelector('view');
 
   if(view.querySelector('tabela')){
@@ -8298,7 +8290,7 @@ const usersremedios_json = async function(id) {
   
   const supabaseurl       = localStorage.supabaseurl;
   const supabase_function = 'rest/v1/rpc/f4580485d482a9037af94f68af98adf23819cbdf4'
-  const supabase_param    = '?modules=usersremedios&euuid=ec0e1e20-d264-4114-b16f-7b408d2e8dc6'
+  const supabase_param    = '?modules=usersremedios&euuid='+user.session
   const eId               = (id)?'&eid='+id:'&eid=0';
   const supabasekey       = localStorage.supabasekey;
   
@@ -8308,11 +8300,7 @@ const usersremedios_json = async function(id) {
 
     method: 'GET',
     mode: 'cors',
-    headers: {
-      'Accept': 'application/json',
-      'Content-Type': 'application/json',
-      'apikey':supabasekey
-    }
+    headers: {'Accept': 'application/json','Content-Type': 'application/json','apikey':supabasekey}
 
   });
 
@@ -8379,8 +8367,7 @@ const usersremedios_send = (data,id) =>{
 
 const usersremedios_update = async function(data) {
   
-  
-  const user = JSON.parse(localStorage.user);
+  const user              = JSON.parse(localStorage.user);
   
   const supabaseurl       = localStorage.supabaseurl;
   const supabase_function = 'rest/v1/rpc/update_usersremedios'
@@ -8390,25 +8377,15 @@ const usersremedios_update = async function(data) {
 
   const supabasekey       = localStorage.supabasekey;
   
-  const url  = supabaseurl + supabase_function;
+  const url               = supabaseurl + supabase_function;
 
-  let param = {
-    'eid':eId,
-    'eremedios':data.remedios,
-    'eposologia':data.posologia,
-    'euuid':user.session
-  }
+  let param = {'eid':eId,'eremedios':data.remedios,'eposologia':data.posologia,'euuid':user.session}
   
   const response = await fetch(url, {
 
     method: 'POST',
     mode: 'cors',
-    headers: {
-      'Accept': 'application/json',
-      'Content-Type': 'application/json',
-      'apikey':supabasekey
-    },
-    
+    headers: {'Accept': 'application/json','Content-Type': 'application/json','apikey':supabasekey},
     body:JSON.stringify(param)
                                
   });

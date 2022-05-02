@@ -1,15 +1,7 @@
 const usersremedios = async function(data){
 
-  if(data==undefined){
-    
-    var json    = await usersremedios_json(null);
-    
-  }else{
+  let json    = (data==undefined)?await usersremedios_json(null):data;
 
-    var json    = data; 
-    
-  }
-  
   let view    = document.querySelector('view');
 
   if(view.querySelector('tabela')){
