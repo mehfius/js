@@ -1,9 +1,9 @@
-const usersremedios_update = async function(data) {
+const social_update = async function(data) {
   
   const user              = JSON.parse(localStorage.user);
   
   const supabaseurl       = localStorage.supabaseurl;
-  const supabase_function = 'rest/v1/rpc/u500'
+  const supabase_function = 'rest/v1/rpc/u600'
 
   
   const eId               = (data.id)?data.id:'0';

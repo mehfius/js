@@ -24,12 +24,14 @@ const modulesOpen = async function(url){
     
     usersremedios();
     
+  }else if(modules.url=='social'){
+    
+    social();  
+    
   }else{
     
     	tabelaLoad(modules);
     
   }
   
-
- 
 }

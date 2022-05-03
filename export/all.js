@@ -8091,14 +8091,16 @@ const modulesOpen = async function(url){
     
     usersremedios();
     
+  }else if(modules.url=='social'){
+    
+    social();  
+    
   }else{
     
     	tabelaLoad(modules);
     
   }
   
-
- 
 }
 
 
@@ -8120,6 +8122,180 @@ function loadPacientes(element,array){
      
    }
 
+}
+
+const social = async function(data){
+
+  let json    = (data==undefined)?await social_select(null):data;
+
+  let view    = document.querySelector('view');
+
+  if(view.querySelector('tabela')){
+
+    var tabela  = view.querySelector('tabela');
+
+    race(tabela);
+    
+  }else{
+    
+    var tabela  = createObject('{"tag":"tabela"}');
+    
+  }
+
+  var modules = document.body.getAttribute("modules");
+
+  Object.entries(json).forEach(([key, value]) => {
+
+    let eId = '{"tag":"item","c":"'+value.id+'"}';
+
+    let item   = createObject(eId);
+
+    usersremedios_item(item,value);
+        
+    tabela.append(item);
+
+  });
+
+  view.append(tabela);
+  
+  document.body.setAttribute("loading","0");
+  
+  window.onscroll=null;  
+
+}
+
+const social_item = (item,value) =>{
+
+  if(value.label!==""){
+
+    let eP = '{"tag":"p","innerhtml":"'+value.label+'"}';
+      
+    item.append(createObject(eP));
+  
+  }
+
+  if(value.posologia!==""){
+  
+    let P = '{"tag":"p","innerhtml":"'+value.posologia+'"}';
+      
+    item.append(createObject(P));
+    
+  }
+
+  loadItemOptions(item,value)
+
+  
+}
+
+const social_reload = (data) =>{
+
+    var user    = JSON.parse(localStorage.user);
+    var config  = JSON.parse(localStorage.config);
+
+     if(data.length==1){
+    
+        const send = async function() {
+        
+          var item = document.querySelector("tabela item[c='"+data[0].id+"']");
+        
+          race(item);
+          
+          usersremedios_item(item,data[0]);
+          
+          document.body.removeAttribute("loading");
+          
+        }
+        
+        send();
+       
+    }else if(data.length>1){
+       
+      usersremedios(data);
+       
+    }else{
+       
+      console.log('sem dados');
+      
+    } 
+
+}
+
+const social_select = async function() {
+  
+  const user = JSON.parse(localStorage.user);
+  
+  const supabaseurl       = localStorage.supabaseurl;
+  const supabase_function = 'rest/v1/rpc/s600'
+  const supabasekey       = localStorage.supabasekey;
+  
+  const url  = supabaseurl + supabase_function
+  
+  let param = {'euuid':user.session}
+  
+  const response = await fetch(url, {
+
+    method: 'POST',
+    mode: 'cors',
+    headers: {'Accept': 'application/json','Content-Type': 'application/json','apikey':supabasekey},
+    body:JSON.stringify(param)
+    
+  });
+
+  return await response.json();
+  
+}
+
+const social_send = (data,id) =>{
+
+  const config      = JSON.parse(localStorage.config);
+  const user        = JSON.parse(localStorage.user);
+
+  data.id           = id;
+
+  document.body.setAttribute("loading","1");
+
+  formClose();
+
+  const send = async function(data) {
+
+    const updated_data = await usersremedios_update(data);
+    
+    usersremedios_reload(updated_data);
+
+  }
+
+  send(data); 
+
+}
+
+
+const social_update = async function(data) {
+  
+  const user              = JSON.parse(localStorage.user);
+  
+  const supabaseurl       = localStorage.supabaseurl;
+  const supabase_function = 'rest/v1/rpc/u600'
+
+  
+  const eId               = (data.id)?data.id:'0';
+
+  const supabasekey       = localStorage.supabasekey;
+  
+  const url               = supabaseurl + supabase_function;
+
+  let param = {'eid':eId,'eremedios':data.remedios,'eposologia':data.posologia,'euuid':user.session}
+  
+  const response = await fetch(url, {
+
+    method: 'POST',
+    mode: 'cors',
+    headers: {'Accept': 'application/json','Content-Type': 'application/json','apikey':supabasekey},
+    body:JSON.stringify(param)
+                               
+  });
+
+  return await response.json();
+  
 }
 
 function tabelaLoad(json){
@@ -8223,7 +8399,7 @@ match["uuid"]=user.session;
 
 const usersremedios = async function(data){
 
-  let json    = (data==undefined)?await usersremedios_json(null):data;
+  let json    = (data==undefined)?await usersremedios_select(null):data;
 
   let view    = document.querySelector('view');
 
@@ -8284,30 +8460,6 @@ const usersremedios_item = (item,value) =>{
   
 }
 
-const usersremedios_json = async function(id) {
-  
-  const user = JSON.parse(localStorage.user);
-  
-  const supabaseurl       = localStorage.supabaseurl;
-  const supabase_function = 'rest/v1/rpc/f4580485d482a9037af94f68af98adf23819cbdf4'
-  const supabase_param    = '?modules=usersremedios&euuid='+user.session
-  const eId               = (id)?'&eid='+id:'&eid=0';
-  const supabasekey       = localStorage.supabasekey;
-  
-  const url  = supabaseurl + supabase_function + supabase_param + eId;
-
-  const response = await fetch(url, {
-
-    method: 'GET',
-    mode: 'cors',
-    headers: {'Accept': 'application/json','Content-Type': 'application/json','apikey':supabasekey}
-
-  });
-
-  return await response.json();
-  
-}
-
 const usersremedios_reload = (data) =>{
 
     var user    = JSON.parse(localStorage.user);
@@ -8341,6 +8493,31 @@ const usersremedios_reload = (data) =>{
 
 }
 
+const usersremedios_select = async function() {
+  
+  const user = JSON.parse(localStorage.user);
+  
+  const supabaseurl       = localStorage.supabaseurl;
+  const supabase_function = 'rest/v1/rpc/s500'
+  const supabasekey       = localStorage.supabasekey;
+  
+  const url  = supabaseurl + supabase_function
+  
+  let param = {'euuid':user.session}
+  
+  const response = await fetch(url, {
+
+    method: 'POST',
+    mode: 'cors',
+    headers: {'Accept': 'application/json','Content-Type': 'application/json','apikey':supabasekey},
+    body:JSON.stringify(param)
+    
+  });
+
+  return await response.json();
+  
+}
+
 const usersremedios_send = (data,id) =>{
 
   const config      = JSON.parse(localStorage.config);
@@ -8370,8 +8547,8 @@ const usersremedios_update = async function(data) {
   const user              = JSON.parse(localStorage.user);
   
   const supabaseurl       = localStorage.supabaseurl;
-  const supabase_function = 'rest/v1/rpc/update_usersremedios'
-  const supabase_param    = '?euuid='+user.session;
+  const supabase_function = 'rest/v1/rpc/u500'
+
   
   const eId               = (data.id)?data.id:'0';
 

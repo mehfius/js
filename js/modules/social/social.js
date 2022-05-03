@@ -1,6 +1,6 @@
-const usersremedios = async function(data){
+const social = async function(data){
 
-  let json    = (data==undefined)?await usersremedios_select(null):data;
+  let json    = (data==undefined)?await social_select(null):data;
 
   let view    = document.querySelector('view');
 
