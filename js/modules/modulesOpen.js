@@ -28,6 +28,10 @@ const modulesOpen = async function(url){
     
     social();  
     
+  }else if(modules.url=='prontuarios'){
+
+    prontuarios();  
+    
   }else{
     
     	tabelaLoad(modules);

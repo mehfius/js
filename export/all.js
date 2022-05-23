@@ -3107,11 +3107,12 @@ function loadNavSuite(){
 
 function pagesLoad(callback){
   
-  var url = localStorage.getItem("url")+"/suites";
+  var url = localStorage.getItem("supabaseurl")+"rest/v1/rpc/suites";
   
   fetch(url, {
     method: 'POST',
-    headers: {'Content-Type':'application/x-www-form-urlencoded'}
+    headers: {'Accept': 'application/json','Content-Type': 'application/json','apikey':localStorage.supabasekey},
+
   })
   
   .then(response => response.json())
@@ -3820,7 +3821,12 @@ function formDelete(codigo){
 function formEdit(modules,id){
   
   gridShow();
-  formMount(modules,id);
+  if(modules=='social'){
+    social_form(modules,id);
+  }else{
+    formMount(modules,id);
+  }
+  
 
 
     /* 
@@ -3907,10 +3913,7 @@ function formMountFields(modules,pagedata){
 		var jsonform = pagedata.form.fields;
 
 	}  
-  
-  //let menu = createObject('{"tag":"menu","style":"background-color:'+config.bgcolor+';"}');
 
-	//form.appendChild(menu);
 
 
 	Object.entries(jsonform).forEach(([key, value]) => {
@@ -3924,80 +3927,6 @@ function formMountFields(modules,pagedata){
 	document.body.appendChild(window);
   
 }  
-
-/* 
-		var type 		      = json[x].type;
-		var grid 		      = json[x].grid;
-		var gridmobile 		= json[x].gridmobile;
-		var fieldcodigo 	= json[x].id;
-    
-		var attribute = [];
-		
-        attribute.codigo		      = codigo;
-        attribute.label			      = json[x].label;
-        attribute.name			      = json[x].name;
-        attribute.title			      = json[x].title;
-        attribute.required	      = json[x].required;
-        attribute.pattern		      = json[x].pattern;
-        attribute.value			      = (json[x].value!==undefined)?json[x].value:"";	
-        attribute.list			      = (json[x].list!==undefined)?json[x].list:"";	
-        attribute.limit			      = json[x].limit;
-        attribute.grid			      = json[x].grid;
-        attribute.gridmobile      = json[x].gridmobile;
-        attribute.admin			      = json[x].admin;
-        attribute.attributes			= json[x].attributes;
-        attribute.placeholder			= json[x].placeholder;
-        attribute.presetarray			= json[x].presetarray;  
-        attribute.action			    = action;
-
-    
-		switch(type) {
-
-            case "hide":            var div = formMountHide(attribute);div.setAttribute('type',type);           break;
-            case "hideinput":       var div = formMountHideInput(attribute);div.setAttribute('type',type);      break; 
-            case "textarea":        var div = formMountTextarea(attribute);div.setAttribute('type',type);       break;
-            case "textareapreset":  var div = formMountTextareaPreset(attribute);div.setAttribute('type',type);       break;
-            case "data":            var div = formMountData(attribute);div.setAttribute('type',type);           break;
-            case "text":            var div = formMountText(attribute);div.setAttribute('type',type);           break;
-            case "password":        var div = formMountPassword(attribute);div.setAttribute('type',type);       break;
-            case "youtube":         var div = formMountYoutube(attribute);div.setAttribute('type',type);        break;  
-            case "trueorfalse":     var div = formMountTrueFalse(attribute);div.setAttribute('type',type);      break;	
-            case "texturl":         var div = formMountTexturl(attribute);div.setAttribute('type',type);        break;
-            case "selectajax":      var div = formMountSelectAjax(attribute);                                   break;
-            case "selectcolor":     var div = formMountSelectColor(attribute);                                  break;   
-            case "search":          var div = formMountSelectCustom(attribute);                                 break;
-            case "multiple":        var div = formMountMultiple(attribute);div.setAttribute('type',type);       break;
-            case "multiplehidden":  var div = formMountMultipleHidden(attribute);div.setAttribute('type',type); break;
-            case "share":           var div = formFieldShare(attribute);div.setAttribute('type',type);header.append(btOptionsBtShare());break;    
-            case "tag":             var div = formMountTag(attribute);div.setAttribute('type',type);            break;
-            case "taggroup":        var div = formMountTagGroup(attribute);div.setAttribute('type',type);       break; 
-            case "keywords":        var div = formMountKeywords(attribute);div.setAttribute('type',type);       break;        
-            case "fileupload":      var div = formMountFileupload(attribute);div.setAttribute('type',type);header.append(btHeaderAttach());break;
-            case "select":
-                        
-                if(attribute.value=='undefined'){
-
-                    if(attribute.value.length<30){
-                        var div = formMountSelect(attribute);
-                    }else{
-                        var div = formMountSelectCustom(attribute);
-                    }
-
-                }else{
-                    
-                    var div = formMountSelect(attribute);
-                    
-                }
-
-        	    break;
-
-            default:
-                    
-                var div = formMountText(attribute);
-                //console.log(type);
-
-		}
-    */
 
         
 
@@ -4360,6 +4289,10 @@ function formSave(codigo){
       
       usersremedios_send(data,codigo); 
       
+    }else if(modules=='social'){
+      
+      social_send(data,codigo); 
+      
     }else{
 
       formSend(data,codigo); 
@@ -4661,7 +4594,7 @@ function fieldTooltip(div,data){
 function fields(data,header,pagedata){
 
   const e = (function(){
-    
+  
     switch(data.type) {
 
     case "textarea":    return textarea(data);
@@ -5243,9 +5176,6 @@ return finder;
 }
 
 
-
-
-
 function selectAjaxListCards(data){
 
   if(document.querySelector("cards")){
@@ -5630,15 +5560,7 @@ function text(data){
 
   div.appendChild(label);
 
-/* 	for (var key in attribute){
-				
-		if(attribute[key]!=="0" && attribute[key]!==""){
-			object.setAttribute(key,attribute[key]);
-		}
-
-	}
-	 */
-  label.innerHTML=data.label;
+  label.innerHTML = data.label;
 	object.setAttribute("autocomplete","new-password");
 	object.setAttribute("type","text");
 	object.setAttribute("class","default");
@@ -5659,16 +5581,18 @@ function textarea(data){
   
   var label = createObject('{"tag":"label","type":"'+data.type+'","innerhtml":"'+data.label+'"}');
   var div   = createObject('{"tag":"div"}');
-if(data.attributes){
-
-	Object.entries(data.attributes).forEach(([key, value]) => {
-
-    if(key=='title'){
-        fieldTooltip(label,data.attributes); 
-    }
-
-  });
-}
+  
+  if(data.attributes){
+  
+  	Object.entries(data.attributes).forEach(([key, value]) => {
+  
+      if(key=='title'){
+          fieldTooltip(label,data.attributes); 
+      }
+  
+    });
+    
+  }
 
   div.append(label);
   
@@ -6245,10 +6169,195 @@ function upload(object){
 		
 }
 
-const jsonBtClose = '{"tag":"btclose","innerhtml":"x","onclick":"document.body.setAttribute(\'openlogin\',\'0\');"}';
+const jsonformlogin = `[
+  {
+    "tag": "btclose",
+    "innerhtml": "x",
+    "onclick": "closeFormLogin()"
+  },
+  {
+    "tag": "p",
+    "innerhtml": "Login",
+    "class": "plogin"
+  },
+  {
+    "tag": "p",
+    "innerhtml": "Criar conta",
+    "class": "pinsert"
+  },
+  {
+    "tag": "p",
+    "innerhtml": "Cadastro de Médico",
+    "class": "pinsertm"
+  },
+  {
+    "tag": "p",
+    "innerhtml": "Recuperar senha",
+    "class": "precovery"
+  },
+  {
+    "tag": "login",
+    "class": "login",
+    "name": "login"
+  },
+  {
+    "tag": "input",
+    "id": "label",
+    "placeholder": "Nome completo"
+  },
+  {
+    "tag": "input",
+    "id": "email",
+    "placeholder": "seu@email.com",
+    "type":"email"
+
+  },
+  {
+    "tag": "input",
+    "id": "password",
+    "type": "password",
+    "placeholder": "Crie uma senha"
+  },
+  {
+    "tag": "input",
+    "id": "cpf",
+    "title": "Exemplo: 98776543220",
+    "placeholder": "CPF (ex: 98776543220)",
+    "type": "text",
+    "pattern": "[0-9]{11}",
+    "onkeypress": "filterInput(this)",
+    "allow": "/[0-9]/"
+  },
+  {
+    "tag": "input",
+    "id": "whatsapp",
+    "title": "Exemplo: 5531987654321",
+    "placeholder": "Whatsapp (ex: 5531987654321)",
+    "type": "text",
+    "pattern": "[0-9]{13}",
+    "onkeypress": "filterInput(this)",
+    "allow": "/[0-9]/"
+  },
+  {
+    "tag": "input",
+    "id": "cep",
+    "title": "Exemplo: 31222300"
+  },
+  {
+    "tag": "input",
+    "id": "rua",
+    "type": "text",
+    "readonly": "true"
+  },
+  {
+    "tag": "input",
+    "id": "numero",
+    "type": "text",
+    "placeholder": "Número"
+  },
+  {
+    "tag": "input",
+    "id": "complemento",
+    "type": "text",
+    "placeholder": "Complemento"
+  },
+  {
+    "tag": "input",
+    "id": "bairro",
+    "type": "text",
+    "readonly": "true"
+  },
+  {
+    "tag": "input",
+    "id": "cidade",
+    "type": "text",
+    "readonly": "true"
+  },
+  {
+    "tag": "input",
+    "id": "estado",
+    "type": "text",
+    "readonly": "true"
+  },
+  {
+    "tag": "button",
+    "id": "btInsertPaciente",
+    "type": "button",
+    "textnode": "Sou paciente",
+    "onclick": "clickBtInsertPaciente()"
+  },
+  {
+    "tag": "button",
+    "id": "btInsertMedico",
+    "type": "button",
+    "textnode": "Sou profissional da saúde",
+    "onclick": "clickBtInsertMedico()"
+  },
+  {
+    "tag": "input",
+    "id": "crm",
+    "placeholder": "Registro profissional",
+    "type": "text",
+    "onkeydown": "return inputTypeNumber(event);"
+  },
+  {
+    "tag": "p",
+    "innerhtml": "Ao clicar em cadastrar, você concorda com a <a href=https://docs.google.com/document/d/1i_-hQXcuPfCH48fUNvC-GN60zZas8eqSjrzoHPZtnPc/ target=_blank>política de privacidade</a>, <a href=https://docs.google.com/document/d/1EsgYKoX4mG40kd0oXfwbuID1t9Oi1oFvEGlxfZ9SAsw/ target=_blank>termos de uso</a> e <a href=https://docs.google.com/document/d/1EsgYKoX4mG40kd0oXfwbuID1t9Oi1oFvEGlxfZ9SAsw/ target=_blank>acordo do usuário</a> e <a href=https://docs.google.com/document/d/1i_-hQXcuPfCH48fUNvC-GN60zZas8eqSjrzoHPZtnPc/ target=_blank>política de cookies</a>.",
+    "class": "ptermos"
+  },
+  {
+    "tag": "input",
+    "id": "areas",
+    "type": "hidden"
+  },
+  {
+    "tag": "div",
+    "id": "status",
+    "class": "status"
+  },
+  {
+    "tag": "button",
+    "id": "btEntrar",
+    "innerhtml": "Entrar"
+  },
+  {
+    "tag": "button",
+    "id": "btCadastrar",
+    "innerhtml": "Cadastrar"
+  },
+  {
+    "tag": "button",
+    "id": "btRecuperar",
+    "innerhtml": "Recuperar"
+  },
+  {
+    "tag": "button",
+    "id": "btLogin",
+    "type": "button",
+    "textnode": "Fazer login",
+    "onclick": "clickBtLogin()"
+  },
+  {
+    "tag": "button",
+    "id": "btInsert",
+    "type": "button",
+    "textnode": "Criar conta",
+    "onclick": "clickBtInsert()"
+  },
+  {
+    "tag": "button",
+    "id": "btRecovery",
+    "type": "button",
+    "textnode": "Esqueci minha senha",
+    "onclick": "clickBtRecovery()"
+  }
+]`;
 
 function load(){
+  
 
+//console.log(fetch("https://api.db-ip.com/v2/free/self"));
+  
     if (window.innerWidth <= 480 || window.innerHeight<=800) {
 
       document.body.setAttribute('mobile', '1');
@@ -6391,37 +6500,26 @@ function debugIphone(array){
 
 const mountLogin = async function(){
 
-  const  login 	    = createObject('{"tag":"login","class":"login","name":"login"}');
+  const  login 	     = createObject('{"tag":"login","class":"login","name":"login"}');
   const  formLogin   = createObject('{"tag":"form","onsubmit":"login();return false;","autocomplete":"off"}');
 
-  const myRequest = new Request('https://json.mehfius.repl.co/formlogin.json');
+  Object.entries(JSON.parse(jsonformlogin)).forEach(([key, value]) => {
 
+    if(value.tag=='input'){
 
+      formLogin.append(jsonToElement(value));
 
-  fetch(myRequest)
-  .then(response => response.json())
-  .then(data => {
+    }else{
 
-    Object.entries(data).forEach(([key, value]) => {
+      formLogin.append(jsonToObject(value));
 
-      if(value.tag=='input'){
+    }
 
-        formLogin.append(jsonToElement(value));
+  });
 
-      }else{
+  login.append(formLogin);
 
-        formLogin.append(jsonToObject(value));
-
-      }
-  
-    });
-
-    login.append(formLogin);
-
-    document.getElementsByTagName("pages")[0].append(login);
-
-  })
-  .catch(console.error);
+  document.getElementsByTagName("pages")[0].append(login);
 
 }
 
@@ -6636,14 +6734,19 @@ function login(){
 	sA(status,"class","loading");
 	status.innerHTML="";
 	status.innerHTML="Autenticando...";
-
+  
+  const supabaseurl       = localStorage.supabaseurl;
+  const supabase_function = 'rest/v1/rpc/logincheck'
+  const supabasekey       = localStorage.supabasekey;
+  const url               = supabaseurl + supabase_function;
+  
 	setTimeout(function () {
 
     (async () => {
-      const rawResponse = await fetch(getLocalStorage("config","login"), {
+      const rawResponse = await fetch(url, {
       method: 'POST',
-      headers: {'Accept': 'application/json','Content-Type': 'application/json'},
-      body: JSON.stringify({email: email.value, password: password.value})
+      headers: {'Accept': 'application/json','Content-Type': 'application/json','apikey':supabasekey},
+      body: JSON.stringify({email: email.value, password: password.value,agent:window.navigator.userAgent})
       });
 
       const authentic = await rawResponse.json();
@@ -7835,78 +7938,84 @@ function loadItemDetail(elements,array){
 
 function loadPacientesFull(element,array){
 
-  var now      = new Date().getFullYear();
-  var birthday = new Date(array.nascimento).getFullYear();
-  var age      = (now - birthday);
-
-  var rua           = (array.rua)?array.rua:"";
-  var numero        = (array.numero)?" "+array.numero:"";
-  var complemento   = (array.complemento)?", "+array.complemento:"";
-  var bairro        = (array.bairro)?" - "+array.bairro:"";
-  var cidade        = (array.cidade)?" - "+array.cidade:"";
-  var estado        = (array.estado)?" - "+array.estado:"";
-
-  var endereco   = rua+numero+complemento+bairro+cidade+estado;
-  
-  var nascimento = (array.nascimento)?age:"Não informado";  
-  var telefone   = (array.telefone)?array.telefone:"Não informado";  
-  var whatsapp   = (array.whatsapp)?new String(array.whatsapp):"";  
-  var label      = (array.label)?array.label:"Não informado";  
-  var cpf        = (array.cpf)?array.cpf:"Não informado";  
-  var identidade = (array.cpf)?array.identidade:"Não informado";  
-  var email      = (array.email)?array.email:"Não informado";  
-
-
-  var eEndereco   = createObject('{"tag":"endereco","innerhtml":"Endereço : '+endereco+'"}');
-  var eNascimento = createObject('{"tag":"nascimento","innerhtml":"Idade : '+nascimento+'"}');
-  var eTelefone   = createObject('{"tag":"telefone","innerhtml":"Telefone : '+telefone+'"}');
-  var eEmail      = createObject('{"tag":"email","innerhtml":"Email : '+email+'"}');
-  var eCPF        = createObject('{"tag":"cpf","innerhtml":"CPF : '+cpf+'"}');
-  var eIdentidade = createObject('{"tag":"identidade","innerhtml":"Identidade : '+identidade+'"}');
-  var eWhatsapp   = createObject('{"tag":"icon","class":"icon-whatsapp"}');
-  var eOpen       = createObject('{"tag":"icon","class":"icon-profile"}');
-
-  let ePacientes  = createObject('{"tag":"pacientes"}');
-  let eDiv        = createObject('{"tag":"div"}');
-  let eLabel      = createObject('{"tag":"label","innerhtml":"Paciente : '+label+'"}');
-eLabel.append(eOpen);
-  eDiv.append(eLabel,eEmail,eEndereco,eNascimento,eTelefone,eCPF,eIdentidade);
-
-  if(whatsapp.length==13){
-
-    eWhatsapp.onclick=(function(){
-
-      window.open('https://api.whatsapp.com/send?phone='+whatsapp,'_blank');
-
-    });
-
-    eDiv.append(eWhatsapp);
-
-  }
-
-    eLabel.onclick=(function(){
-      
-      let open = this.parentElement.parentElement;
-
-      console.log(open.getAttribute('open'));
-
-      if(open.getAttribute('open')=="1"){
+  if(array){
         
-         open.setAttribute('open','0');
-        
-      }else{
-
-        open.setAttribute('open','1');
-        
-      }
-      
-     
+      var now      = new Date().getFullYear();
+      var birthday = new Date(array.nascimento).getFullYear();
+      var age      = (now - birthday);
     
-    });
+      var rua           = (array.rua)?array.rua:"";
+      var numero        = (array.numero)?" "+array.numero:"";
+      var complemento   = (array.complemento)?", "+array.complemento:"";
+      var bairro        = (array.bairro)?" - "+array.bairro:"";
+      var cidade        = (array.cidade)?" - "+array.cidade:"";
+      var estado        = (array.estado)?" - "+array.estado:"";
+    
+      var endereco   = rua+numero+complemento+bairro+cidade+estado;
+      
+      var nascimento = (array.nascimento)?age:"Não informado";  
+      var telefone   = (array.telefone)?array.telefone:"Não informado";  
+      var whatsapp   = (array.whatsapp)?new String(array.whatsapp):"";  
+      var label      = (array.label)?array.label:"Não informado";  
+      var cpf        = (array.cpf)?array.cpf:"Não informado";  
+      var identidade = (array.identidade)?array.identidade:"Não informado";  
+      var email      = (array.email)?array.email:"Não informado";  
+    
+    
+      var eEndereco   = createObject('{"tag":"endereco","innerhtml":"Endereço : '+endereco+'"}');
+      var eNascimento = createObject('{"tag":"nascimento","innerhtml":"Idade : '+nascimento+'"}');
+      var eTelefone   = createObject('{"tag":"telefone","innerhtml":"Telefone : '+telefone+'"}');
+      var eEmail      = createObject('{"tag":"email","innerhtml":"Email : '+email+'"}');
+      var eCPF        = createObject('{"tag":"cpf","innerhtml":"CPF : '+cpf+'"}');
+      var eIdentidade = createObject('{"tag":"identidade","innerhtml":"Identidade : '+identidade+'"}');
+      var eWhatsapp   = createObject('{"tag":"icon","class":"icon-whatsapp"}');
+      var eOpen       = createObject('{"tag":"icon","class":"icon-profile"}');
+    
+      let ePacientes  = createObject('{"tag":"pacientes"}');
+      let eDiv        = createObject('{"tag":"div"}');
+      let eLabel      = createObject('{"tag":"label","innerhtml":"Paciente : '+label+'"}');
+      
+      eLabel.append(eOpen);
+      
+      eDiv.append(eLabel,eEmail,eEndereco,eNascimento,eTelefone,eCPF,eIdentidade);
+    
+      if(whatsapp.length==13){
+    
+        eWhatsapp.onclick=(function(){
+    
+          window.open('https://api.whatsapp.com/send?phone='+whatsapp,'_blank');
+    
+        });
+    
+        eDiv.append(eWhatsapp);
+    
+      }
+    
+        eLabel.onclick=(function(){
+          
+          let open = this.parentElement.parentElement;
+    
+          console.log(open.getAttribute('open'));
+    
+          if(open.getAttribute('open')=="1"){
+            
+             open.setAttribute('open','0');
+            
+          }else{
+    
+            open.setAttribute('open','1');
+            
+          }
+          
+         
+        
+        });
+      
+      ePacientes.append(eDiv);
+      element.append(ePacientes);
+    
+  }
   
-  ePacientes.append(eDiv);
-  element.append(ePacientes);
-
 }
 
 
@@ -8095,6 +8204,10 @@ const modulesOpen = async function(url){
     
     social();  
     
+  }else if(modules.url=='prontuarios'){
+
+    prontuarios();  
+    
   }else{
     
     	tabelaLoad(modules);
@@ -8124,6 +8237,188 @@ function loadPacientes(element,array){
 
 }
 
+const prontuarios = async function(data){
+
+  let json    = (data==undefined)?await prontuarios_select(null):data;
+
+  let view    = document.querySelector('view');
+
+  if(view.querySelector('tabela')){
+
+    var tabela  = view.querySelector('tabela');
+
+    race(tabela);
+    
+  }else{
+    
+    var tabela  = createObject('{"tag":"tabela"}');
+    
+  }
+
+  var modules = document.body.getAttribute("modules");
+
+  Object.entries(json.page).forEach(([key, value]) => {
+
+    let eId = '{"tag":"item","c":"'+value.id+'"}';
+
+    let item   = createObject(eId);
+
+    prontuarios_item(item,value);
+        
+    tabela.append(item);
+
+  });
+
+  view.append(tabela);
+  
+  document.body.setAttribute("loading","0");
+  boxFilter();
+  window.onscroll=prontuarios_lazyload;  
+
+}
+
+const prontuarios_item = (item,value) =>{
+  
+  var header = cE("header");
+  
+  var footer = cE("footer");
+
+      item.setAttribute('me',value.me);
+    
+      item.setAttribute("a",value.a);
+
+      item.setAttribute("view","0");
+  
+      if(value.me==false){
+        
+          var iconshare = document.createElement("icon");
+              iconshare.setAttribute("class","icon-share2");
+        
+          header.appendChild(iconshare);
+        
+      }
+    
+      item.append(header); 
+  	
+      loadPacientes(header,value.jsonpacientes);
+      
+      category(header,item,value.category,value.categorylabel);
+  
+      let text = cT(value.label);
+      
+      let eP = '{"tag":"p"}';
+      
+      let object = createObject(eP)
+    
+          object.append(text);
+  
+          if(value.label){
+            
+            item.append(object);
+            
+          }
+     
+          loadPacientesFull(item,value.jsonpacientes);
+         
+          loadItemOptions(item,value)
+      
+          itemDetail(item,value);
+          loadMedicos(item,value.jsonmedicos);
+          loadShare(item,value);
+          loadItemUpdateTime(footer,value);
+        
+          if(footer.innerHTML!=""){
+            
+            item.appendChild(footer);
+            
+          }
+  
+}
+
+  const prontuarios_lazyload = async function() {
+        
+    var config        = JSON.parse(localStorage.config);
+    var user          = JSON.parse(localStorage.user);
+    
+    var modules       = document.body.getAttribute("modules");
+    var rolled        = document.body.offsetHeight + document.body.scrollTop + document.documentElement.scrollTop;
+    var height        = document.documentElement.scrollHeight;
+    var tabela        = document.querySelectorAll("tabela")[0];
+
+    if ((rolled) > (height-10)) {
+        
+        window.onscroll = null;
+  
+        const selectsearch = document.querySelectorAll("selectsearch")
+  
+        let match = {};
+  
+        Object.entries(selectsearch).forEach(([key, value]) => {
+  
+          let i = value.getAttribute('id');
+          let m = value.getAttribute('modules');
+  
+          if(i){
+  
+            //f.push(JSON.parse('{"'+m+'":'+i+'}'));
+            match[m]=i;
+  
+          }
+  
+        });
+  
+        match["uuid"]=user.session;
+  
+        var offset = got(got(document,"tabela")[0],"item").length;
+  
+        document.body.setAttribute("loading","1");
+  
+        const data = await prontuarios_select(offset);
+  
+        Object.entries(data.page).forEach(([key, value]) => { 
+          
+          let item = createObject('{"tag":"item","c":"'+value.id+'"}');
+          
+          prontuarios_item(item,value);
+          
+          tabela.append(item);
+          
+        });
+  
+        document.body.setAttribute("loading","0");
+        
+       window.onscroll=prontuarios_lazyload;
+
+
+    }
+
+}
+
+const prontuarios_select = async function(query_offset) {
+  
+  const user = JSON.parse(localStorage.user);
+  
+  const supabaseurl       = localStorage.supabaseurl;
+  const supabase_function = 'rest/v1/rpc/s133'
+  const supabasekey       = localStorage.supabasekey;
+  
+  const url  = supabaseurl + supabase_function
+  
+  let param = {'euuid':user.session,'query_offset':query_offset}
+  
+  const response = await fetch(url, {
+
+    method: 'POST',
+    mode: 'cors',
+    headers: {'Accept': 'application/json','Content-Type': 'application/json','apikey':supabasekey},
+    body:JSON.stringify(param)
+    
+  });
+
+  return await response.json();
+  
+}
+
 const social = async function(data){
 
   let json    = (data==undefined)?await social_select(null):data;
@@ -8150,7 +8445,7 @@ const social = async function(data){
 
     let item   = createObject(eId);
 
-    usersremedios_item(item,value);
+    social_item(item,value);
         
     tabela.append(item);
 
@@ -8164,6 +8459,43 @@ const social = async function(data){
 
 }
 
+const social_form = (modules,id,header) =>{
+  
+  var config    = JSON.parse(localStorage.config);
+	var user      = JSON.parse(localStorage.user);
+
+  const supabaseurl       = localStorage.supabaseurl;
+  const supabase_function = 'rest/v1/rpc/f600'
+
+  
+  const eId               = (id)?id:'0';
+
+  const supabasekey       = localStorage.supabasekey;
+  
+  const url               = supabaseurl + supabase_function;
+  
+  const send = async function() {
+    
+    const rawResponse = await fetch(url, {
+
+      method: 'POST',
+      headers: {'Accept': 'application/json','Content-Type': 'application/json','apikey':supabasekey},
+      body: JSON.stringify({euuid:user.session,eid:id})
+
+    });
+
+    const data = await rawResponse.json();
+
+	               await formMountFields(modules,data);
+
+    document.body.removeAttribute("loading");
+
+  }
+
+  send();
+
+}
+
 const social_item = (item,value) =>{
 
   if(value.label!==""){
@@ -8174,17 +8506,8 @@ const social_item = (item,value) =>{
   
   }
 
-  if(value.posologia!==""){
-  
-    let P = '{"tag":"p","innerhtml":"'+value.posologia+'"}';
-      
-    item.append(createObject(P));
-    
-  }
+  //loadItemOptions(item,value)
 
-  loadItemOptions(item,value)
-
-  
 }
 
 const social_reload = (data) =>{
@@ -8192,7 +8515,7 @@ const social_reload = (data) =>{
     var user    = JSON.parse(localStorage.user);
     var config  = JSON.parse(localStorage.config);
 
-     if(data.length==1){
+    if(data.length==1){
     
         const send = async function() {
         
@@ -8200,7 +8523,7 @@ const social_reload = (data) =>{
         
           race(item);
           
-          usersremedios_item(item,data[0]);
+          social_item(item,data[0]);
           
           document.body.removeAttribute("loading");
           
@@ -8210,7 +8533,7 @@ const social_reload = (data) =>{
        
     }else if(data.length>1){
        
-      usersremedios(data);
+      social(data);
        
     }else{
        
@@ -8258,9 +8581,9 @@ const social_send = (data,id) =>{
 
   const send = async function(data) {
 
-    const updated_data = await usersremedios_update(data);
+    const updated_data = await social_update(data);
     
-    usersremedios_reload(updated_data);
+    social_reload(updated_data);
 
   }
 
@@ -8283,7 +8606,7 @@ const social_update = async function(data) {
   
   const url               = supabaseurl + supabase_function;
 
-  let param = {'eid':eId,'eremedios':data.remedios,'eposologia':data.posologia,'euuid':user.session}
+  let param = {'eid':eId,'elabel':data.label,'eshare':data.share,'euuid':user.session}
   
   const response = await fetch(url, {
 

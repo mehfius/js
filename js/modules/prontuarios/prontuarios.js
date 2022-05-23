@@ -1,6 +1,6 @@
-const social = async function(data){
+const prontuarios = async function(data){
 
-  let json    = (data==undefined)?await social_select(null):data;
+  let json    = (data==undefined)?await prontuarios_select(null):data;
 
   let view    = document.querySelector('view');
 
@@ -18,13 +18,13 @@ const social = async function(data){
 
   var modules = document.body.getAttribute("modules");
 
-  Object.entries(json).forEach(([key, value]) => {
+  Object.entries(json.page).forEach(([key, value]) => {
 
     let eId = '{"tag":"item","c":"'+value.id+'"}';
 
     let item   = createObject(eId);
 
-    social_item(item,value);
+    prontuarios_item(item,value);
         
     tabela.append(item);
 
@@ -33,7 +33,7 @@ const social = async function(data){
   view.append(tabela);
   
   document.body.setAttribute("loading","0");
-  
-  window.onscroll=null;  
+  boxFilter();
+  window.onscroll=prontuarios_lazyload;  
 
 }

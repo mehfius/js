@@ -13,14 +13,19 @@ function login(){
 	sA(status,"class","loading");
 	status.innerHTML="";
 	status.innerHTML="Autenticando...";
-
+  
+  const supabaseurl       = localStorage.supabaseurl;
+  const supabase_function = 'rest/v1/rpc/logincheck'
+  const supabasekey       = localStorage.supabasekey;
+  const url               = supabaseurl + supabase_function;
+  
 	setTimeout(function () {
 
     (async () => {
-      const rawResponse = await fetch(getLocalStorage("config","login"), {
+      const rawResponse = await fetch(url, {
       method: 'POST',
-      headers: {'Accept': 'application/json','Content-Type': 'application/json'},
-      body: JSON.stringify({email: email.value, password: password.value})
+      headers: {'Accept': 'application/json','Content-Type': 'application/json','apikey':supabasekey},
+      body: JSON.stringify({email: email.value, password: password.value,agent:window.navigator.userAgent})
       });
 
       const authentic = await rawResponse.json();

@@ -9,15 +9,7 @@ function text(data){
 
   div.appendChild(label);
 
-/* 	for (var key in attribute){
-				
-		if(attribute[key]!=="0" && attribute[key]!==""){
-			object.setAttribute(key,attribute[key]);
-		}
-
-	}
-	 */
-  label.innerHTML=data.label;
+  label.innerHTML = data.label;
 	object.setAttribute("autocomplete","new-password");
 	object.setAttribute("type","text");
 	object.setAttribute("class","default");

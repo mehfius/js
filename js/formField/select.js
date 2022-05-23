@@ -109,5 +109,3 @@ function selectAjaxSetInputValue(data){
 return finder;
 
 }
-
-

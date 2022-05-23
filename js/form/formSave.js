@@ -80,6 +80,10 @@ function formSave(codigo){
       
       usersremedios_send(data,codigo); 
       
+    }else if(modules=='social'){
+      
+      social_send(data,codigo); 
+      
     }else{
 
       formSend(data,codigo); 

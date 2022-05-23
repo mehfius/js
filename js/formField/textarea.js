@@ -2,16 +2,18 @@ function textarea(data){
   
   var label = createObject('{"tag":"label","type":"'+data.type+'","innerhtml":"'+data.label+'"}');
   var div   = createObject('{"tag":"div"}');
-if(data.attributes){
-
-	Object.entries(data.attributes).forEach(([key, value]) => {
-
-    if(key=='title'){
-        fieldTooltip(label,data.attributes); 
-    }
-
-  });
-}
+  
+  if(data.attributes){
+  
+  	Object.entries(data.attributes).forEach(([key, value]) => {
+  
+      if(key=='title'){
+          fieldTooltip(label,data.attributes); 
+      }
+  
+    });
+    
+  }
 
   div.append(label);
   

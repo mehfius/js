@@ -12,7 +12,7 @@ const social_update = async function(data) {
   
   const url               = supabaseurl + supabase_function;
 
-  let param = {'eid':eId,'eremedios':data.remedios,'eposologia':data.posologia,'euuid':user.session}
+  let param = {'eid':eId,'elabel':data.label,'eshare':data.share,'euuid':user.session}
   
   const response = await fetch(url, {
 

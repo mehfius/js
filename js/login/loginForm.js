@@ -1,36 +1,25 @@
 const mountLogin = async function(){
 
-  const  login 	    = createObject('{"tag":"login","class":"login","name":"login"}');
+  const  login 	     = createObject('{"tag":"login","class":"login","name":"login"}');
   const  formLogin   = createObject('{"tag":"form","onsubmit":"login();return false;","autocomplete":"off"}');
 
-  const myRequest = new Request('https://json.mehfius.repl.co/formlogin.json');
+  Object.entries(JSON.parse(jsonformlogin)).forEach(([key, value]) => {
 
+    if(value.tag=='input'){
 
+      formLogin.append(jsonToElement(value));
 
-  fetch(myRequest)
-  .then(response => response.json())
-  .then(data => {
+    }else{
 
-    Object.entries(data).forEach(([key, value]) => {
+      formLogin.append(jsonToObject(value));
 
-      if(value.tag=='input'){
+    }
 
-        formLogin.append(jsonToElement(value));
+  });
 
-      }else{
+  login.append(formLogin);
 
-        formLogin.append(jsonToObject(value));
-
-      }
-  
-    });
-
-    login.append(formLogin);
-
-    document.getElementsByTagName("pages")[0].append(login);
-
-  })
-  .catch(console.error);
+  document.getElementsByTagName("pages")[0].append(login);
 
 }
 

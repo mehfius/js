@@ -1,7 +1,7 @@
 function fields(data,header,pagedata){
 
   const e = (function(){
-    
+  
     switch(data.type) {
 
     case "textarea":    return textarea(data);

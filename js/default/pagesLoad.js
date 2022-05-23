@@ -1,11 +1,12 @@
 
 function pagesLoad(callback){
   
-  var url = localStorage.getItem("url")+"/suites";
+  var url = localStorage.getItem("supabaseurl")+"rest/v1/rpc/suites";
   
   fetch(url, {
     method: 'POST',
-    headers: {'Content-Type':'application/x-www-form-urlencoded'}
+    headers: {'Accept': 'application/json','Content-Type': 'application/json','apikey':localStorage.supabasekey},
+
   })
   
   .then(response => response.json())

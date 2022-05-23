@@ -11,9 +11,9 @@ const social_send = (data,id) =>{
 
   const send = async function(data) {
 
-    const updated_data = await usersremedios_update(data);
+    const updated_data = await social_update(data);
     
-    usersremedios_reload(updated_data);
+    social_reload(updated_data);
 
   }
 

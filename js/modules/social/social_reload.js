@@ -3,7 +3,7 @@ const social_reload = (data) =>{
     var user    = JSON.parse(localStorage.user);
     var config  = JSON.parse(localStorage.config);
 
-     if(data.length==1){
+    if(data.length==1){
     
         const send = async function() {
         
@@ -11,7 +11,7 @@ const social_reload = (data) =>{
         
           race(item);
           
-          usersremedios_item(item,data[0]);
+          social_item(item,data[0]);
           
           document.body.removeAttribute("loading");
           
@@ -21,7 +21,7 @@ const social_reload = (data) =>{
        
     }else if(data.length>1){
        
-      usersremedios(data);
+      social(data);
        
     }else{
        

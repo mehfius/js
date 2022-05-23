@@ -2,7 +2,12 @@
 function formEdit(modules,id){
   
   gridShow();
-  formMount(modules,id);
+  if(modules=='social'){
+    social_form(modules,id);
+  }else{
+    formMount(modules,id);
+  }
+  
 
 
     /* 

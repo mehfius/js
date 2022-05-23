@@ -1,5 +1,8 @@
 function load(){
+  
 
+//console.log(fetch("https://api.db-ip.com/v2/free/self"));
+  
     if (window.innerWidth <= 480 || window.innerHeight<=800) {
 
       document.body.setAttribute('mobile', '1');
