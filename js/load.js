@@ -39,7 +39,8 @@ function load(){
       //console.log(JSON.stringify(data));
       //localStorage.languages    = JSON.stringify(data.languages);
       //localStorage.language    = "ptbr";
-
+      
+      setInterval(loop, 3000);
       mountLogin();
       grade();
 

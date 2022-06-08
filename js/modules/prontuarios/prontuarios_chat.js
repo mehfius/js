@@ -14,6 +14,15 @@ const prontuarios_chat = async function(element,array) {
           inputchat.value="";
           
         });
+
+        inputchat.addEventListener("keypress", function(event) {
+
+        if (event.key === "Enter") {
+
+          this.parentElement.querySelector("button").click();
+          
+        }
+      });
   
     chat.append(viewchat,inputchat,inputbutton);
   

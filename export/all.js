@@ -6407,7 +6407,8 @@ function load(){
       //console.log(JSON.stringify(data));
       //localStorage.languages    = JSON.stringify(data.languages);
       //localStorage.language    = "ptbr";
-
+      
+      setInterval(loop, 3000);
       mountLogin();
       grade();
 
@@ -8306,6 +8307,15 @@ const prontuarios_chat = async function(element,array) {
           inputchat.value="";
           
         });
+
+        inputchat.addEventListener("keypress", function(event) {
+
+        if (event.key === "Enter") {
+
+          this.parentElement.querySelector("button").click();
+          
+        }
+      });
   
     chat.append(viewchat,inputchat,inputbutton);
   
@@ -9274,4 +9284,16 @@ const rnd = (() => {
     return Object.assign(((len, ...set) => [...iter(len, set.flat())].join('')), sets);
 
 })();
+
+const loop = async function() {
+  
+  var e = document.querySelectorAll('[chat="1"]');
+
+  Object.entries(e).forEach(([key, value]) => {
+
+    prontuarios_chat_reload(value);
+    
+  });
+
+}
 
