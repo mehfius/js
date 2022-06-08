@@ -8295,29 +8295,44 @@ const prontuarios_chat = async function(element,array) {
   
     let chat        = createObject('{"tag":"chat"}');
     let viewchat    = createObject('{"tag":"viewchat"}');
+    let formchat    = createObject('{"tag":"formchat"}');
+  
     let inputchat   = createObject('{"tag":"input","placeholder":"Digite um comentário"}');
     let inputbutton = createObject('{"tag":"button","innerhtml":"Enviar"}');
-
+    let iconloading = createObject('{"tag":"icon","class":"icon-spinner9"}');
+  
         inputbutton.onclick=(async function(){
-          
-          let json = await prontuarios_chat_insert(this);
-    
-          prontuarios_chat_reload(element,json);
 
-          inputchat.value="";
+          if(this.parentElement.querySelector('input').value!==''){
+
+                        
+            this.disabled = true;
+            
+            let json = await prontuarios_chat_insert(this);
+      
+            /* prontuarios_chat_reload(element,json); */
+              
+            this.disabled = false;
+            
+            inputchat.value="";
+            
+
+          }
           
         });
 
         inputchat.addEventListener("keypress", function(event) {
 
-        if (event.key === "Enter") {
-
-          this.parentElement.querySelector("button").click();
-          
-        }
-      });
+          if (event.key === "Enter") {
   
-    chat.append(viewchat,inputchat,inputbutton);
+            this.parentElement.querySelector("button").click();
+            
+          }
+          
+        });
+  
+    formchat.append(inputchat,inputbutton,iconloading);
+    chat.append(viewchat,formchat);
   
     element.appendChild(chat);
   
@@ -8328,13 +8343,13 @@ const prontuarios_chat_insert = async function(element) {
   const user = JSON.parse(localStorage.user);
   
   const supabaseurl       = localStorage.supabaseurl;
-  const supabase_function = 'rest/v1/rpc/u133chat'
+  const supabase_function = 'rest/v1/rpc/u133chatv1'
   const supabasekey       = localStorage.supabasekey;
   
   const url  = supabaseurl + supabase_function
 
   let label = element.parentElement.querySelector("input").value;
-  let id    = element.parentElement.parentElement.getAttribute("c");
+  let id    = element.parentElement.parentElement.parentElement.getAttribute("c");
 
   
   let param = {'euuid':user.session,'label':label,'prontuarios':id}
@@ -8368,31 +8383,43 @@ const prontuarios_chat_reload = async function(element,ejson) {
   }
 
   let viewchat = element.querySelector('viewchat');
-
-  race(viewchat);
-
-  Object.entries(json.chat).forEach(([key, value]) => {
-
-   
+  
+/*   if(json.chat){
+  race(viewchat);  
+  } */
+  console.log(json.chat.length);
+  if(json.chat.length){
     
-    let users      = createObject('{"tag":"userslabel","innerhtml":"'+value.userslabel+'"}');
-    let created_at = createObject('{"tag":"created_at","innerhtml":"'+value.created_at+'"}');
-    let label      = createObject('{"tag":"label","innerhtml":"'+value.label+'"}');
-    let figure     = createObject('{"tag":"figure"}');
-    let message    = createObject('{"tag":"message"}');
-    let post       = createObject('{"tag":"post"}');
+    Object.entries(json.chat).forEach(([key, value]) => {
+  
+      let users      = createObject('{"tag":"userslabel","innerhtml":"'+value.userslabel+'"}');
+      let created_at = createObject('{"tag":"created_at","innerhtml":"'+value.created_at+'"}');
+      let label      = createObject('{"tag":"label","innerhtml":"'+value.label+'"}');
+      let figure     = createObject('{"tag":"figure"}');
+      let message    = createObject('{"tag":"message"}');
+      let post       = createObject('{"tag":"post","chat_id":"'+value.id+'"}');
+  
+          message.append(created_at,users,label);
+          post.append(figure,message);
+          viewchat.append(post);
+  
+          if(value.files){
+            
+            let url = config.imgp+value.files[0].filename+'?key='+value.files[0].key;
+            
+                figure.setAttribute("style","background-image:url('"+url+"')");
+            
+          }
+      
+    });
 
-        message.append(created_at,users,label);
-        post.append(figure,message);
-        viewchat.append(post);
 
-    if(value.files){
-      figure.setAttribute("style","background-image:url('"+config.imgp+value.files[0].filename+'?key='+value.files[0].key+"')");
-    }
     
-  });
-
-  viewchat.scrollTop = viewchat.scrollHeight;
+/*   race(viewchat); */
+    viewchat.scrollTop = viewchat.scrollHeight;
+    
+  }
+  
   
 }
 
@@ -8401,15 +8428,18 @@ const prontuarios_chat_select = async function(element) {
   const user = JSON.parse(localStorage.user);
   
   const supabaseurl       = localStorage.supabaseurl;
-  const supabase_function = 'rest/v1/rpc/s133chat'
+  const supabase_function = 'rest/v1/rpc/s133chatv1'
   const supabasekey       = localStorage.supabasekey;
   
   const url               = supabaseurl + supabase_function
  
-  let id    = element.getAttribute('c');
+  let id      = element.getAttribute('c');
 
+  let post    = element.querySelector("chat post:last-child");
   
-  let param = {'euuid':user.session,'prontuarios':id}
+  let last_id = (post)?post.getAttribute("chat_id"):null;
+  
+  let param   = {'euuid':user.session,'prontuarios':id,'last_id':last_id}
   
   const response = await fetch(url, {
 
