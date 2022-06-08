@@ -1,14 +1,17 @@
-const prontuarios_select = async function(query_offset) {
+const prontuarios_chat_select = async function(element) {
   
   const user = JSON.parse(localStorage.user);
   
   const supabaseurl       = localStorage.supabaseurl;
-  const supabase_function = 'rest/v1/rpc/s133v1'
+  const supabase_function = 'rest/v1/rpc/s133chat'
   const supabasekey       = localStorage.supabasekey;
   
-  const url  = supabaseurl + supabase_function
+  const url               = supabaseurl + supabase_function
+ 
+  let id    = element.getAttribute('c');
+
   
-  let param = {'euuid':user.session,'query_offset':query_offset,'eid':null}
+  let param = {'euuid':user.session,'prontuarios':id}
   
   const response = await fetch(url, {
 
@@ -20,5 +23,5 @@ const prontuarios_select = async function(query_offset) {
   });
 
   return await response.json();
-  
+
 }

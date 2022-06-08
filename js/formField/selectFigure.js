@@ -4,8 +4,6 @@ function selectFigure(div,data){
 
   var labelfigure   = createObject('{"tag":"figure"}');
 
-if(data){
-
   if(data.files){
 
     let filename = data.files[0].filename;
@@ -15,8 +13,7 @@ if(data){
     labelfigure.style.backgroundImage="url("+url+")";
 
   }
-}
-
+    
   div.append(labelfigure);
 
 }

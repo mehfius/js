@@ -2,8 +2,13 @@
 function formEdit(modules,id){
   
   gridShow();
+  
   if(modules=='social'){
+    
     social_form(modules,id);
+  }else if(modules=='prontuarios'){
+    
+    prontuarios_form(modules,id);
   }else{
     formMount(modules,id);
   }

@@ -3821,8 +3821,13 @@ function formDelete(codigo){
 function formEdit(modules,id){
   
   gridShow();
+  
   if(modules=='social'){
+    
     social_form(modules,id);
+  }else if(modules=='prontuarios'){
+    
+    prontuarios_form(modules,id);
   }else{
     formMount(modules,id);
   }
@@ -3894,7 +3899,7 @@ function formMountFields(modules,pagedata){
   header.append(btHeaderSave(pagedata.id));
 
 	if(pagedata.id){
-    
+
     label.appendChild(cT("Editando "+modules));
     header.appendChild(btHeaderPrint());
     
@@ -4285,6 +4290,10 @@ function formSave(codigo){
       
       formSend(data,codigo);
       
+    }else if(modules=='prontuarios'){
+    
+      prontuarios_send(data,codigo);
+      
     }else if(modules=='usersremedios'){
       
       usersremedios_send(data,codigo); 
@@ -4335,7 +4344,7 @@ function formSend(data,id){
       
       switch(modules) {
       
-        case "prontuarios":    return itemReload(id);
+        case "prontuarios":    return prontuarios_reload(id);
         case "usersremedios":  return usersremedios_reload(id);
         
         default:return document.body.setAttribute("loading","0");
@@ -5077,7 +5086,7 @@ function selectAjax(data,header){
 
   if(plugin=="multiply"){
 
-    let json = (data.value)?JSON.parse(data.value):[];
+    let json = (data.value)?data.value:[];
     let btshare=btOptionsBtShare();
 
     div.append(selectAjaxListCards(json));
@@ -5109,6 +5118,7 @@ function selectAjax(data,header){
 	
 }
 
+
 function selectAjaxRemoveCard(e){
 
   let input     = e.parentElement.parentElement.parentElement.querySelector("input");
@@ -5125,7 +5135,7 @@ function selectAjaxRemoveCard(e){
 
   });
 
-  valueid = JSON.stringify(json);
+  valueid = (json.length)?JSON.stringify(json):"";
 
   input.setAttribute("valueid",valueid);
 
@@ -5133,8 +5143,8 @@ function selectAjaxRemoveCard(e){
 
 function selectAjaxSetInputValue(data){
 
-  let value       = (data.value)?JSON.parse(data.value):null;
-
+  let value       = (data.value)?data.value:null;
+ console.log(value);
   if(Array.isArray(value)){
 
     var valueid = "";
@@ -5143,17 +5153,18 @@ function selectAjaxSetInputValue(data){
 
     Object.entries(value).forEach(([key, value]) => {json.push(value.id)});
 
-    valueid = JSON.stringify(json);
-
+    valueid = JSON.stringify(json).replace(/"/g, '');
+    
+    var placeholder = value[0].label;
+    
   }else{
 
     var valueid     = (value)?value.id:"";
-
+    var placeholder = "Escolha "+data.label;
+    
   }
 
-  let placeholder = (value)?value.label:"Escolha "+data.label;
-
-  
+ /*  let placeholder = (value)?value.label:"Escolha "+data.label; */
 
   var finder = createObject('{"tag":"input","title":"'+data.label+'","id":"'+data.url+'","class":"default","placeholder":"'+placeholder+'","valueid":"'+valueid+'"}');
 
@@ -5455,8 +5466,6 @@ function selectFigure(div,data){
 
   var labelfigure   = createObject('{"tag":"figure"}');
 
-if(data){
-
   if(data.files){
 
     let filename = data.files[0].filename;
@@ -5466,8 +5475,7 @@ if(data){
     labelfigure.style.backgroundImage="url("+url+")";
 
   }
-}
-
+    
   div.append(labelfigure);
 
 }
@@ -5657,7 +5665,7 @@ function fileupload(data,header,pagedata){
 
   var label    = createObject('{"tag":"label","innerhtml":"'+data.label+'"}');
   var div      = createObject('{"tag":"div"}');
-  var uuid     = (pagedata.uuid)?pagedata.files:uuidv4();
+  var uuid     = (data.uuid)?data.uuid:uuidv4();
 
   var object   = createObject('{"tag":"input","id":"files","type":"hidden","value":"'+uuid+'"}');
 
@@ -5670,7 +5678,12 @@ function fileupload(data,header,pagedata){
 
     if(data.value){
 
-      var files    = JSON.parse(data.value);
+      if(data.value.length){
+              var files    = data.value;
+      }else{
+              var files    = JSON.parse(data.value);
+      }
+
 
 
         /*       Object.entries(files).forEach(([key, value]) => {
@@ -8277,6 +8290,169 @@ const prontuarios = async function(data){
 
 }
 
+const prontuarios_chat = async function(element,array) {
+  
+    let chat        = createObject('{"tag":"chat"}');
+    let viewchat    = createObject('{"tag":"viewchat"}');
+    let inputchat   = createObject('{"tag":"input","placeholder":"Digite um comentário"}');
+    let inputbutton = createObject('{"tag":"button","innerhtml":"Enviar"}');
+
+        inputbutton.onclick=(async function(){
+          
+          let json = await prontuarios_chat_insert(this);
+    
+          prontuarios_chat_reload(element,json);
+
+          inputchat.value="";
+          
+        });
+  
+    chat.append(viewchat,inputchat,inputbutton);
+  
+    element.appendChild(chat);
+  
+}
+
+const prontuarios_chat_insert = async function(element) {
+  
+  const user = JSON.parse(localStorage.user);
+  
+  const supabaseurl       = localStorage.supabaseurl;
+  const supabase_function = 'rest/v1/rpc/u133chat'
+  const supabasekey       = localStorage.supabasekey;
+  
+  const url  = supabaseurl + supabase_function
+
+  let label = element.parentElement.querySelector("input").value;
+  let id    = element.parentElement.parentElement.getAttribute("c");
+
+  
+  let param = {'euuid':user.session,'label':label,'prontuarios':id}
+  
+  const response = await fetch(url, {
+
+    method: 'POST',
+    mode: 'cors',
+    headers: {'Accept': 'application/json','Content-Type': 'application/json','apikey':supabasekey},
+    body:JSON.stringify(param)
+    
+  });
+
+  
+  
+  return await response.json();
+}
+
+const prontuarios_chat_reload = async function(element,ejson) {
+  
+  config = JSON.parse(localStorage.config);
+  
+  if(ejson!==undefined){
+  
+      var json = ejson;
+    
+  }else{
+    
+      var json = await prontuarios_chat_select(element);
+    
+  }
+
+  let viewchat = element.querySelector('viewchat');
+
+  race(viewchat);
+
+  Object.entries(json.chat).forEach(([key, value]) => {
+
+   
+    
+    let users      = createObject('{"tag":"userslabel","innerhtml":"'+value.userslabel+'"}');
+    let created_at = createObject('{"tag":"created_at","innerhtml":"'+value.created_at+'"}');
+    let label      = createObject('{"tag":"label","innerhtml":"'+value.label+'"}');
+    let figure     = createObject('{"tag":"figure"}');
+    let message    = createObject('{"tag":"message"}');
+    let post       = createObject('{"tag":"post"}');
+
+        message.append(created_at,users,label);
+        post.append(figure,message);
+        viewchat.append(post);
+
+    if(value.files){
+      figure.setAttribute("style","background-image:url('"+config.imgp+value.files[0].filename+'?key='+value.files[0].key+"')");
+    }
+    
+  });
+
+  viewchat.scrollTop = viewchat.scrollHeight;
+  
+}
+
+const prontuarios_chat_select = async function(element) {
+  
+  const user = JSON.parse(localStorage.user);
+  
+  const supabaseurl       = localStorage.supabaseurl;
+  const supabase_function = 'rest/v1/rpc/s133chat'
+  const supabasekey       = localStorage.supabasekey;
+  
+  const url               = supabaseurl + supabase_function
+ 
+  let id    = element.getAttribute('c');
+
+  
+  let param = {'euuid':user.session,'prontuarios':id}
+  
+  const response = await fetch(url, {
+
+    method: 'POST',
+    mode: 'cors',
+    headers: {'Accept': 'application/json','Content-Type': 'application/json','apikey':supabasekey},
+    body:JSON.stringify(param)
+    
+  });
+
+  return await response.json();
+
+}
+
+const prontuarios_form = (modules,id,header) =>{
+
+  gridShow();
+  
+  var config    = JSON.parse(localStorage.config);
+	var user      = JSON.parse(localStorage.user);
+
+  const supabaseurl       = localStorage.supabaseurl;
+  const supabase_function = 'rest/v1/rpc/f133'
+
+  
+  const eId               = (id)?id:'0';
+
+  const supabasekey       = localStorage.supabasekey;
+  
+  const url               = supabaseurl + supabase_function;
+  
+  const send = async function() {
+    
+    const rawResponse = await fetch(url, {
+
+      method: 'POST',
+      headers: {'Accept': 'application/json','Content-Type': 'application/json','apikey':supabasekey},
+      body: JSON.stringify({euuid:user.session,eid:id})
+
+    });
+
+    const data = await rawResponse.json();
+          data.id = id;
+	               await formMountFields(modules,data);
+
+    document.body.removeAttribute("loading");
+
+  }
+
+  send();
+
+}
+
 const prontuarios_item = (item,value) =>{
   
   var header = cE("header");
@@ -8320,11 +8496,12 @@ const prontuarios_item = (item,value) =>{
      
           loadPacientesFull(item,value.jsonpacientes);
          
-          loadItemOptions(item,value)
+          prontuarios_options(item,value)
       
           itemDetail(item,value);
           loadMedicos(item,value.jsonmedicos);
           loadShare(item,value);
+          prontuarios_chat(item,value);
           loadItemUpdateTime(footer,value);
         
           if(footer.innerHTML!=""){
@@ -8394,17 +8571,115 @@ const prontuarios_item = (item,value) =>{
 
 }
 
+const prontuarios_options = async function(element,array) {
+  
+    let options = createObject('{"tag":"options"}');
+  
+  	if(array.me==true){
+    
+      let edit = createObject('{"tag":"button","action":"edit","class":"icon-pencil"}');
+
+	    edit.onclick=( async function(){ 
+
+        document.body.setAttribute("loading","1");
+        await prontuarios_form(gA(),array.id)
+      
+      });
+      
+      options.append(edit);
+      
+    }
+    
+    let chatview = createObject('{"tag":"button","action":"chatview","class":"icon-bubbles3"}');
+    
+        chatview.onclick=( async function(){ 
+        
+          document.querySelector("item[c='"+array.id+"']").setAttribute("chat","1");
+          
+          prontuarios_chat_reload(element);
+        
+        });
+
+    let chatclose = createObject('{"tag":"button","action":"chatclose","class":"icon-bubbles3"}');
+    
+        chatclose.onclick=( async function(){ 
+        
+          document.querySelector("item[c='"+array.id+"']").setAttribute("chat","0");
+        
+        });
+    
+    options.append(chatview,chatclose);
+    
+    let view = createObject('{"tag":"button","action":"view","class":"icon-enlarge"}');
+    
+    view.onclick=(function(){ 
+    
+      document.querySelector("item[c='"+array.id+"']").setAttribute("view","1");
+    
+    });
+    
+    let close = createObject('{"tag":"button","class":"icon-shrink","action":"close"}');
+    
+    close.onclick=(function(){ 
+    
+      document.querySelector("item[c='"+array.id+"']").setAttribute("view","0");
+    
+    });
+    
+    options.append(view);
+    options.append(close);
+    element.append(options);
+
+
+}
+
+const prontuarios_reload = (data) =>{
+
+    var user    = JSON.parse(localStorage.user);
+    var config  = JSON.parse(localStorage.config);
+
+var page = data.page;
+
+  
+     if(page.length==1){
+    
+        const send = async function() {
+        
+          var item = document.querySelector("tabela item[c='"+data.page[0].id+"']");
+        
+          race(item);
+          
+          prontuarios_item(item,page[0]);
+          
+          document.body.removeAttribute("loading");
+          
+        }
+        
+        send();
+       
+    }else if(page.length>1){
+       
+      prontuarios(data);
+       
+    }else{
+       
+      console.log('sem dados');
+      
+    } 
+
+}
+
 const prontuarios_select = async function(query_offset) {
   
   const user = JSON.parse(localStorage.user);
   
   const supabaseurl       = localStorage.supabaseurl;
-  const supabase_function = 'rest/v1/rpc/s133'
+  const supabase_function = 'rest/v1/rpc/s133v1'
   const supabasekey       = localStorage.supabasekey;
   
   const url  = supabaseurl + supabase_function
   
-  let param = {'euuid':user.session,'query_offset':query_offset}
+  let param = {'euuid':user.session,'query_offset':query_offset,'eid':null}
   
   const response = await fetch(url, {
 
@@ -8413,6 +8688,69 @@ const prontuarios_select = async function(query_offset) {
     headers: {'Accept': 'application/json','Content-Type': 'application/json','apikey':supabasekey},
     body:JSON.stringify(param)
     
+  });
+
+  return await response.json();
+  
+}
+
+const prontuarios_send = (data,id) =>{
+
+  const config      = JSON.parse(localStorage.config);
+  const user        = JSON.parse(localStorage.user);
+
+  data.id           = id;
+
+  document.body.setAttribute("loading","1");
+
+  formClose();
+
+  const send = async function(data) {
+
+    const updated_data = await prontuarios_update(data);
+    
+    prontuarios_reload(updated_data);
+
+  }
+
+  send(data); 
+
+}
+
+
+const prontuarios_update = async function(data) {
+  
+  const user              = JSON.parse(localStorage.user);
+  
+  const supabaseurl       = localStorage.supabaseurl;
+  const supabase_function = 'rest/v1/rpc/u133'
+
+  
+  const eId               = (data.id)?data.id:'0';
+
+  const supabasekey       = localStorage.supabasekey;
+  
+  const url               = supabaseurl + supabase_function;
+
+  let param = {
+    
+    'euuid':user.session,
+    'eid':eId,
+    'ecategory':data.category,
+    'efiles':data.files,
+    'epacientes':data.pacientes,
+    'elabel':data.label,
+    'eshare':data.share
+
+  }
+ 
+  const response = await fetch(url, {
+
+    method: 'POST',
+    mode: 'cors',
+    headers: {'Accept': 'application/json','Content-Type': 'application/json','apikey':supabasekey},
+    body:JSON.stringify(param)
+                               
   });
 
   return await response.json();

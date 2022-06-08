@@ -76,6 +76,10 @@ function formSave(codigo){
       
       formSend(data,codigo);
       
+    }else if(modules=='prontuarios'){
+    
+      prontuarios_send(data,codigo);
+      
     }else if(modules=='usersremedios'){
       
       usersremedios_send(data,codigo); 

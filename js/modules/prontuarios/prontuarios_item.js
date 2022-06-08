@@ -41,11 +41,12 @@ const prontuarios_item = (item,value) =>{
      
           loadPacientesFull(item,value.jsonpacientes);
          
-          loadItemOptions(item,value)
+          prontuarios_options(item,value)
       
           itemDetail(item,value);
           loadMedicos(item,value.jsonmedicos);
           loadShare(item,value);
+          prontuarios_chat(item,value);
           loadItemUpdateTime(footer,value);
         
           if(footer.innerHTML!=""){

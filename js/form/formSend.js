@@ -30,7 +30,7 @@ function formSend(data,id){
       
       switch(modules) {
       
-        case "prontuarios":    return itemReload(id);
+        case "prontuarios":    return prontuarios_reload(id);
         case "usersremedios":  return usersremedios_reload(id);
         
         default:return document.body.setAttribute("loading","0");

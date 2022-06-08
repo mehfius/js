@@ -12,7 +12,7 @@ function selectAjax(data,header){
 
   if(plugin=="multiply"){
 
-    let json = (data.value)?JSON.parse(data.value):[];
+    let json = (data.value)?data.value:[];
     let btshare=btOptionsBtShare();
 
     div.append(selectAjaxListCards(json));
@@ -44,6 +44,7 @@ function selectAjax(data,header){
 	
 }
 
+
 function selectAjaxRemoveCard(e){
 
   let input     = e.parentElement.parentElement.parentElement.querySelector("input");
@@ -60,7 +61,7 @@ function selectAjaxRemoveCard(e){
 
   });
 
-  valueid = JSON.stringify(json);
+  valueid = (json.length)?JSON.stringify(json):"";
 
   input.setAttribute("valueid",valueid);
 
@@ -68,8 +69,8 @@ function selectAjaxRemoveCard(e){
 
 function selectAjaxSetInputValue(data){
 
-  let value       = (data.value)?JSON.parse(data.value):null;
-
+  let value       = (data.value)?data.value:null;
+ console.log(value);
   if(Array.isArray(value)){
 
     var valueid = "";
@@ -78,17 +79,18 @@ function selectAjaxSetInputValue(data){
 
     Object.entries(value).forEach(([key, value]) => {json.push(value.id)});
 
-    valueid = JSON.stringify(json);
-
+    valueid = JSON.stringify(json).replace(/"/g, '');
+    
+    var placeholder = value[0].label;
+    
   }else{
 
     var valueid     = (value)?value.id:"";
-
+    var placeholder = "Escolha "+data.label;
+    
   }
 
-  let placeholder = (value)?value.label:"Escolha "+data.label;
-
-  
+ /*  let placeholder = (value)?value.label:"Escolha "+data.label; */
 
   var finder = createObject('{"tag":"input","title":"'+data.label+'","id":"'+data.url+'","class":"default","placeholder":"'+placeholder+'","valueid":"'+valueid+'"}');
 
