@@ -139,15 +139,29 @@ function btHeaderSeeAttach(){
 
 function btHeaderSave(codigo){
 
-	var bt = cE("icon");
+  var label = createObject('{"tag":"label","innerhtml":"Salvar"}');
+  
+	var bt = createObject('{"tag":"icon"}');
 			
 			bt.setAttribute("action","save");
 			bt.setAttribute("class","icon-checkmark");
+
+      bt.append(label);
+  
 			bt.onclick=(function(){
 					formSave(codigo);
 
 
 			});
+
+
+/*   	var bt = createObject('{"tag":"button","innerhtml":"Salvar"}');
+
+			bt.onclick=(function(){
+					formSave(codigo);
+
+
+			}); */
 
 	return bt;
 	

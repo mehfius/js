@@ -17,11 +17,11 @@ const checkbox = function(data){
 
       Object.entries(options).forEach(([k, v]) => {
 
-        let replaced = value.replace('{', '[').replace('}', ']');
+        
+        let replaced = (value)?value.replace('{', '[').replace('}', ']'):"[]";
 
         let arrayValue = (value)?JSON.parse(replaced):"";
         
- 
         let checked   = (arrayValue.indexOf(parseInt(k))>-1)?"1":"0";
 
         var opt       = createObject('{"tag":"opt","value":"'+k+'","checked":"'+checked+'"}')

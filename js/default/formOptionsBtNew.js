@@ -1,17 +1,19 @@
 
 function btNew(){
 	  
-  var button = createObject('{"tag":"button","innerhtml":"Novo","action":"new"}');
-  
-    var icon = cE("icon")
-        icon.setAttribute("class","icon-file-empty");
+  var button = createObject('{"tag":"button","action":"new"}');
+  var label  = createObject('{"tag":"label","innerhtml":"Novo"}');
+  var icon   = createObject('{"tag":"icon"}');
+      icon.setAttribute("class","icon-file-empty");
 
 			button.onclick=(function(){
 
 				formNew();
 
 			});
-	button.append(icon);
+  
+	    button.append(icon,label);
+  
 	return button;
 	
 }

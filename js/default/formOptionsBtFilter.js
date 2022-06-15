@@ -1,7 +1,7 @@
 function btFilter(){
   
-  var button = createObject('{"tag":"button","innerhtml":"Filtro","action":"filter"}');
-  
+  var button = createObject('{"tag":"button","action":"filter"}');
+  var label  = createObject('{"tag":"label","innerhtml":"Filtro"}');
     var icon = cE("icon")
         icon.setAttribute("class","icon-search");
     
@@ -11,7 +11,6 @@ function btFilter(){
           
           if(document.body.getAttribute("filter")=="1"){
              
-           
              document.body.setAttribute("filter","0");
             
           }else{
@@ -22,8 +21,8 @@ function btFilter(){
           }
           
         });
-  
-  button.append(icon);
+  button.append(icon,label);
+
   
   return button;
   

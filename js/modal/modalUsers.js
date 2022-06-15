@@ -18,7 +18,7 @@ const modalUsers = async function(){
     
         button.onclick=(function(){
 
-          document.querySelector('profile > div').click();
+          formEdit("users");
 
           rE(this.parentElement.parentElement);
 

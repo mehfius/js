@@ -20,20 +20,22 @@ const prontuarios = async function(data){
 
   Object.entries(json.page).forEach(([key, value]) => {
 
-    let eId = '{"tag":"item","c":"'+value.id+'"}';
+    let eId    = '{"tag":"item","c":"'+value.id+'"}';
 
     let item   = createObject(eId);
 
-    prontuarios_item(item,value);
-        
-    tabela.append(item);
+                 prontuarios_item(item,value);
+                    
+                 tabela.append(item);
 
   });
 
   view.append(tabela);
   
   document.body.setAttribute("loading","0");
+  
   boxFilter();
-  window.onscroll=prontuarios_lazyload;  
+  
+  window.onscroll = prontuarios_lazyload;  
 
 }

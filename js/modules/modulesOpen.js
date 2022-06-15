@@ -1,41 +1,36 @@
-
-
 const modulesOpen = async function(url){
 
-//function modulesOpen(url){
-	
-	var body    = got(document,'body')[0];
-
+	var body    = document.querySelector("body");
+  var view    = document.querySelector("view");
+  
 	var modules = getModulesByUrl(url);
-
-	race(got(document,"view")[0]);
-
-	var menu    = cE("menu");
-
-	var view    = got(document,'view')[0];
   
-    menu.appendChild(btNew());
-    menu.appendChild(btFilter());
-    view.appendChild(menu); 
+      body.setAttribute('modules',modules.url)
   
-  sA(body,'modules',modules.url);
+	    race(view);
+  
+	var tips    = createObject('{"tag":"tips","innerhtml":"Preencha este formulário antes do atendimento médico. "}');
 
-  if(modules.url=='usersremedios'){
-    
-    usersremedios();
-    
-  }else if(modules.url=='social'){
-    
-    social();  
-    
-  }else if(modules.url=='prontuarios'){
+      tips.onclick=( async function(){
 
-    prontuarios();  
+        
+        
+      });
+  
+	var menu    = createObject('{"tag":"menu"}');
+
+      menu.append(btNew(),btFilter());
+  /*     view.append(tips); */
+      view.append(menu); 
+  
+      switch (modules.url) {
+          
+        case 'usersremedios'   :usersremedios();  break;
+        case 'social'          :social();         break;
+        case 'prontuarios'     :prontuarios();    break;
+          
+        default:tabelaLoad(modules);
     
-  }else{
-    
-    	tabelaLoad(modules);
-    
-  }
+      }
   
 }

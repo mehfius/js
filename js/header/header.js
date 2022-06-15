@@ -1,7 +1,7 @@
 function mountHeader(array){
   
-  var user   = JSON.parse(localStorage.user);  
-  var config          = JSON.parse(localStorage.config);
+  var user    = JSON.parse(localStorage.user);  
+  var config  = JSON.parse(localStorage.config);
 
 	if(!got(document,"header").length){
 
@@ -9,7 +9,7 @@ function mountHeader(array){
     var config = JSON.parse(localStorage.config);
 
 		var header = cE("header");
-
+		var content = cE("content");
 		var icon = cE("icon");
 				icon.setAttribute("id","navmenu");
 		    icon.setAttribute("class","icon-menu");
@@ -17,8 +17,8 @@ function mountHeader(array){
     var iconSuite= cE("icon");
         iconSuite.setAttribute("class","icon-infinite");
     
-		header.appendChild(icon);
-   
+	/* 	header.appendChild(icon);
+    */
 		var a 			= cE("a");
 		var logo    = cE("logo");
 		var span    = cE("span");	
@@ -28,8 +28,20 @@ function mountHeader(array){
 		logo.appendChild(span);
 		a.appendChild(logo);
 
-		header.appendChild(a);
-
+    content.append(header_profile());
+    
+		content.appendChild(a);
+    
+		logo.onclick=(function(){
+        
+      var view  = document.querySelector("view");
+    
+      race(view);
+      
+      document.body.setAttribute("modules","");
+      
+    });
+    
 		icon.onclick=(function(){
 
 			var nav = goi("nav"); 
@@ -43,8 +55,8 @@ function mountHeader(array){
     
 		if(user.areas==1){
       
-      header.appendChild(iconSuite);
-      header.appendChild(mountMobileVersion());
+      content.appendChild(iconSuite);
+      content.appendChild(mountMobileVersion());
       
     }
     
@@ -71,8 +83,9 @@ function mountHeader(array){
       }
       
     }
-     
-    header.appendChild(options);
+    
+    content.append(options);
+    header.append(content);
        
 
 	}

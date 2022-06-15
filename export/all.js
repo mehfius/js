@@ -2405,8 +2405,8 @@ function mountFilterStandard(){
 
 function btFilter(){
   
-  var button = createObject('{"tag":"button","innerhtml":"Filtro","action":"filter"}');
-  
+  var button = createObject('{"tag":"button","action":"filter"}');
+  var label  = createObject('{"tag":"label","innerhtml":"Filtro"}');
     var icon = cE("icon")
         icon.setAttribute("class","icon-search");
     
@@ -2416,7 +2416,6 @@ function btFilter(){
           
           if(document.body.getAttribute("filter")=="1"){
              
-           
              document.body.setAttribute("filter","0");
             
           }else{
@@ -2427,8 +2426,8 @@ function btFilter(){
           }
           
         });
-  
-  button.append(icon);
+  button.append(icon,label);
+
   
   return button;
   
@@ -2440,188 +2439,22 @@ function btFilter(){
 
 function btNew(){
 	  
-  var button = createObject('{"tag":"button","innerhtml":"Novo","action":"new"}');
-  
-    var icon = cE("icon")
-        icon.setAttribute("class","icon-file-empty");
+  var button = createObject('{"tag":"button","action":"new"}');
+  var label  = createObject('{"tag":"label","innerhtml":"Novo"}');
+  var icon   = createObject('{"tag":"icon"}');
+      icon.setAttribute("class","icon-file-empty");
 
 			button.onclick=(function(){
 
 				formNew();
 
 			});
-	button.append(icon);
+  
+	    button.append(icon,label);
+  
 	return button;
 	
 }
-
-function mountHeader(array){
-  
-  var user   = JSON.parse(localStorage.user);  
-  var config          = JSON.parse(localStorage.config);
-
-	if(!got(document,"header").length){
-
-    var user   = JSON.parse(localStorage.user);  
-    var config = JSON.parse(localStorage.config);
-
-		var header = cE("header");
-
-		var icon = cE("icon");
-				icon.setAttribute("id","navmenu");
-		    icon.setAttribute("class","icon-menu");
-    
-    var iconSuite= cE("icon");
-        iconSuite.setAttribute("class","icon-infinite");
-    
-		header.appendChild(icon);
-   
-		var a 			= cE("a");
-		var logo    = cE("logo");
-		var span    = cE("span");	
-		var text    = cT(config.label);
-
-		span.appendChild(text);
-		logo.appendChild(span);
-		a.appendChild(logo);
-
-		header.appendChild(a);
-
-		icon.onclick=(function(){
-
-			var nav = goi("nav"); 
-			nav.setAttribute('class','show');
-
-			gridShow();
-
-		});    
-
-		got(document,"body")[0].appendChild(header);
-    
-		if(user.areas==1){
-      
-      header.appendChild(iconSuite);
-      header.appendChild(mountMobileVersion());
-      
-    }
-    
-    var options = document.createElement("options");
-    
-        options.appendChild(iconNotification());
-
-    
-		if(config.id==1){      
-      
-      if(user.areas==50 ){
-        
-        iconPlanilha(options);
-        
-      }
-
-      
-      iconHelp(options);   
-      
-      if(user.areas==50 ){
-        
-        iconReceitaEspecial(options);
-        
-      }
-      
-    }
-     
-    header.appendChild(options);
-       
-
-	}
-	
-}
-
-function resetHeaderOptions(){
-  
-  document.body.setAttribute("notification","0");
-  document.body.setAttribute("filter","0");
-  
-}
-
-function navSuiteMount(){
-  
-  var div = cE("navsuite");
-  
-  return div;
-  
-}
-
-function mountMobileVersion(){
-  
-  var icon = cE("mobileversion");
-  
-  icon.onclick=(function(){
-    
-    var mobile=got(document,"body")[0].getAttribute('mobile');
-    
-    if(mobile==1){
-      got(document,"body")[0].setAttribute('mobile','0');
-    }else{
-      
-      got(document,"body")[0].setAttribute('mobile','1');
-    }
-    
-    
-  });
-  
-  return icon;
-  
-}
-
-function iconHelp(element){
-  
-var icon = cE("icon")
-    icon.setAttribute("class","icon-question");
-
-tooltip(icon,"Tutorial");
-
-var user = JSON.parse(localStorage.user);
-var config = JSON.parse(localStorage.config);
-
-    icon.onclick=(function(){
-
-      if(user.areas==50){
-
-        window.open(config.medicohelp);
-
-      }else if(user.areas==100){
-
-        window.open(config.pacientehelp);
-
-      }
-
-    });
-
-    element.appendChild(icon);
-  
-}
-
-
-function iconVideo(element){
-  
-    var icon = cE("icon")
-        icon.setAttribute("class","icon-users");
-  
-        tooltip(icon,"Video confêrencia");
-  
-    var userinfo = JSON.parse(localStorage.userinfo);
-
-        icon.onclick=(function(){
-          
-          window.open("https://whereby.com/"+userinfo.whereby,"_blank");
-           //window.open("https://facedoctors.com.br/","_blank");
-          
-        });
-
-  element.appendChild(icon);
-  
-}
-
 
 function iconNotification(){
   
@@ -3153,94 +2986,6 @@ function pagesMount(json){
   document.body.append(pages,grid);
  
 }
-
-function profile(){
-
-  var user   = JSON.parse(localStorage.user);  
-  var config = JSON.parse(localStorage.config);
-
-	var div    		= cE("div");
-	var profile 	= cE("profile");
-	//var figure 		= cE("figure");
-	var label 		= cE("label");
-
-		//profile.appendChild(figure);
-
-			label.appendChild(cT(user.label));
-	
-	div.onclick=(function(){	
-
-    document.body.setAttribute("loading","1");
-
-		formEdit("users");
-		navClose();
-		
-	});
-	
-	var attribute = [];
-
-	attribute.tag 		= "uploadedFiles";
-
-	var result = cEA(attribute);
-	
-	if(user.profileimage){
-
-
-    //Object.entries(user.profileimage).forEach(([key, value]) => {
-
-      addUploadFilesProfile(result,user.profileimage[0]);
-
-    //});
-
-	}
-
-	div.appendChild(result);
-
-	addUploadFilesProfile(result,null);
-	
-	profile.appendChild(div);
-	profile.appendChild(label);
-
-	
-	return profile;
-
-}
-
-function addUploadFilesProfile(local,file){
-
-
-  var config = JSON.parse(localStorage.config);
-
-	var div 				= cE("div");
-	var figure 			= cE("figure");
-
-	if(file!==null){
-
-    let filename = file.filename;
-    let key      = file.key;
-
-		sA(figure,"style","background-image:url('"+config.imgp+filename+"?key="+key+"');");
-
-		div.appendChild(figure);
-
-	}else{
-
-		var icon 	= cE("icon");
-
-		figure.setAttribute('style',"");
-		figure.appendChild(icon);
-		div.appendChild(figure);
-
-		local.insertBefore(div, local.childNodes[0]);
-		icon.setAttribute('class','icon-user');
-
-	}
-	
-	local.insertBefore(div, local.childNodes[0]); 
-
-}
-
-
 
       Number.prototype.pad = function(size, character = "0") {
         var s = String(this);
@@ -3825,9 +3570,15 @@ function formEdit(modules,id){
   if(modules=='social'){
     
     social_form(modules,id);
+    
   }else if(modules=='prontuarios'){
     
     prontuarios_form(modules,id);
+    
+  }else if(modules=='users'){
+    
+    users_form(modules,id);
+    
   }else{
     formMount(modules,id);
   }
@@ -4077,15 +3828,29 @@ function btHeaderSeeAttach(){
 
 function btHeaderSave(codigo){
 
-	var bt = cE("icon");
+  var label = createObject('{"tag":"label","innerhtml":"Salvar"}');
+  
+	var bt = createObject('{"tag":"icon"}');
 			
 			bt.setAttribute("action","save");
 			bt.setAttribute("class","icon-checkmark");
+
+      bt.append(label);
+  
 			bt.onclick=(function(){
 					formSave(codigo);
 
 
 			});
+
+
+/*   	var bt = createObject('{"tag":"button","innerhtml":"Salvar"}');
+
+			bt.onclick=(function(){
+					formSave(codigo);
+
+
+			}); */
 
 	return bt;
 	
@@ -4489,11 +4254,11 @@ const checkbox = function(data){
 
       Object.entries(options).forEach(([k, v]) => {
 
-        let replaced = value.replace('{', '[').replace('}', ']');
+        
+        let replaced = (value)?value.replace('{', '[').replace('}', ']'):"[]";
 
         let arrayValue = (value)?JSON.parse(replaced):"";
         
- 
         let checked   = (arrayValue.indexOf(parseInt(k))>-1)?"1":"0";
 
         var opt       = createObject('{"tag":"opt","value":"'+k+'","checked":"'+checked+'"}')
@@ -6182,6 +5947,320 @@ function upload(object){
 		
 }
 
+function mountHeader(array){
+  
+  var user    = JSON.parse(localStorage.user);  
+  var config  = JSON.parse(localStorage.config);
+
+	if(!got(document,"header").length){
+
+    var user   = JSON.parse(localStorage.user);  
+    var config = JSON.parse(localStorage.config);
+
+		var header = cE("header");
+		var content = cE("content");
+		var icon = cE("icon");
+				icon.setAttribute("id","navmenu");
+		    icon.setAttribute("class","icon-menu");
+    
+    var iconSuite= cE("icon");
+        iconSuite.setAttribute("class","icon-infinite");
+    
+	/* 	header.appendChild(icon);
+    */
+		var a 			= cE("a");
+		var logo    = cE("logo");
+		var span    = cE("span");	
+		var text    = cT(config.label);
+
+		span.appendChild(text);
+		logo.appendChild(span);
+		a.appendChild(logo);
+
+    content.append(header_profile());
+    
+		content.appendChild(a);
+    
+		logo.onclick=(function(){
+        
+      var view  = document.querySelector("view");
+    
+      race(view);
+      
+      document.body.setAttribute("modules","");
+      
+    });
+    
+		icon.onclick=(function(){
+
+			var nav = goi("nav"); 
+			nav.setAttribute('class','show');
+
+			gridShow();
+
+		});    
+
+		got(document,"body")[0].appendChild(header);
+    
+		if(user.areas==1){
+      
+      content.appendChild(iconSuite);
+      content.appendChild(mountMobileVersion());
+      
+    }
+    
+    var options = document.createElement("options");
+    
+        options.appendChild(iconNotification());
+
+    
+		if(config.id==1){      
+      
+      if(user.areas==50 ){
+        
+        iconPlanilha(options);
+        
+      }
+
+      
+      iconHelp(options);   
+      
+      if(user.areas==50 ){
+        
+        iconReceitaEspecial(options);
+        
+      }
+      
+    }
+    
+    content.append(options);
+    header.append(content);
+       
+
+	}
+	
+}
+
+function resetHeaderOptions(){
+  
+  document.body.setAttribute("notification","0");
+  document.body.setAttribute("filter","0");
+  
+}
+
+function navSuiteMount(){
+  
+  var div = cE("navsuite");
+  
+  return div;
+  
+}
+
+function mountMobileVersion(){
+  
+  var icon = cE("mobileversion");
+  
+  icon.onclick=(function(){
+    
+    var mobile=got(document,"body")[0].getAttribute('mobile');
+    
+    if(mobile==1){
+      got(document,"body")[0].setAttribute('mobile','0');
+    }else{
+      
+      got(document,"body")[0].setAttribute('mobile','1');
+    }
+    
+    
+  });
+  
+  return icon;
+  
+}
+
+function iconHelp(element){
+  
+var icon = cE("icon")
+    icon.setAttribute("class","icon-question");
+
+tooltip(icon,"Tutorial");
+
+var user = JSON.parse(localStorage.user);
+var config = JSON.parse(localStorage.config);
+
+    icon.onclick=(function(){
+
+      if(user.areas==50){
+
+        window.open(config.medicohelp);
+
+      }else if(user.areas==100){
+
+        window.open(config.pacientehelp);
+
+      }
+
+    });
+
+    element.appendChild(icon);
+  
+}
+
+
+function iconVideo(element){
+  
+    var icon = cE("icon")
+        icon.setAttribute("class","icon-users");
+  
+        tooltip(icon,"Video confêrencia");
+  
+    var userinfo = JSON.parse(localStorage.userinfo);
+
+        icon.onclick=(function(){
+          
+          window.open("https://whereby.com/"+userinfo.whereby,"_blank");
+           //window.open("https://facedoctors.com.br/","_blank");
+          
+        });
+
+  element.appendChild(icon);
+  
+}
+
+
+const header_profile = function() {
+
+  var user      = JSON.parse(localStorage.user);  
+  var config    = JSON.parse(localStorage.config);
+
+
+	var profile 	= createObject('{"tag":"profile"}');
+/* 	var label 		= createObject('{"tag":"label"}'); */
+	var icon 		  = createObject('{"tag":"icon"}');
+  
+  let style = '';
+  
+  if(user.profileimage){
+
+    let key       = user.profileimage[0].key;
+    let filename  = user.profileimage[0].filename;
+    let url       = config.imgp+filename+'?key='+key;
+    
+        style = 'background-image:url('+url+')';
+    
+  }
+  
+  let figure    = createObject('{"tag":"figure","style":"'+style+'"}');
+
+  icon.append(figure);
+  
+  tooltip(icon,"Editar meu profile");
+  
+  label.appendChild(cT(user.label));
+
+  profile.onclick=(function(){	
+
+    document.body.setAttribute("loading","1");
+
+    formEdit("users");
+
+    
+  });
+	
+	profile.append(icon);
+
+	return profile;
+
+};
+
+function profile(){
+
+  var user   = JSON.parse(localStorage.user);  
+  var config = JSON.parse(localStorage.config);
+
+	var div    		= cE("div");
+	var profile 	= cE("profile");
+	//var figure 		= cE("figure");
+	var label 		= cE("label");
+
+		//profile.appendChild(figure);
+
+			label.appendChild(cT(user.label));
+	
+	div.onclick=(function(){	
+
+    document.body.setAttribute("loading","1");
+
+		formEdit("users");
+		navClose();
+		
+	});
+	
+	var attribute = [];
+
+	attribute.tag 		= "uploadedFiles";
+
+	var result = cEA(attribute);
+	
+	if(user.profileimage){
+
+
+    //Object.entries(user.profileimage).forEach(([key, value]) => {
+
+      addUploadFilesProfile(result,user.profileimage[0]);
+
+    //});
+
+	}
+
+	div.appendChild(result);
+
+	addUploadFilesProfile(result,null);
+	
+	profile.appendChild(div);
+	profile.appendChild(label);
+
+	
+	return profile;
+
+}
+
+function addUploadFilesProfile(local,file){
+
+
+  var config = JSON.parse(localStorage.config);
+
+	var div 				= cE("div");
+	var figure 			= cE("figure");
+
+	if(file!==null){
+
+    let filename = file.filename;
+    let key      = file.key;
+
+		sA(figure,"style","background-image:url('"+config.imgp+filename+"?key="+key+"');");
+
+		div.appendChild(figure);
+
+	}else{
+
+		var icon 	= cE("icon");
+
+		figure.setAttribute('style',"");
+		figure.appendChild(icon);
+		div.appendChild(figure);
+
+		local.insertBefore(div, local.childNodes[0]);
+		icon.setAttribute('class','icon-user');
+
+	}
+	
+	local.insertBefore(div, local.childNodes[0]); 
+
+}
+
+
+
 const jsonformlogin = `[
   {
     "tag": "btclose",
@@ -6474,8 +6553,8 @@ function loadLogged(authentic){
 	mountPrint(authentic);
 	mountSection();
 
-	navMount();
-
+/* 	navMount();
+ */
   loadNavSuite();
   modal();
   document.getElementsByTagName("body")[0].setAttribute("modules","");
@@ -7055,12 +7134,16 @@ function getLoginStatus(){
 	
 }
 
-const modal = async function(){
+const modal = function(){
 
+
+
+
+  
   var user      = JSON.parse(localStorage.user);
 
   var body    = got(document,'body')[0];
-  
+
   var modal   = createObject('{"tag":"modal"}');
 
       modal.append(modalProntuarios());
@@ -7070,7 +7153,8 @@ const modal = async function(){
           if(user.areas=='100') {
 
             modal.append(modalMVB());
-
+            modal.append(modalRemedios());
+            
           }
 
           modalUsers();
@@ -7090,13 +7174,15 @@ const modalMVB = function(){
   var title   = createObject('{"tag":"label","innerhtml":"Médicos do Brasil"}');
   
   let content = createObject('{"tag":"content"}');
+
+  let icon    = createObject('{"tag":"icon","class":"icon-file-text2"}');
   let p       = createObject('{"tag":"p","innerhtml":"Formulário para ser preenchido antes do atendimento médico."}');
   let button  = createObject('{"tag":"button","type":"button","innerhtml":"Preencher"}');
   
-      button.onclick=(function(){formEdit("mvb")});
+      content.onclick=(function(){formEdit("mvb")});
   
       header.append(title);
-      content.append(p,button);
+      content.append(icon,p);
 
       div.append(header,content);
 
@@ -7152,13 +7238,36 @@ function modalProntuarios(){
   var title   = createObject('{"tag":"label","innerhtml":"Aviso"}');
   
   let content = createObject('{"tag":"content"}');
-  let p       = createObject('{"tag":"p","innerhtml":"Bem-vindo ao Doctor8, clique abaixo para começar"}');
+  let icon    = createObject('{"tag":"icon","class":"icon-folder-open"}');
+  let p       = createObject('{"tag":"p","innerhtml":"Bem-vindo ao Doctor8, clique aqui para começar"}');
   let button  = createObject('{"tag":"button","type":"button","innerhtml":"Acessar meus arquivos"}');
   
-      button.onclick=(function(){document.querySelector('a[c="133"]').click();});
+      content.onclick=(function(){modulesOpen('prontuarios')});
   
       header.append(title);
-      content.append(p,button);
+      content.append(icon,p);
+
+      div.append(header,content);
+
+  return div;
+
+}
+
+const modalRemedios =  function() {
+
+  var div     = createObject('{"tag":"div"}');
+
+  var header  = createObject('{"tag":"header","style":"background-color:#176B89;"}');
+  var title   = createObject('{"tag":"label","innerhtml":"Aviso"}');
+  
+  let content = createObject('{"tag":"content"}');
+  let icon    = createObject('{"tag":"icon","class":"icon-aid-kit"}');
+  let p       = createObject('{"tag":"p","innerhtml":"Meus medicamentos em uso"}');
+
+      content.onclick=(function(){modulesOpen('usersremedios');}); 
+  
+      header.append(title);
+      content.append(icon,p);
 
       div.append(header,content);
 
@@ -7186,7 +7295,7 @@ const modalUsers = async function(){
     
         button.onclick=(function(){
 
-          document.querySelector('profile > div').click();
+          formEdit("users");
 
           rE(this.parentElement.parentElement);
 
@@ -8188,48 +8297,42 @@ function loadUser(elements,array){
 }
 
 
-
-
 const modulesOpen = async function(url){
 
-//function modulesOpen(url){
-	
-	var body    = got(document,'body')[0];
-
+	var body    = document.querySelector("body");
+  var view    = document.querySelector("view");
+  
 	var modules = getModulesByUrl(url);
-
-	race(got(document,"view")[0]);
-
-	var menu    = cE("menu");
-
-	var view    = got(document,'view')[0];
   
-    menu.appendChild(btNew());
-    menu.appendChild(btFilter());
-    view.appendChild(menu); 
+      body.setAttribute('modules',modules.url)
   
-  sA(body,'modules',modules.url);
+	    race(view);
+  
+	var tips    = createObject('{"tag":"tips","innerhtml":"Preencha este formulário antes do atendimento médico. "}');
 
-  if(modules.url=='usersremedios'){
-    
-    usersremedios();
-    
-  }else if(modules.url=='social'){
-    
-    social();  
-    
-  }else if(modules.url=='prontuarios'){
+      tips.onclick=( async function(){
 
-    prontuarios();  
+        
+        
+      });
+  
+	var menu    = createObject('{"tag":"menu"}');
+
+      menu.append(btNew(),btFilter());
+  /*     view.append(tips); */
+      view.append(menu); 
+  
+      switch (modules.url) {
+          
+        case 'usersremedios'   :usersremedios();  break;
+        case 'social'          :social();         break;
+        case 'prontuarios'     :prontuarios();    break;
+          
+        default:tabelaLoad(modules);
     
-  }else{
-    
-    	tabelaLoad(modules);
-    
-  }
+      }
   
 }
-
 
 function loadPacientes(element,array){
 
@@ -8273,21 +8376,23 @@ const prontuarios = async function(data){
 
   Object.entries(json.page).forEach(([key, value]) => {
 
-    let eId = '{"tag":"item","c":"'+value.id+'"}';
+    let eId    = '{"tag":"item","c":"'+value.id+'"}';
 
     let item   = createObject(eId);
 
-    prontuarios_item(item,value);
-        
-    tabela.append(item);
+                 prontuarios_item(item,value);
+                    
+                 tabela.append(item);
 
   });
 
   view.append(tabela);
   
   document.body.setAttribute("loading","0");
+  
   boxFilter();
-  window.onscroll=prontuarios_lazyload;  
+  
+  window.onscroll = prontuarios_lazyload;  
 
 }
 
@@ -9095,6 +9200,44 @@ match["uuid"]=user.session;
     view.append(modulesLoad(data)); 
     
   })();
+
+}
+
+const users_form = (modules,id,header) =>{
+
+  gridShow();
+  
+  var config    = JSON.parse(localStorage.config);
+	var user      = JSON.parse(localStorage.user);
+
+  const supabaseurl       = localStorage.supabaseurl;
+  const supabase_function = 'rest/v1/rpc/f1'
+
+  const eId               = (id)?id:'0';
+
+  const supabasekey       = localStorage.supabasekey;
+  
+  const url               = supabaseurl + supabase_function;
+  
+  const send = async function() {
+    
+    const rawResponse = await fetch(url, {
+
+      method: 'POST',
+      headers: {'Accept': 'application/json','Content-Type': 'application/json','apikey':supabasekey},
+      body: JSON.stringify({euuid:user.session,eid:id})
+
+    });
+
+    const data = await rawResponse.json();
+          data.id = id;
+	               await formMountFields(modules,data);
+
+    document.body.removeAttribute("loading");
+
+  }
+
+  send();
 
 }
 

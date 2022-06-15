@@ -14,8 +14,8 @@ function loadLogged(authentic){
 	mountPrint(authentic);
 	mountSection();
 
-	navMount();
-
+/* 	navMount();
+ */
   loadNavSuite();
   modal();
   document.getElementsByTagName("body")[0].setAttribute("modules","");

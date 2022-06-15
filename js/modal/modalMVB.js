@@ -7,13 +7,15 @@ const modalMVB = function(){
   var title   = createObject('{"tag":"label","innerhtml":"Médicos do Brasil"}');
   
   let content = createObject('{"tag":"content"}');
+
+  let icon    = createObject('{"tag":"icon","class":"icon-file-text2"}');
   let p       = createObject('{"tag":"p","innerhtml":"Formulário para ser preenchido antes do atendimento médico."}');
   let button  = createObject('{"tag":"button","type":"button","innerhtml":"Preencher"}');
   
-      button.onclick=(function(){formEdit("mvb")});
+      content.onclick=(function(){formEdit("mvb")});
   
       header.append(title);
-      content.append(p,button);
+      content.append(icon,p);
 
       div.append(header,content);
 
