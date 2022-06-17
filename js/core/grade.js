@@ -1,10 +1,10 @@
 function grade(){
   	var grade   = cE('grade');
-	grade.onclick=(function(){
+	/* grade.onclick=(function(){
 		
 		navClose();
 		formClose();
 
-	});
+	}); */
 		document.body.appendChild(grade);
 }
