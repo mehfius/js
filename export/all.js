@@ -4067,6 +4067,10 @@ function formSave(codigo){
       
       social_send(data,codigo); 
       
+    }else if(modules=='users'){
+      
+      users_send(data,codigo); 
+      
     }else{
 
       formSend(data,codigo); 
@@ -4236,8 +4240,10 @@ const fieldCep = function(data){
 }
 
 const checkbox = function(data){
-
-  var value       = (data.value!==undefined)?data.value:"";
+  
+/*   console.log(JSON.stringify(data.value)); */
+  
+  var value       = (data.value!==undefined && data.value!==null)?JSON.stringify(data.value):"";
   var placeholder = (data.placeholder!==undefined)?data.placeholder:"";
 
   var label       = createObject('{"tag":"label","innerhtml":""}');
@@ -4254,10 +4260,9 @@ const checkbox = function(data){
 
       Object.entries(options).forEach(([k, v]) => {
 
-        
-        let replaced = (value)?value.replace('{', '[').replace('}', ']'):"[]";
+        /* let replaced = (value)?value.replace('{', '[').replace('}', ']'):"[]"; */
 
-        let arrayValue = (value)?JSON.parse(replaced):"";
+        let arrayValue = (data.value)?data.value:"";
         
         let checked   = (arrayValue.indexOf(parseInt(k))>-1)?"1":"0";
 
@@ -4276,7 +4281,7 @@ const checkbox = function(data){
 
               let text  = input.value;
 
-              let array = (text)?JSON.parse(input.value.replace('{', '[').replace('}', ']')):[];
+              let array = (text)?JSON.parse(input.value):[];
   
                   value = parseInt(this.getAttribute("value"));
 
@@ -4298,9 +4303,9 @@ const checkbox = function(data){
               
               
               
-              input.value=(array.length)?"{"+array+"}":"{}"; 
+              input.value=(array.length)?"["+array+"]":""; 
 
-              console.log(input.value);
+          
 
             })
 
@@ -8410,7 +8415,6 @@ const prontuarios_chat = async function(element,array) {
 
           if(this.parentElement.querySelector('input').value!==''){
 
-                        
             this.disabled = true;
             
             let json = await prontuarios_chat_insert(this);
@@ -8421,7 +8425,6 @@ const prontuarios_chat = async function(element,array) {
             
             inputchat.value="";
             
-
           }
           
         });
@@ -9259,6 +9262,66 @@ const users_form = (modules,id,header) =>{
 
   send();
 
+}
+
+const users_send = (data,id) =>{
+
+  const config      = JSON.parse(localStorage.config);
+  const user        = JSON.parse(localStorage.user);
+
+  data.id           = id;
+
+  document.body.setAttribute("loading","1");
+
+  formClose();
+
+  const send = async function(data) {
+
+    const updated_data = await users_update(data);
+    
+/*     prontuarios_reload(updated_data); */
+
+  }
+
+  send(data); 
+  
+  document.body.removeAttribute("loading");
+  
+}
+
+
+const users_update = async function(data) {
+  
+  const user              = JSON.parse(localStorage.user);
+  
+  const supabaseurl       = localStorage.supabaseurl;
+  const supabase_function = 'rest/v1/rpc/u1'
+
+  
+  const eId               = (data.id)?data.id:'0';
+
+  const supabasekey       = localStorage.supabasekey;
+  
+  const url               = supabaseurl + supabase_function;
+
+  let param = {
+    
+    'euuid':user.session,
+    'data':data
+
+  }
+ 
+  const response = await fetch(url, {
+
+    method: 'POST',
+    mode: 'cors',
+    headers: {'Accept': 'application/json','Content-Type': 'application/json','apikey':supabasekey},
+    body:JSON.stringify(param)
+                               
+  });
+
+  return await response.json();
+  
 }
 
 const usersremedios = async function(data){

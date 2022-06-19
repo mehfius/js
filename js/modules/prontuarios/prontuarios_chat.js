@@ -12,7 +12,6 @@ const prontuarios_chat = async function(element,array) {
 
           if(this.parentElement.querySelector('input').value!==''){
 
-                        
             this.disabled = true;
             
             let json = await prontuarios_chat_insert(this);
@@ -23,7 +22,6 @@ const prontuarios_chat = async function(element,array) {
             
             inputchat.value="";
             
-
           }
           
         });

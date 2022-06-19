@@ -88,6 +88,10 @@ function formSave(codigo){
       
       social_send(data,codigo); 
       
+    }else if(modules=='users'){
+      
+      users_send(data,codigo); 
+      
     }else{
 
       formSend(data,codigo); 

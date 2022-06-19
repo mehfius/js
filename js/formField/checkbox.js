@@ -1,6 +1,8 @@
 const checkbox = function(data){
-
-  var value       = (data.value!==undefined)?data.value:"";
+  
+/*   console.log(JSON.stringify(data.value)); */
+  
+  var value       = (data.value!==undefined && data.value!==null)?JSON.stringify(data.value):"";
   var placeholder = (data.placeholder!==undefined)?data.placeholder:"";
 
   var label       = createObject('{"tag":"label","innerhtml":""}');
@@ -17,10 +19,9 @@ const checkbox = function(data){
 
       Object.entries(options).forEach(([k, v]) => {
 
-        
-        let replaced = (value)?value.replace('{', '[').replace('}', ']'):"[]";
+        /* let replaced = (value)?value.replace('{', '[').replace('}', ']'):"[]"; */
 
-        let arrayValue = (value)?JSON.parse(replaced):"";
+        let arrayValue = (data.value)?data.value:"";
         
         let checked   = (arrayValue.indexOf(parseInt(k))>-1)?"1":"0";
 
@@ -39,7 +40,7 @@ const checkbox = function(data){
 
               let text  = input.value;
 
-              let array = (text)?JSON.parse(input.value.replace('{', '[').replace('}', ']')):[];
+              let array = (text)?JSON.parse(input.value):[];
   
                   value = parseInt(this.getAttribute("value"));
 
@@ -61,9 +62,9 @@ const checkbox = function(data){
               
               
               
-              input.value=(array.length)?"{"+array+"}":"{}"; 
+              input.value=(array.length)?"["+array+"]":""; 
 
-              console.log(input.value);
+          
 
             })
 
