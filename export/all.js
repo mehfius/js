@@ -3752,11 +3752,12 @@ function btClose(codigo){
 
 function btBack(codigo){
 
-	var bt = cE("icon");
-			//btClose.setAttribute("class","icon-cross");
-	//bt.appendChild(cT("<"));
-			bt.setAttribute("action","back");
-			bt.setAttribute("class","icon-arrow-left2");
+  var label = createObject('{"tag":"label","innerhtml":"Cancelar"}');
+  var bt    = createObject('{"tag":"icon","class":"icon-arrow-left2","action":"back"}');
+
+
+bt.append(label);
+  
 			bt.onclick=(function(){
 
 				formClose(codigo);
@@ -5963,6 +5964,9 @@ function mountHeader(array){
     var config = JSON.parse(localStorage.config);
 
 		var header = cE("header");
+    
+    var header_progressbar 		  = createObject('{"tag":"header_progressbar","class":"_it4vx _72fik"}');
+    
 		var content = cE("content");
 		var icon = cE("icon");
 				icon.setAttribute("id","navmenu");
@@ -6039,7 +6043,7 @@ function mountHeader(array){
     }
     
     content.append(options);
-    header.append(content);
+    header.append(header_progressbar,content);
        
 
 	}
@@ -6467,7 +6471,7 @@ function load(){
 
    // suporteLoad();
 
-    document.body.appendChild(loadingMount());
+/*     document.body.appendChild(loadingMount()); */
     document.body.appendChild(ad());
     document.body.setAttribute('open','0');
     document.body.setAttribute('logged','0');
@@ -8360,7 +8364,7 @@ function loadPacientes(element,array){
 }
 
 const prontuarios = async function(data){
-
+document.body.setAttribute("loading","1");
   let json    = (data==undefined)?await prontuarios_select(null):data;
 
   let view    = document.querySelector('view');
@@ -8563,7 +8567,9 @@ const prontuarios_chat_select = async function(element) {
 }
 
 const prontuarios_form = (modules,id,header) =>{
-
+  
+  document.body.setAttribute("loading","1");
+  
   gridShow();
   
   var config    = JSON.parse(localStorage.config);
@@ -9227,7 +9233,9 @@ match["uuid"]=user.session;
 }
 
 const users_form = (modules,id,header) =>{
-
+  
+  document.body.setAttribute("loading","1");
+  
   gridShow();
   
   var config    = JSON.parse(localStorage.config);
@@ -9256,12 +9264,14 @@ const users_form = (modules,id,header) =>{
           data.id = id;
 	               await formMountFields(modules,data);
 
-    document.body.removeAttribute("loading");
+   document.body.removeAttribute("loading");
 
   }
 
   send();
+  
 
+  
 }
 
 const users_send = (data,id) =>{
@@ -9279,18 +9289,20 @@ const users_send = (data,id) =>{
 
     const updated_data = await users_update(data);
     
-/*     prontuarios_reload(updated_data); */
-
+    /*     prontuarios_reload(updated_data); */
+document.body.removeAttribute("loading");
   }
 
   send(data); 
   
-  document.body.removeAttribute("loading");
+/*   document.body.removeAttribute("loading"); */
   
 }
 
 
 const users_update = async function(data) {
+  console.log("loading");
+  document.body.setAttribute("loading","1");
   
   const user              = JSON.parse(localStorage.user);
   
@@ -9319,7 +9331,9 @@ const users_update = async function(data) {
     body:JSON.stringify(param)
                                
   });
+  
 
+  
   return await response.json();
   
 }

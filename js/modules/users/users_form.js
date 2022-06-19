@@ -1,5 +1,7 @@
 const users_form = (modules,id,header) =>{
-
+  
+  document.body.setAttribute("loading","1");
+  
   gridShow();
   
   var config    = JSON.parse(localStorage.config);
@@ -28,10 +30,12 @@ const users_form = (modules,id,header) =>{
           data.id = id;
 	               await formMountFields(modules,data);
 
-    document.body.removeAttribute("loading");
+   document.body.removeAttribute("loading");
 
   }
 
   send();
+  
 
+  
 }

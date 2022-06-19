@@ -13,12 +13,12 @@ const users_send = (data,id) =>{
 
     const updated_data = await users_update(data);
     
-/*     prontuarios_reload(updated_data); */
-
+    /*     prontuarios_reload(updated_data); */
+document.body.removeAttribute("loading");
   }
 
   send(data); 
   
-  document.body.removeAttribute("loading");
+/*   document.body.removeAttribute("loading"); */
   
 }

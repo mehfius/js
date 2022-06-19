@@ -15,7 +15,7 @@ function load(){
 
    // suporteLoad();
 
-    document.body.appendChild(loadingMount());
+/*     document.body.appendChild(loadingMount()); */
     document.body.appendChild(ad());
     document.body.setAttribute('open','0');
     document.body.setAttribute('logged','0');

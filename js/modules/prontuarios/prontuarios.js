@@ -1,5 +1,5 @@
 const prontuarios = async function(data){
-
+document.body.setAttribute("loading","1");
   let json    = (data==undefined)?await prontuarios_select(null):data;
 
   let view    = document.querySelector('view');

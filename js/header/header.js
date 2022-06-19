@@ -9,6 +9,9 @@ function mountHeader(array){
     var config = JSON.parse(localStorage.config);
 
 		var header = cE("header");
+    
+    var header_progressbar 		  = createObject('{"tag":"header_progressbar","class":"_it4vx _72fik"}');
+    
 		var content = cE("content");
 		var icon = cE("icon");
 				icon.setAttribute("id","navmenu");
@@ -85,7 +88,7 @@ function mountHeader(array){
     }
     
     content.append(options);
-    header.append(content);
+    header.append(header_progressbar,content);
        
 
 	}

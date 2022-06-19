@@ -63,11 +63,12 @@ function btClose(codigo){
 
 function btBack(codigo){
 
-	var bt = cE("icon");
-			//btClose.setAttribute("class","icon-cross");
-	//bt.appendChild(cT("<"));
-			bt.setAttribute("action","back");
-			bt.setAttribute("class","icon-arrow-left2");
+  var label = createObject('{"tag":"label","innerhtml":"voltar"}');
+  var bt    = createObject('{"tag":"icon","class":"icon-arrow-left2","action":"back"}');
+
+
+bt.append(label);
+  
 			bt.onclick=(function(){
 
 				formClose(codigo);

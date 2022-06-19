@@ -1,5 +1,7 @@
 const prontuarios_form = (modules,id,header) =>{
-
+  
+  document.body.setAttribute("loading","1");
+  
   gridShow();
   
   var config    = JSON.parse(localStorage.config);

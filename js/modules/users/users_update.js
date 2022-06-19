@@ -1,4 +1,6 @@
 const users_update = async function(data) {
+  console.log("loading");
+  document.body.setAttribute("loading","1");
   
   const user              = JSON.parse(localStorage.user);
   
@@ -27,7 +29,9 @@ const users_update = async function(data) {
     body:JSON.stringify(param)
                                
   });
+  
 
+  
   return await response.json();
   
 }
