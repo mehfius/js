@@ -7165,7 +7165,7 @@ const modal = function(){
      
           if(user.areas=='100') {
 
-            /* modal.append(modalMVB()); */
+            modal.append(modalMVB());
             modal.append(modalRemedios());
             
           }
@@ -8400,10 +8400,23 @@ const mvb_send = (data,id) =>{
 
   formClose();
 
+  var fieldlabel="";
+
+  Object.entries(data.fieldlabel).forEach(([key, value]) => {
+
+      if(data.fieldlabel[key] && key!=='welcome'){
+            fieldlabel+=''+value.label+'\n';
+            fieldlabel+=value.value+'\n\n'; 
+      }
+    
+  });
+
+ data.fieldlabel=fieldlabel;
+  
   const send = async function(data) {
 
     const updated_data = await mvb_update(data);
-    
+  
     /*     prontuarios_reload(updated_data); */
     
     document.body.removeAttribute("loading");
@@ -8473,574 +8486,6 @@ function loadPacientes(element,array){
      
    }
 
-}
-
-const prontuarios = async function(data){
-document.body.setAttribute("loading","1");
-  let json    = (data==undefined)?await prontuarios_select(null):data;
-
-  let view    = document.querySelector('view');
-
-  if(view.querySelector('tabela')){
-
-    var tabela  = view.querySelector('tabela');
-
-    race(tabela);
-    
-  }else{
-    
-    var tabela  = createObject('{"tag":"tabela"}');
-    
-  }
-
-  var modules = document.body.getAttribute("modules");
-
-  Object.entries(json.page).forEach(([key, value]) => {
-
-    let eId    = '{"tag":"item","c":"'+value.id+'"}';
-
-    let item   = createObject(eId);
-
-                 prontuarios_item(item,value);
-                    
-                 tabela.append(item);
-
-  });
-
-  view.append(tabela);
-  
-  document.body.setAttribute("loading","0");
-  
-  boxFilter();
-  
-  window.onscroll = prontuarios_lazyload;  
-
-}
-
-const prontuarios_chat = async function(element,array) {
-  
-    let chat        = createObject('{"tag":"chat"}');
-    let viewchat    = createObject('{"tag":"viewchat"}');
-    let formchat    = createObject('{"tag":"formchat"}');
-  
-    let inputchat   = createObject('{"tag":"input","placeholder":"Digite um comentário"}');
-    let inputbutton = createObject('{"tag":"button","innerhtml":"Enviar"}');
-    let iconloading = createObject('{"tag":"icon","class":"icon-spinner9"}');
-  
-        inputbutton.onclick=(async function(){
-
-          if(this.parentElement.querySelector('input').value!==''){
-
-            this.disabled = true;
-            
-            let json = await prontuarios_chat_insert(this);
-      
-            /* prontuarios_chat_reload(element,json); */
-              
-            this.disabled = false;
-            
-            inputchat.value="";
-            
-          }
-          
-        });
-
-        inputchat.addEventListener("keypress", function(event) {
-
-          if (event.key === "Enter") {
-  
-            this.parentElement.querySelector("button").click();
-            
-          }
-          
-        });
-  
-    formchat.append(inputchat,inputbutton,iconloading);
-    chat.append(viewchat,formchat);
-  
-    element.appendChild(chat);
-  
-}
-
-const prontuarios_chat_insert = async function(element) {
-  
-  const user = JSON.parse(localStorage.user);
-  
-  const supabaseurl       = localStorage.supabaseurl;
-  const supabase_function = 'rest/v1/rpc/u133chatv1'
-  const supabasekey       = localStorage.supabasekey;
-  
-  const url  = supabaseurl + supabase_function
-
-  let label = element.parentElement.querySelector("input").value;
-  let id    = element.parentElement.parentElement.parentElement.getAttribute("c");
-
-  
-  let param = {'euuid':user.session,'label':label,'prontuarios':id}
-  
-  const response = await fetch(url, {
-
-    method: 'POST',
-    mode: 'cors',
-    headers: {'Accept': 'application/json','Content-Type': 'application/json','apikey':supabasekey},
-    body:JSON.stringify(param)
-    
-  });
-
-  
-  
-  return await response.json();
-}
-
-const prontuarios_chat_reload = async function(element,ejson) {
-  
-  config = JSON.parse(localStorage.config);
-  
-  if(ejson!==undefined){
-  
-      var json = ejson;
-    
-  }else{
-    
-      var json = await prontuarios_chat_select(element);
-    
-  }
-
-  let viewchat = element.querySelector('viewchat');
-  
-/*   if(json.chat){
-  race(viewchat);  
-  } */
-  console.log(json.chat.length);
-  if(json.chat.length){
-    
-    Object.entries(json.chat).forEach(([key, value]) => {
-  
-      let users      = createObject('{"tag":"userslabel","innerhtml":"'+value.userslabel+'"}');
-      let created_at = createObject('{"tag":"created_at","innerhtml":"'+value.created_at+'"}');
-      let label      = createObject('{"tag":"label","innerhtml":"'+value.label+'"}');
-      let figure     = createObject('{"tag":"figure"}');
-      let message    = createObject('{"tag":"message"}');
-      let post       = createObject('{"tag":"post","chat_id":"'+value.id+'"}');
-  
-          message.append(created_at,users,label);
-          post.append(figure,message);
-          viewchat.append(post);
-  
-          if(value.files){
-            
-            let url = config.imgp+value.files[0].filename+'?key='+value.files[0].key;
-            
-                figure.setAttribute("style","background-image:url('"+url+"')");
-            
-          }
-      
-    });
-
-
-    
-/*   race(viewchat); */
-    viewchat.scrollTop = viewchat.scrollHeight;
-    
-  }
-  
-  
-}
-
-const prontuarios_chat_select = async function(element) {
-  
-  const user = JSON.parse(localStorage.user);
-  
-  const supabaseurl       = localStorage.supabaseurl;
-  const supabase_function = 'rest/v1/rpc/s133chatv1'
-  const supabasekey       = localStorage.supabasekey;
-  
-  const url               = supabaseurl + supabase_function
- 
-  let id      = element.getAttribute('c');
-
-  let post    = element.querySelector("chat post:last-child");
-  
-  let last_id = (post)?post.getAttribute("chat_id"):null;
-  
-  let param   = {'euuid':user.session,'prontuarios':id,'last_id':last_id}
-  
-  const response = await fetch(url, {
-
-    method: 'POST',
-    mode: 'cors',
-    headers: {'Accept': 'application/json','Content-Type': 'application/json','apikey':supabasekey},
-    body:JSON.stringify(param)
-    
-  });
-
-  return await response.json();
-
-}
-
-const prontuarios_form = (modules,id,header) =>{
-  
-  document.body.setAttribute("loading","1");
-  
-  gridShow();
-  
-  var config    = JSON.parse(localStorage.config);
-	var user      = JSON.parse(localStorage.user);
-
-  const supabaseurl       = localStorage.supabaseurl;
-  const supabase_function = 'rest/v1/rpc/f133'
-
-  
-  const eId               = (id)?id:'0';
-
-  const supabasekey       = localStorage.supabasekey;
-  
-  const url               = supabaseurl + supabase_function;
-  
-  const send = async function() {
-    
-    const rawResponse = await fetch(url, {
-
-      method: 'POST',
-      headers: {'Accept': 'application/json','Content-Type': 'application/json','apikey':supabasekey},
-      body: JSON.stringify({euuid:user.session,eid:id})
-
-    });
-
-    const data = await rawResponse.json();
-          data.id = id;
-	               await formMountFields(modules,data);
-
-    document.body.removeAttribute("loading");
-
-  }
-
-  send();
-
-}
-
-const prontuarios_item = (item,value) =>{
-  
-  var header = cE("header");
-  
-  var footer = cE("footer");
-
-      item.setAttribute('me',value.me);
-    
-      item.setAttribute("a",value.a);
-
-      item.setAttribute("view","0");
-  
-      if(value.me==false){
-        
-          var iconshare = document.createElement("icon");
-              iconshare.setAttribute("class","icon-share2");
-        
-          header.appendChild(iconshare);
-        
-      }
-    
-      item.append(header); 
-  	
-      loadPacientes(header,value.jsonpacientes);
-      
-      category(header,item,value.category,value.categorylabel);
-  
-      let text = cT(value.label);
-      
-      let eP = '{"tag":"p"}';
-      
-      let object = createObject(eP)
-    
-          object.append(text);
-  
-          if(value.label){
-            
-            item.append(object);
-            
-          }
-     
-          loadPacientesFull(item,value.jsonpacientes);
-         
-          prontuarios_options(item,value)
-      
-          itemDetail(item,value);
-          loadMedicos(item,value.jsonmedicos);
-          loadShare(item,value);
-          prontuarios_chat(item,value);
-          loadItemUpdateTime(footer,value);
-        
-          if(footer.innerHTML!=""){
-            
-            item.appendChild(footer);
-            
-          }
-  
-}
-
-  const prontuarios_lazyload = async function() {
-        
-    var config        = JSON.parse(localStorage.config);
-    var user          = JSON.parse(localStorage.user);
-    
-    var modules       = document.body.getAttribute("modules");
-    var rolled        = document.body.offsetHeight + document.body.scrollTop + document.documentElement.scrollTop;
-    var height        = document.documentElement.scrollHeight;
-    var tabela        = document.querySelectorAll("tabela")[0];
-
-    if ((rolled) > (height-10)) {
-        
-        window.onscroll = null;
-  
-        const selectsearch = document.querySelectorAll("selectsearch")
-  
-        let match = {};
-  
-        Object.entries(selectsearch).forEach(([key, value]) => {
-  
-          let i = value.getAttribute('id');
-          let m = value.getAttribute('modules');
-  
-          if(i){
-  
-            //f.push(JSON.parse('{"'+m+'":'+i+'}'));
-            match[m]=i;
-  
-          }
-  
-        });
-  
-        match["uuid"]=user.session;
-  
-        var offset = got(got(document,"tabela")[0],"item").length;
-  
-        document.body.setAttribute("loading","1");
-  
-        const data = await prontuarios_select(offset);
-  
-        Object.entries(data.page).forEach(([key, value]) => { 
-          
-          let item = createObject('{"tag":"item","c":"'+value.id+'"}');
-          
-          prontuarios_item(item,value);
-          
-          tabela.append(item);
-          
-        });
-  
-        document.body.setAttribute("loading","0");
-        
-       window.onscroll=prontuarios_lazyload;
-
-
-    }
-
-}
-
-const prontuarios_options = async function(element,array) {
-  
-    let options = createObject('{"tag":"options"}');
-  
-  	if(array.me==true){
-    
-      let edit = createObject('{"tag":"button","action":"edit"}');
-      
-      let iconedit  = createObject('{"tag":"icon","class":"icon-pencil"}');
-      let labeledit = createObject('{"tag":"label","innerhtml":"Editar"}');
-
-      edit.append(iconedit,labeledit);
-      
-	    edit.onclick=( async function(){ 
-
-        document.body.setAttribute("loading","1");
-        await prontuarios_form(gA(),array.id)
-      
-      });
-      
-      options.append(edit);
-      
-    }
-    
-    let chatview       = createObject('{"tag":"button","action":"chatview"}');
-    let iconlchatview  = createObject('{"tag":"icon","class":"icon-bubbles3"}');
-    let labelchatview  = createObject('{"tag":"label","innerhtml":"Discussão"}');
-  
-        chatview.append(iconlchatview,labelchatview);
-  
-        chatview.onclick=( async function(){ 
-        
-          document.querySelector("item[c='"+array.id+"']").setAttribute("chat","1");
-          
-          prontuarios_chat_reload(element);
-        
-        });
-
-    let chatclose       = createObject('{"tag":"button","action":"chatclose"}');
-    let iconchatclose   = createObject('{"tag":"icon","class":"icon-bubbles3"}');
-    let labelchatclose  = createObject('{"tag":"label","innerhtml":"Fechar"}');
-  
-        chatclose.append(iconchatclose,labelchatclose);
-        chatclose.onclick=( async function(){ 
-        
-          document.querySelector("item[c='"+array.id+"']").setAttribute("chat","0");
-        
-        });
-    
-        options.append(chatview,chatclose);
-    
-    let view = createObject('{"tag":"button","action":"view"}');
-    let iconview  = createObject('{"tag":"icon","class":"icon-enlarge"}');
-    let labelview  = createObject('{"tag":"label","innerhtml":"Expandir"}');
-  
-        view.append(iconview,labelview);
-
-        view.onclick=(function(){ 
-        
-          document.querySelector("item[c='"+array.id+"']").setAttribute("view","1");
-        
-        });
-    
-    let close       = createObject('{"tag":"button","action":"close"}');
-    let iconclose    = createObject('{"tag":"icon","class":"icon-shrink"}');
-    let labelclose   = createObject('{"tag":"label","innerhtml":"Fechar"}');
-  
-        close.append(iconclose,labelclose);
-      
-        close.onclick=(function(){ 
-        
-          document.querySelector("item[c='"+array.id+"']").setAttribute("view","0");
-        
-        });
-    
-    options.append(view);
-    options.append(close);
-    element.append(options);
-
-
-}
-
-const prontuarios_reload = (data) =>{
-
-    var user    = JSON.parse(localStorage.user);
-    var config  = JSON.parse(localStorage.config);
-
-var page = data.page;
-
-  
-     if(page.length==1){
-    
-        const send = async function() {
-        
-          var item = document.querySelector("tabela item[c='"+data.page[0].id+"']");
-        
-          race(item);
-          
-          prontuarios_item(item,page[0]);
-          
-          document.body.removeAttribute("loading");
-          
-        }
-        
-        send();
-       
-    }else if(page.length>1){
-       
-      prontuarios(data);
-       
-    }else{
-       
-      console.log('sem dados');
-      
-    } 
-
-}
-
-const prontuarios_select = async function(query_offset) {
-  
-  const user = JSON.parse(localStorage.user);
-  
-  const supabaseurl       = localStorage.supabaseurl;
-  const supabase_function = 'rest/v1/rpc/s133v1'
-  const supabasekey       = localStorage.supabasekey;
-  
-  const url  = supabaseurl + supabase_function
-  
-  let param = {'euuid':user.session,'query_offset':query_offset,'eid':null}
-  
-  const response = await fetch(url, {
-
-    method: 'POST',
-    mode: 'cors',
-    headers: {'Accept': 'application/json','Content-Type': 'application/json','apikey':supabasekey},
-    body:JSON.stringify(param)
-    
-  });
-
-  return await response.json();
-  
-}
-
-const prontuarios_send = (data,id) =>{
-
-  const config      = JSON.parse(localStorage.config);
-  const user        = JSON.parse(localStorage.user);
-
-  data.id           = id;
-
-  document.body.setAttribute("loading","1");
-
-  formClose();
-
-  const send = async function(data) {
-
-    const updated_data = await prontuarios_update(data);
-    
-    prontuarios_reload(updated_data);
-
-  }
-
-  send(data); 
-
-}
-
-
-const prontuarios_update = async function(data) {
-  
-  const user              = JSON.parse(localStorage.user);
-  
-  const supabaseurl       = localStorage.supabaseurl;
-  const supabase_function = 'rest/v1/rpc/u133'
-
-  
-  const eId               = (data.id)?data.id:'0';
-
-  const supabasekey       = localStorage.supabasekey;
-  
-  const url               = supabaseurl + supabase_function;
-
-  let param = {
-    
-    'euuid':user.session,
-    'eid':eId,
-    'ecategory':data.category,
-    'efiles':data.files,
-    'epacientes':data.pacientes,
-    'elabel':data.label,
-    'eshare':data.share
-
-  }
- 
-  const response = await fetch(url, {
-
-    method: 'POST',
-    mode: 'cors',
-    headers: {'Accept': 'application/json','Content-Type': 'application/json','apikey':supabasekey},
-    body:JSON.stringify(param)
-                               
-  });
-
-  return await response.json();
-  
 }
 
 const social = async function(data){
@@ -9611,6 +9056,574 @@ const usersremedios_update = async function(data) {
 
   let param = {'eid':eId,'eremedios':data.remedios,'eposologia':data.posologia,'euuid':user.session}
   
+  const response = await fetch(url, {
+
+    method: 'POST',
+    mode: 'cors',
+    headers: {'Accept': 'application/json','Content-Type': 'application/json','apikey':supabasekey},
+    body:JSON.stringify(param)
+                               
+  });
+
+  return await response.json();
+  
+}
+
+const prontuarios = async function(data){
+document.body.setAttribute("loading","1");
+  let json    = (data==undefined)?await prontuarios_select(null):data;
+
+  let view    = document.querySelector('view');
+
+  if(view.querySelector('tabela')){
+
+    var tabela  = view.querySelector('tabela');
+
+    race(tabela);
+    
+  }else{
+    
+    var tabela  = createObject('{"tag":"tabela"}');
+    
+  }
+
+  var modules = document.body.getAttribute("modules");
+
+  Object.entries(json.page).forEach(([key, value]) => {
+
+    let eId    = '{"tag":"item","c":"'+value.id+'"}';
+
+    let item   = createObject(eId);
+
+                 prontuarios_item(item,value);
+                    
+                 tabela.append(item);
+
+  });
+
+  view.append(tabela);
+  
+  document.body.setAttribute("loading","0");
+  
+  boxFilter();
+  
+  window.onscroll = prontuarios_lazyload;  
+
+}
+
+const prontuarios_chat = async function(element,array) {
+  
+    let chat        = createObject('{"tag":"chat"}');
+    let viewchat    = createObject('{"tag":"viewchat"}');
+    let formchat    = createObject('{"tag":"formchat"}');
+  
+    let inputchat   = createObject('{"tag":"input","placeholder":"Digite um comentário"}');
+    let inputbutton = createObject('{"tag":"button","innerhtml":"Enviar"}');
+    let iconloading = createObject('{"tag":"icon","class":"icon-spinner9"}');
+  
+        inputbutton.onclick=(async function(){
+
+          if(this.parentElement.querySelector('input').value!==''){
+
+            this.disabled = true;
+            
+            let json = await prontuarios_chat_insert(this);
+      
+            /* prontuarios_chat_reload(element,json); */
+              
+            this.disabled = false;
+            
+            inputchat.value="";
+            
+          }
+          
+        });
+
+        inputchat.addEventListener("keypress", function(event) {
+
+          if (event.key === "Enter") {
+  
+            this.parentElement.querySelector("button").click();
+            
+          }
+          
+        });
+  
+    formchat.append(inputchat,inputbutton,iconloading);
+    chat.append(viewchat,formchat);
+  
+    element.appendChild(chat);
+  
+}
+
+const prontuarios_chat_insert = async function(element) {
+  
+  const user = JSON.parse(localStorage.user);
+  
+  const supabaseurl       = localStorage.supabaseurl;
+  const supabase_function = 'rest/v1/rpc/u133chatv1'
+  const supabasekey       = localStorage.supabasekey;
+  
+  const url  = supabaseurl + supabase_function
+
+  let label = element.parentElement.querySelector("input").value;
+  let id    = element.parentElement.parentElement.parentElement.getAttribute("c");
+
+  
+  let param = {'euuid':user.session,'label':label,'prontuarios':id}
+  
+  const response = await fetch(url, {
+
+    method: 'POST',
+    mode: 'cors',
+    headers: {'Accept': 'application/json','Content-Type': 'application/json','apikey':supabasekey},
+    body:JSON.stringify(param)
+    
+  });
+
+  
+  
+  return await response.json();
+}
+
+const prontuarios_chat_reload = async function(element,ejson) {
+  
+  config = JSON.parse(localStorage.config);
+  
+  if(ejson!==undefined){
+  
+      var json = ejson;
+    
+  }else{
+    
+      var json = await prontuarios_chat_select(element);
+    
+  }
+
+  let viewchat = element.querySelector('viewchat');
+  
+/*   if(json.chat){
+  race(viewchat);  
+  } */
+  console.log(json.chat.length);
+  if(json.chat.length){
+    
+    Object.entries(json.chat).forEach(([key, value]) => {
+  
+      let users      = createObject('{"tag":"userslabel","innerhtml":"'+value.userslabel+'"}');
+      let created_at = createObject('{"tag":"created_at","innerhtml":"'+value.created_at+'"}');
+      let label      = createObject('{"tag":"label","innerhtml":"'+value.label+'"}');
+      let figure     = createObject('{"tag":"figure"}');
+      let message    = createObject('{"tag":"message"}');
+      let post       = createObject('{"tag":"post","chat_id":"'+value.id+'"}');
+  
+          message.append(created_at,users,label);
+          post.append(figure,message);
+          viewchat.append(post);
+  
+          if(value.files){
+            
+            let url = config.imgp+value.files[0].filename+'?key='+value.files[0].key;
+            
+                figure.setAttribute("style","background-image:url('"+url+"')");
+            
+          }
+      
+    });
+
+
+    
+/*   race(viewchat); */
+    viewchat.scrollTop = viewchat.scrollHeight;
+    
+  }
+  
+  
+}
+
+const prontuarios_chat_select = async function(element) {
+  
+  const user = JSON.parse(localStorage.user);
+  
+  const supabaseurl       = localStorage.supabaseurl;
+  const supabase_function = 'rest/v1/rpc/s133chatv1'
+  const supabasekey       = localStorage.supabasekey;
+  
+  const url               = supabaseurl + supabase_function
+ 
+  let id      = element.getAttribute('c');
+
+  let post    = element.querySelector("chat post:last-child");
+  
+  let last_id = (post)?post.getAttribute("chat_id"):null;
+  
+  let param   = {'euuid':user.session,'prontuarios':id,'last_id':last_id}
+  
+  const response = await fetch(url, {
+
+    method: 'POST',
+    mode: 'cors',
+    headers: {'Accept': 'application/json','Content-Type': 'application/json','apikey':supabasekey},
+    body:JSON.stringify(param)
+    
+  });
+
+  return await response.json();
+
+}
+
+const prontuarios_form = (modules,id,header) =>{
+  
+  document.body.setAttribute("loading","1");
+  
+  gridShow();
+  
+  var config    = JSON.parse(localStorage.config);
+	var user      = JSON.parse(localStorage.user);
+
+  const supabaseurl       = localStorage.supabaseurl;
+  const supabase_function = 'rest/v1/rpc/f133'
+
+  
+  const eId               = (id)?id:'0';
+
+  const supabasekey       = localStorage.supabasekey;
+  
+  const url               = supabaseurl + supabase_function;
+  
+  const send = async function() {
+    
+    const rawResponse = await fetch(url, {
+
+      method: 'POST',
+      headers: {'Accept': 'application/json','Content-Type': 'application/json','apikey':supabasekey},
+      body: JSON.stringify({euuid:user.session,eid:id})
+
+    });
+
+    const data = await rawResponse.json();
+          data.id = id;
+	               await formMountFields(modules,data);
+
+    document.body.removeAttribute("loading");
+
+  }
+
+  send();
+
+}
+
+const prontuarios_item = (item,value) =>{
+  
+  var header = cE("header");
+  
+  var footer = cE("footer");
+
+      item.setAttribute('me',value.me);
+    
+      item.setAttribute("a",value.a);
+
+      item.setAttribute("view","0");
+  
+      if(value.me==false){
+        
+          var iconshare = document.createElement("icon");
+              iconshare.setAttribute("class","icon-share2");
+        
+          header.appendChild(iconshare);
+        
+      }
+    
+      item.append(header); 
+  	
+      loadPacientes(header,value.jsonpacientes);
+      
+      category(header,item,value.category,value.categorylabel);
+  
+      let text = cT(value.label);
+      
+      let eP = '{"tag":"p"}';
+      
+      let object = createObject(eP)
+    
+          object.append(text);
+  
+          if(value.label){
+            
+            item.append(object);
+            
+          }
+     
+          loadPacientesFull(item,value.jsonpacientes);
+         
+          prontuarios_options(item,value)
+      
+          itemDetail(item,value);
+          loadMedicos(item,value.jsonmedicos);
+          loadShare(item,value);
+          prontuarios_chat(item,value);
+          loadItemUpdateTime(footer,value);
+        
+          if(footer.innerHTML!=""){
+            
+            item.appendChild(footer);
+            
+          }
+  
+}
+
+  const prontuarios_lazyload = async function() {
+        
+    var config        = JSON.parse(localStorage.config);
+    var user          = JSON.parse(localStorage.user);
+    
+    var modules       = document.body.getAttribute("modules");
+    var rolled        = document.body.offsetHeight + document.body.scrollTop + document.documentElement.scrollTop;
+    var height        = document.documentElement.scrollHeight;
+    var tabela        = document.querySelectorAll("tabela")[0];
+
+    if ((rolled) > (height-10)) {
+        
+        window.onscroll = null;
+  
+        const selectsearch = document.querySelectorAll("selectsearch")
+  
+        let match = {};
+  
+        Object.entries(selectsearch).forEach(([key, value]) => {
+  
+          let i = value.getAttribute('id');
+          let m = value.getAttribute('modules');
+  
+          if(i){
+  
+            //f.push(JSON.parse('{"'+m+'":'+i+'}'));
+            match[m]=i;
+  
+          }
+  
+        });
+  
+        match["uuid"]=user.session;
+  
+        var offset = got(got(document,"tabela")[0],"item").length;
+  
+        document.body.setAttribute("loading","1");
+  
+        const data = await prontuarios_select(offset);
+  
+        Object.entries(data.page).forEach(([key, value]) => { 
+          
+          let item = createObject('{"tag":"item","c":"'+value.id+'"}');
+          
+          prontuarios_item(item,value);
+          
+          tabela.append(item);
+          
+        });
+  
+        document.body.setAttribute("loading","0");
+        
+       window.onscroll=prontuarios_lazyload;
+
+
+    }
+
+}
+
+const prontuarios_options = async function(element,array) {
+  
+    let options = createObject('{"tag":"options"}');
+  
+  	if(array.me==true){
+    
+      let edit = createObject('{"tag":"button","action":"edit"}');
+      
+      let iconedit  = createObject('{"tag":"icon","class":"icon-pencil"}');
+      let labeledit = createObject('{"tag":"label","innerhtml":"Editar"}');
+
+      edit.append(iconedit,labeledit);
+      
+	    edit.onclick=( async function(){ 
+
+        document.body.setAttribute("loading","1");
+        await prontuarios_form(gA(),array.id)
+      
+      });
+      
+      options.append(edit);
+      
+    }
+    
+    let chatview       = createObject('{"tag":"button","action":"chatview"}');
+    let iconlchatview  = createObject('{"tag":"icon","class":"icon-bubbles3"}');
+    let labelchatview  = createObject('{"tag":"label","innerhtml":"Discussão"}');
+  
+        chatview.append(iconlchatview,labelchatview);
+  
+        chatview.onclick=( async function(){ 
+        
+          document.querySelector("item[c='"+array.id+"']").setAttribute("chat","1");
+          
+          prontuarios_chat_reload(element);
+        
+        });
+
+    let chatclose       = createObject('{"tag":"button","action":"chatclose"}');
+    let iconchatclose   = createObject('{"tag":"icon","class":"icon-bubbles3"}');
+    let labelchatclose  = createObject('{"tag":"label","innerhtml":"Fechar"}');
+  
+        chatclose.append(iconchatclose,labelchatclose);
+        chatclose.onclick=( async function(){ 
+        
+          document.querySelector("item[c='"+array.id+"']").setAttribute("chat","0");
+        
+        });
+    
+        options.append(chatview,chatclose);
+    
+    let view = createObject('{"tag":"button","action":"view"}');
+    let iconview  = createObject('{"tag":"icon","class":"icon-enlarge"}');
+    let labelview  = createObject('{"tag":"label","innerhtml":"Expandir"}');
+  
+        view.append(iconview,labelview);
+
+        view.onclick=(function(){ 
+        
+          document.querySelector("item[c='"+array.id+"']").setAttribute("view","1");
+        
+        });
+    
+    let close       = createObject('{"tag":"button","action":"close"}');
+    let iconclose    = createObject('{"tag":"icon","class":"icon-shrink"}');
+    let labelclose   = createObject('{"tag":"label","innerhtml":"Fechar"}');
+  
+        close.append(iconclose,labelclose);
+      
+        close.onclick=(function(){ 
+        
+          document.querySelector("item[c='"+array.id+"']").setAttribute("view","0");
+        
+        });
+    
+    options.append(view);
+    options.append(close);
+    element.append(options);
+
+
+}
+
+const prontuarios_reload = (data) =>{
+
+    var user    = JSON.parse(localStorage.user);
+    var config  = JSON.parse(localStorage.config);
+
+var page = data.page;
+
+  
+     if(page.length==1){
+    
+        const send = async function() {
+        
+          var item = document.querySelector("tabela item[c='"+data.page[0].id+"']");
+        
+          race(item);
+          
+          prontuarios_item(item,page[0]);
+          
+          document.body.removeAttribute("loading");
+          
+        }
+        
+        send();
+       
+    }else if(page.length>1){
+       
+      prontuarios(data);
+       
+    }else{
+       
+      console.log('sem dados');
+      
+    } 
+
+}
+
+const prontuarios_select = async function(query_offset) {
+  
+  const user = JSON.parse(localStorage.user);
+  
+  const supabaseurl       = localStorage.supabaseurl;
+  const supabase_function = 'rest/v1/rpc/s133v1'
+  const supabasekey       = localStorage.supabasekey;
+  
+  const url  = supabaseurl + supabase_function
+  
+  let param = {'euuid':user.session,'query_offset':query_offset,'eid':null}
+  
+  const response = await fetch(url, {
+
+    method: 'POST',
+    mode: 'cors',
+    headers: {'Accept': 'application/json','Content-Type': 'application/json','apikey':supabasekey},
+    body:JSON.stringify(param)
+    
+  });
+
+  return await response.json();
+  
+}
+
+const prontuarios_send = (data,id) =>{
+
+  const config      = JSON.parse(localStorage.config);
+  const user        = JSON.parse(localStorage.user);
+
+  data.id           = id;
+
+  document.body.setAttribute("loading","1");
+
+  formClose();
+
+  const send = async function(data) {
+
+    const updated_data = await prontuarios_update(data);
+    
+    prontuarios_reload(updated_data);
+
+  }
+
+  send(data); 
+
+}
+
+
+const prontuarios_update = async function(data) {
+  
+  const user              = JSON.parse(localStorage.user);
+  
+  const supabaseurl       = localStorage.supabaseurl;
+  const supabase_function = 'rest/v1/rpc/u133'
+
+  
+  const eId               = (data.id)?data.id:'0';
+
+  const supabasekey       = localStorage.supabasekey;
+  
+  const url               = supabaseurl + supabase_function;
+
+  let param = {
+    
+    'euuid':user.session,
+    'eid':eId,
+    'ecategory':data.category,
+    'efiles':data.files,
+    'epacientes':data.pacientes,
+    'elabel':data.label,
+    'eshare':data.share
+
+  }
+ 
   const response = await fetch(url, {
 
     method: 'POST',

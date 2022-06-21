@@ -9,10 +9,23 @@ const mvb_send = (data,id) =>{
 
   formClose();
 
+  var fieldlabel="";
+
+  Object.entries(data.fieldlabel).forEach(([key, value]) => {
+
+      if(data.fieldlabel[key] && key!=='welcome'){
+            fieldlabel+=''+value.label+'\n';
+            fieldlabel+=value.value+'\n\n'; 
+      }
+    
+  });
+
+ data.fieldlabel=fieldlabel;
+  
   const send = async function(data) {
 
     const updated_data = await mvb_update(data);
-    
+  
     /*     prontuarios_reload(updated_data); */
     
     document.body.removeAttribute("loading");
