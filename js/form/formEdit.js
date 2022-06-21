@@ -15,6 +15,10 @@ function formEdit(modules,id){
     
     users_form(modules,id);
     
+  }else if(modules=='mvb'){
+    
+    mvb_form(modules,id);
+    
   }else{
     formMount(modules,id);
   }

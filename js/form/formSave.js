@@ -74,7 +74,7 @@ function formSave(codigo){
     
       data["fieldlabel"] = fieldlabel;
       
-      formSend(data,codigo);
+      mvb_send(data,codigo);
       
     }else if(modules=='prontuarios'){
     

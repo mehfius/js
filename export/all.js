@@ -3579,6 +3579,10 @@ function formEdit(modules,id){
     
     users_form(modules,id);
     
+  }else if(modules=='mvb'){
+    
+    mvb_form(modules,id);
+    
   }else{
     formMount(modules,id);
   }
@@ -3752,7 +3756,7 @@ function btClose(codigo){
 
 function btBack(codigo){
 
-  var label = createObject('{"tag":"label","innerhtml":"Cancelar"}');
+  var label = createObject('{"tag":"label","innerhtml":"voltar"}');
   var bt    = createObject('{"tag":"icon","class":"icon-arrow-left2","action":"back"}');
 
 
@@ -4054,7 +4058,7 @@ function formSave(codigo){
     
       data["fieldlabel"] = fieldlabel;
       
-      formSend(data,codigo);
+      mvb_send(data,codigo);
       
     }else if(modules=='prontuarios'){
     
@@ -7161,7 +7165,7 @@ const modal = function(){
      
           if(user.areas=='100') {
 
-            modal.append(modalMVB());
+            /* modal.append(modalMVB()); */
             modal.append(modalRemedios());
             
           }
@@ -8340,6 +8344,114 @@ const modulesOpen = async function(url){
         default:tabelaLoad(modules);
     
       }
+  
+}
+
+const mvb_form = (modules,id,header) =>{
+  
+  document.body.setAttribute("loading","1");
+  
+  gridShow();
+  
+  var config    = JSON.parse(localStorage.config);
+	var user      = JSON.parse(localStorage.user);
+
+  const supabaseurl       = localStorage.supabaseurl;
+  const supabase_function = 'rest/v1/rpc/f300'
+
+  const eId               = (id)?id:'0';
+
+  const supabasekey       = localStorage.supabasekey;
+  
+  const url               = supabaseurl + supabase_function;
+  
+  const send = async function() {
+    
+    const rawResponse = await fetch(url, {
+
+      method: 'POST',
+      headers: {'Accept': 'application/json','Content-Type': 'application/json','apikey':supabasekey},
+      body: JSON.stringify({euuid:user.session,eid:id})
+
+    });
+
+    const data = await rawResponse.json();
+          data.id = id;
+	               await formMountFields(modules,data);
+
+   document.body.removeAttribute("loading");
+
+  }
+
+  send();
+  
+
+  
+}
+
+const mvb_send = (data,id) =>{
+
+  const config      = JSON.parse(localStorage.config);
+  const user        = JSON.parse(localStorage.user);
+
+  data.id           = id;
+
+  document.body.setAttribute("loading","1");
+
+  formClose();
+
+  const send = async function(data) {
+
+    const updated_data = await mvb_update(data);
+    
+    /*     prontuarios_reload(updated_data); */
+    
+    document.body.removeAttribute("loading");
+    
+  }
+
+  send(data); 
+  
+/*   document.body.removeAttribute("loading"); */
+  
+}
+
+
+const mvb_update = async function(data) {
+  console.log("loading");
+  document.body.setAttribute("loading","1");
+  
+  const user              = JSON.parse(localStorage.user);
+  
+  const supabaseurl       = localStorage.supabaseurl;
+  const supabase_function = 'rest/v1/rpc/u300'
+
+  
+  const eId               = (data.id)?data.id:'0';
+
+  const supabasekey       = localStorage.supabasekey;
+  
+  const url               = supabaseurl + supabase_function;
+
+  let param = {
+    
+    'euuid':user.session,
+    'data':data
+
+  }
+ 
+  const response = await fetch(url, {
+
+    method: 'POST',
+    mode: 'cors',
+    headers: {'Accept': 'application/json','Content-Type': 'application/json','apikey':supabasekey},
+    body:JSON.stringify(param)
+                               
+  });
+  
+
+  
+  return await response.json();
   
 }
 

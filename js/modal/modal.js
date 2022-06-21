@@ -16,7 +16,7 @@ const modal = function(){
      
           if(user.areas=='100') {
 
-            modal.append(modalMVB());
+            /* modal.append(modalMVB()); */
             modal.append(modalRemedios());
             
           }
