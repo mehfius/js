@@ -1,21 +1,12 @@
 function loadLogged(authentic){
   
-
   localStorage.user       = JSON.stringify(authentic.user);
   localStorage.nav        = JSON.stringify(authentic.nav);
   localStorage.shortcut   = JSON.stringify(authentic.shortcut);
 
-/*   if(authentic.customforms!=undefined){
-    localStorage.customform = JSON.stringify(authentic.customforms);
-  } */
-  
-
 	mountHeader(authentic);
 	mountPrint(authentic);
 	mountSection();
-
-/* 	navMount();
- */
   loadNavSuite();
   modal();
   document.getElementsByTagName("body")[0].setAttribute("modules","");

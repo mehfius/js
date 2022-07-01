@@ -70,7 +70,7 @@ function selectAjaxRemoveCard(e){
 function selectAjaxSetInputValue(data){
 
   let value       = (data.value)?data.value:null;
- console.log(value);
+
   if(Array.isArray(value)){
 
     var valueid = "";

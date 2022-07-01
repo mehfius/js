@@ -6,32 +6,28 @@ function fileupload(data,header,pagedata){
 
   var object   = createObject('{"tag":"input","id":"files","type":"hidden","value":"'+uuid+'"}');
 
-    header.append(btHeaderAttach());
+      header.append(btHeaderAttach());
 
   var span   = createObject('{"tag":"uploadedStatus"}');
   var result = createObject('{"tag":"uploadedFiles"}');
     
-    div.append(label,object,result,span);
-
-    if(data.value){
-
-      if(data.value.length){
-              var files    = data.value;
-      }else{
-              var files    = JSON.parse(data.value);
-      }
-
-
-
-        /*       Object.entries(files).forEach(([key, value]) => {
-        */
+      div.append(label,object,result,span);
+    
+      if(data.value){
+    
+        if(data.value.length){
+          
+          var files    = data.value;
+          
+        }else{
+          
+          var files    = JSON.parse(data.value);
+          
+        }
+    
         fileUploadFigure(result,files);
-
-        /*         object.setAttribute('value',value.uuid);
-
-        }); */
-
-    }
+    
+      }
 
   return div;
   

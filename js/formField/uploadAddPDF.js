@@ -1,28 +1,24 @@
-
 function addUploadFilesPDF(local,filename){
 
   const config = JSON.parse(localStorage.config);
 
 	var split       = filename.split(".");
 
-	var div 				= createObject('{"tag":"div","id":"'+filename+'"}');
+	var div         = createObject('{"tag":"div","type":"pdf","id":"'+filename+'"}');
 	var divOptions 	= createObject('{"tag":"options"}');
 	var spanDelete 	= createObject('{"tag":"span","class":"icon-bin"}');
 	var spanCover 	= createObject('{"tag":"span","innerhtml":"Destaque"}');
 	var spanZoom 		= createObject('{"tag":"span","class":"icon-search"}');
 	var figure 			= createObject('{"tag":"figure","style":"background-image:url('+config.imgp+split[0]+'.jpg);"}');
 	var divLabel 		= createObject('{"tag":"h3"}');
-
-
-
-
+  
   spanDelete.onclick=(function(){
 
       if(confirm('Deseja remover este arquivo?')){removeAnexos(this.parentNode.parentNode,filename)}
 
   });
 
-  spanZoom.onclick=(function(){
+  figure.onclick=(function(){
 
     window.open(config.pdf+filename,'_blank');
 
@@ -31,7 +27,6 @@ function addUploadFilesPDF(local,filename){
   divOptions.append(spanDelete,spanZoom);
   figure.append(divLabel);
 
-  
 	if(goiFind(filename)){
 
 		goi(filename).append(divOptions,figure);
@@ -44,7 +39,7 @@ function addUploadFilesPDF(local,filename){
 	}
   
 }
-
+/* 
 function addUploadFilesPDFv2(local,filename){
 
   const config = JSON.parse(localStorage.config);
@@ -95,3 +90,4 @@ function addUploadFilesPDFv2(local,filename){
 	div.setAttribute("id",filename);
 	
 }
+ */

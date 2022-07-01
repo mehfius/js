@@ -4,6 +4,8 @@ function sendFile(file,anexos,url,cb){
 
 	var formData 	= new FormData();
 
+  var size = file.size;
+  
 	formData.append('fileupload', file);
 
 	var xhr = new XMLHttpRequest();
@@ -11,14 +13,17 @@ function sendFile(file,anexos,url,cb){
 	//var anexos = gon('files')[0].value;
 	
 	var form = got(document,"form")[0];
-	var uploadedfiles = document.querySelector("form uploadedfiles");
+
 	
-	var divLoading=cE("div");
+
 	var labelLoading=cE("label");
   var iconLoading     = createObject('{"tag":"icon","class":"icon-spinner3"}');
-
-	divLoading.append(iconLoading,labelLoading);
-	uploadedfiles.insertBefore(divLoading, uploadedfiles.childNodes[0]);
+  
+	    var uploadedfiles = document.querySelector("form uploadedfiles");
+      var divLoading    = createObject('{"tag":"div"}');
+          
+          divLoading.append(iconLoading,labelLoading);
+          uploadedfiles.insertBefore(divLoading, uploadedfiles.childNodes[0]);
 	
 	
 	xhr.upload.addEventListener("progress", function(e) {
@@ -34,38 +39,31 @@ function sendFile(file,anexos,url,cb){
 		if (xhr.readyState == 4 && xhr.status == 200) {
 			
 			var object = JSON.parse(xhr.responseText);
-			
+                             
+      divLoading.setAttribute("type",object.ext);
+      
 			if(object.ext=='jpg'){
 
-				var div = cE('div');
-				
-				//sA(div,"style","background-image:url('/client/"+object.url+"');");
-				//sA(div,"onclick","window.open('/client/"+object.url+"','_blank');");
+				insertAnexos(anexos,object.filename);
+				divLoading.setAttribute("id",object.filename);
+				divLoading.innerHTML="";
+				cb(object.filename);
+
+			}else if(object.ext=='png'){
+
+				insertAnexos(anexos,object.filename);
+				cb(object.filename);
+
+
+			}else if(object.ext=='pdf'){
 				
 				insertAnexos(anexos,object.filename);
 				divLoading.setAttribute("id",object.filename);
 				divLoading.innerHTML="";
 				cb(object.filename);
-			
-				//got('fileuploadresult').appendChild(div);
-
-			}else if(object.ext=='png'){
-
-				var div = cE('div');
 				
-				//sA(div,"style","background-image:url('/client/"+object.url+"');");
-				//sA(div,"onclick","window.open('/client/"+object.url+"','_blank');");
+			}else if(object.ext=='mp4'){
 				
-				insertAnexos(anexos,object.filename);
-				cb(object.filename);
-				console.log(object);
-				//got('fileuploadresult').appendChild(div);
-
-			}else if(object.ext=='pdf'){
-				
-				//var uploadedfiles = got(object.parentNode.parentNode,"uploadedfiles")[0];
-				
-				//addUploadFiles(uploadedfiles,object.filename);
 				insertAnexos(anexos,object.filename);
 				divLoading.setAttribute("id",object.filename);
 				divLoading.innerHTML="";
@@ -77,8 +75,11 @@ function sendFile(file,anexos,url,cb){
 
 	};
 
-	xhr.open('POST', url, true);
-	xhr.send(formData);
+
+  xhr.open('POST', url, true);
+  xhr.send(formData);
+  
+
 
 }
 
@@ -93,53 +94,37 @@ function upload(object){
 	for(var x=0;x<object.files.length;x++){
 			
 		var ext     = object.files[x].type;
+
 		var anexos  = document.getElementById('files').value;
 
-		if(ext=='image/jpeg'){
+    var size    = object.files[x].size;
+    
+    var maxsize = '80';
+    
+    switch(ext) {
 
-			sendFile(object.files[x],anexos,config.upload+'?',
-
-				function(filename){
-
-					addUploadFiles(uploadedfiles,filename);
-
-				}
-
-			);
-			
-		}else if(ext=='application/pdf'){
-			
-			sendFile(object.files[x],anexos,config.upload+'?',
-
-							 
-				function(filename){
+      case "image/jpeg": sendFile(object.files[x],anexos,config.upload+'?',function(filename){addUploadFiles(uploadedfiles,filename);});break;
+      case "application/pdf": sendFile(object.files[x],anexos,config.upload+'?',function(filename){addUploadFilesPDF(uploadedfiles,filename);});break;
+      case "image/png": sendFile(object.files[x],anexos,config.upload+'?',function(filename){addUploadFiles(uploadedfiles,filename);});break;
+      case "video/mp4": 
         
-				  //pdftothumb(object);
-	
+        if(size < (maxsize * 1024 * 1024)){
+  
+         sendFile(object.files[x],anexos,config.upload+'?',function(filename){addUploadFilesMP4(uploadedfiles,filename);});
+          
+        }else{
+          
+          alert('Arquivo maior que o permitido '+maxsize+'mb');
+          console.log((size/1024)/1024);
+          
+        }
+        
+        break;
+        
+      default:alert('Formato de arquivo não suportado');
+        
+    } 
 
-					addUploadFilesPDF(uploadedfiles,filename);
-
-				}
-							 
-			);
-
-		}else if(ext=='image/png'){
-			
-			sendFile(object.files[x],anexos,config.upload+'?',
-
-							 
-				function(filename){
-				
-
-					addUploadFiles(uploadedfiles,filename);
-
-				}
-							 
-			);
-						
-		}else{
-			alert('Formato de arquivo não suportado');
-		}
 
 	}
 		

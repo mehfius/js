@@ -4919,7 +4919,7 @@ function selectAjaxRemoveCard(e){
 function selectAjaxSetInputValue(data){
 
   let value       = (data.value)?data.value:null;
- console.log(value);
+
   if(Array.isArray(value)){
 
     var valueid = "";
@@ -5444,32 +5444,28 @@ function fileupload(data,header,pagedata){
 
   var object   = createObject('{"tag":"input","id":"files","type":"hidden","value":"'+uuid+'"}');
 
-    header.append(btHeaderAttach());
+      header.append(btHeaderAttach());
 
   var span   = createObject('{"tag":"uploadedStatus"}');
   var result = createObject('{"tag":"uploadedFiles"}');
     
-    div.append(label,object,result,span);
-
-    if(data.value){
-
-      if(data.value.length){
-              var files    = data.value;
-      }else{
-              var files    = JSON.parse(data.value);
-      }
-
-
-
-        /*       Object.entries(files).forEach(([key, value]) => {
-        */
+      div.append(label,object,result,span);
+    
+      if(data.value){
+    
+        if(data.value.length){
+          
+          var files    = data.value;
+          
+        }else{
+          
+          var files    = JSON.parse(data.value);
+          
+        }
+    
         fileUploadFigure(result,files);
-
-        /*         object.setAttribute('value',value.uuid);
-
-        }); */
-
-    }
+    
+      }
 
   return div;
   
@@ -5480,7 +5476,7 @@ function addUploadFiles(local,object){
 
   const config = JSON.parse(localStorage.config);
 
-	var div 				= createObject('{"tag":"div"}');
+  var div         = createObject('{"tag":"div","type":"jpg","id":"'+filename+'"}');
 	var figure 			= createObject('{"tag":"figure"}');
 
 	var spanDelete 	= createObject('{"tag":"span","class":"icon-bin"}');
@@ -5506,7 +5502,7 @@ function addUploadFiles(local,object){
     var urlimg  = config.img+filename+"?key="+randomString(32);
 
 		    divOptions.append(spanDelete,spanLeft,spanZoom,spanRight);
-		    div.append(divOptions);
+		 /*    div.append(divOptions); */
 
 
 		sA(figure,"style","background-image:url('"+urlimgm+"');");
@@ -5516,7 +5512,7 @@ function addUploadFiles(local,object){
     
 
 
-    spanZoom.onclick=(function(){
+    figure.onclick=(function(){
       window.open(urlimg,'_blank');
     });
                       
@@ -5525,7 +5521,7 @@ function addUploadFiles(local,object){
       let key = randomString(32);
 
 			figure.setAttribute('style',"background-image:url('"+config.urlimagerotate+"?img="+filename+"&rotate=left&key="+key+"');");
-			//divOptions.setAttribute('style',"background-image:url('"+localStorage.getItem("url")+"/admin/action/actionChangeImageKey.php?filename="+filename+"&key="+randomString(32)+"');");
+
 
       rotateImage(filename,key);
       
@@ -5536,19 +5532,18 @@ function addUploadFiles(local,object){
       let key = randomString(32);
 
 			figure.setAttribute('style',"background-image:url('"+config.urlimagerotate+"?img="+filename+"&rotate=right&key="+key+"');");
-			//divOptions.setAttribute('style',"background-image:url('"+localStorage.getItem("url")+"/admin/action/actionChangeImageKey.php?filename="+filename+"&key="+randomString(32)+"');");
+
       rotateImage(filename,key);
 		});
 		
 		if(goiFind(filename)){
 			
-			goi(filename).appendChild(divOptions);
-			goi(filename).appendChild(figure);
-			
+			goi(filename).append(figure,divOptions);
+
 		}else{
 			
 			local.insertBefore(div, local.childNodes[0]);
-			div.appendChild(figure);
+			div.append(figure,divOptions);
 			
 		}
 		
@@ -5563,7 +5558,6 @@ function addUploadFiles(local,object){
     btsalvar.setAttribute("type","button");
 		
 
-		div.setAttribute("id",filename);
 	
 		
 	}else{
@@ -5601,30 +5595,90 @@ const rotateImage = async function(filename,key){
 }
 
 
+function addUploadFilesMP4(local,filename){
+  
+  const config = JSON.parse(localStorage.config);
+  
+  var div         = createObject('{"tag":"div","type":"mp4","id":"'+filename+'"}');
+
+	var textCover 	= createObject('{"tag":"Destaque"}');
+  
+	var spanDelete 	= createObject('{"tag":"span"}');
+	var spanZoom 	  = createObject('{"tag":"span"}');
+	var spanCover 	= createObject('{"tag":"span"}');
+  
+	var divOptions 	= createObject('{"tag":"options"}');
+
+	if(filename!==null){
+
+    		spanCover.append(textCover);
+    
+    		divOptions.append(spanDelete,spanZoom);
+    
+   /*  		div.append(divOptions); */
+    
+    		spanDelete.setAttribute('class','icon-bin');
+    
+    		spanZoom.setAttribute('class','icon-play3');
+
+    let video = createObject('{"tag":"video"}');
+
+    let video_source = createObject('{"tag":"source","src":"'+config.mp4+filename+'","type":"video/mp4"}');
+
+        video.append(video_source);
+    
+        spanDelete.setAttribute("onclick","if(confirm('Deseja remover este arquivo?')){removeAnexos(this.parentNode.parentNode,'"+filename+"')}");
+        video.setAttribute("onclick","window.open('"+config.mp4+filename+"','_blank');");
+    
+        divOptions.append(spanDelete,spanZoom);
+
+      	if(goiFind(filename)){
+      
+      		goi(filename).append(video,divOptions);
+      
+      	}else{
+      
+      		local.insertBefore(div, local.childNodes[0]);
+      		div.append(video,divOptions);
+          
+      	}
+
+	}else{
+
+	  var icon 	= createObject('{"tag":"icon","class":"icon-user"}');
+    
+    		figure.setAttribute('style',"");
+    		figure.append(icon);
+    		div.append(figure);
+    		local.append(div);
+    
+	}
+
+
+}
+
+
 function addUploadFilesPDF(local,filename){
 
   const config = JSON.parse(localStorage.config);
 
 	var split       = filename.split(".");
 
-	var div 				= createObject('{"tag":"div","id":"'+filename+'"}');
+	var div         = createObject('{"tag":"div","type":"pdf","id":"'+filename+'"}');
 	var divOptions 	= createObject('{"tag":"options"}');
 	var spanDelete 	= createObject('{"tag":"span","class":"icon-bin"}');
 	var spanCover 	= createObject('{"tag":"span","innerhtml":"Destaque"}');
 	var spanZoom 		= createObject('{"tag":"span","class":"icon-search"}');
 	var figure 			= createObject('{"tag":"figure","style":"background-image:url('+config.imgp+split[0]+'.jpg);"}');
 	var divLabel 		= createObject('{"tag":"h3"}');
-
-
-
-
+  
   spanDelete.onclick=(function(){
 
       if(confirm('Deseja remover este arquivo?')){removeAnexos(this.parentNode.parentNode,filename)}
 
   });
 
-  spanZoom.onclick=(function(){
+  figure.onclick=(function(){
 
     window.open(config.pdf+filename,'_blank');
 
@@ -5633,7 +5687,6 @@ function addUploadFilesPDF(local,filename){
   divOptions.append(spanDelete,spanZoom);
   figure.append(divLabel);
 
-  
 	if(goiFind(filename)){
 
 		goi(filename).append(divOptions,figure);
@@ -5646,7 +5699,7 @@ function addUploadFilesPDF(local,filename){
 	}
   
 }
-
+/* 
 function addUploadFilesPDFv2(local,filename){
 
   const config = JSON.parse(localStorage.config);
@@ -5697,7 +5750,7 @@ function addUploadFilesPDFv2(local,filename){
 	div.setAttribute("id",filename);
 	
 }
-
+ */
 
 
 function addUploadFilesPNG(local,filename){
@@ -5761,8 +5814,8 @@ function fileUploadFigure(result,data){
 
       case "jpg": addUploadFiles(result,value);break;
       case "pdf": addUploadFilesPDF(result,value.filename);break;
-      case "png": ddUploadFilesPNG(result,value.filename);break;
-
+      case "png": addUploadFilesPNG(result,value.filename);break;
+      case "mp4": addUploadFilesMP4(result,value.filename);break;
     } 
 
   });
@@ -5816,6 +5869,8 @@ function sendFile(file,anexos,url,cb){
 
 	var formData 	= new FormData();
 
+  var size = file.size;
+  
 	formData.append('fileupload', file);
 
 	var xhr = new XMLHttpRequest();
@@ -5823,14 +5878,17 @@ function sendFile(file,anexos,url,cb){
 	//var anexos = gon('files')[0].value;
 	
 	var form = got(document,"form")[0];
-	var uploadedfiles = document.querySelector("form uploadedfiles");
+
 	
-	var divLoading=cE("div");
+
 	var labelLoading=cE("label");
   var iconLoading     = createObject('{"tag":"icon","class":"icon-spinner3"}');
-
-	divLoading.append(iconLoading,labelLoading);
-	uploadedfiles.insertBefore(divLoading, uploadedfiles.childNodes[0]);
+  
+	    var uploadedfiles = document.querySelector("form uploadedfiles");
+      var divLoading    = createObject('{"tag":"div"}');
+          
+          divLoading.append(iconLoading,labelLoading);
+          uploadedfiles.insertBefore(divLoading, uploadedfiles.childNodes[0]);
 	
 	
 	xhr.upload.addEventListener("progress", function(e) {
@@ -5846,38 +5904,31 @@ function sendFile(file,anexos,url,cb){
 		if (xhr.readyState == 4 && xhr.status == 200) {
 			
 			var object = JSON.parse(xhr.responseText);
-			
+                             
+      divLoading.setAttribute("type",object.ext);
+      
 			if(object.ext=='jpg'){
 
-				var div = cE('div');
-				
-				//sA(div,"style","background-image:url('/client/"+object.url+"');");
-				//sA(div,"onclick","window.open('/client/"+object.url+"','_blank');");
+				insertAnexos(anexos,object.filename);
+				divLoading.setAttribute("id",object.filename);
+				divLoading.innerHTML="";
+				cb(object.filename);
+
+			}else if(object.ext=='png'){
+
+				insertAnexos(anexos,object.filename);
+				cb(object.filename);
+
+
+			}else if(object.ext=='pdf'){
 				
 				insertAnexos(anexos,object.filename);
 				divLoading.setAttribute("id",object.filename);
 				divLoading.innerHTML="";
 				cb(object.filename);
-			
-				//got('fileuploadresult').appendChild(div);
-
-			}else if(object.ext=='png'){
-
-				var div = cE('div');
 				
-				//sA(div,"style","background-image:url('/client/"+object.url+"');");
-				//sA(div,"onclick","window.open('/client/"+object.url+"','_blank');");
+			}else if(object.ext=='mp4'){
 				
-				insertAnexos(anexos,object.filename);
-				cb(object.filename);
-				console.log(object);
-				//got('fileuploadresult').appendChild(div);
-
-			}else if(object.ext=='pdf'){
-				
-				//var uploadedfiles = got(object.parentNode.parentNode,"uploadedfiles")[0];
-				
-				//addUploadFiles(uploadedfiles,object.filename);
 				insertAnexos(anexos,object.filename);
 				divLoading.setAttribute("id",object.filename);
 				divLoading.innerHTML="";
@@ -5889,8 +5940,11 @@ function sendFile(file,anexos,url,cb){
 
 	};
 
-	xhr.open('POST', url, true);
-	xhr.send(formData);
+
+  xhr.open('POST', url, true);
+  xhr.send(formData);
+  
+
 
 }
 
@@ -5905,53 +5959,37 @@ function upload(object){
 	for(var x=0;x<object.files.length;x++){
 			
 		var ext     = object.files[x].type;
+
 		var anexos  = document.getElementById('files').value;
 
-		if(ext=='image/jpeg'){
+    var size    = object.files[x].size;
+    
+    var maxsize = '80';
+    
+    switch(ext) {
 
-			sendFile(object.files[x],anexos,config.upload+'?',
-
-				function(filename){
-
-					addUploadFiles(uploadedfiles,filename);
-
-				}
-
-			);
-			
-		}else if(ext=='application/pdf'){
-			
-			sendFile(object.files[x],anexos,config.upload+'?',
-
-							 
-				function(filename){
+      case "image/jpeg": sendFile(object.files[x],anexos,config.upload+'?',function(filename){addUploadFiles(uploadedfiles,filename);});break;
+      case "application/pdf": sendFile(object.files[x],anexos,config.upload+'?',function(filename){addUploadFilesPDF(uploadedfiles,filename);});break;
+      case "image/png": sendFile(object.files[x],anexos,config.upload+'?',function(filename){addUploadFiles(uploadedfiles,filename);});break;
+      case "video/mp4": 
         
-				  //pdftothumb(object);
-	
+        if(size < (maxsize * 1024 * 1024)){
+  
+         sendFile(object.files[x],anexos,config.upload+'?',function(filename){addUploadFilesMP4(uploadedfiles,filename);});
+          
+        }else{
+          
+          alert('Arquivo maior que o permitido '+maxsize+'mb');
+          console.log((size/1024)/1024);
+          
+        }
+        
+        break;
+        
+      default:alert('Formato de arquivo não suportado');
+        
+    } 
 
-					addUploadFilesPDF(uploadedfiles,filename);
-
-				}
-							 
-			);
-
-		}else if(ext=='image/png'){
-			
-			sendFile(object.files[x],anexos,config.upload+'?',
-
-							 
-				function(filename){
-				
-
-					addUploadFiles(uploadedfiles,filename);
-
-				}
-							 
-			);
-						
-		}else{
-			alert('Formato de arquivo não suportado');
-		}
 
 	}
 		
@@ -6552,22 +6590,13 @@ window.onload=load;
 
 function loadLogged(authentic){
   
-
   localStorage.user       = JSON.stringify(authentic.user);
   localStorage.nav        = JSON.stringify(authentic.nav);
   localStorage.shortcut   = JSON.stringify(authentic.shortcut);
 
-/*   if(authentic.customforms!=undefined){
-    localStorage.customform = JSON.stringify(authentic.customforms);
-  } */
-  
-
 	mountHeader(authentic);
 	mountPrint(authentic);
 	mountSection();
-
-/* 	navMount();
- */
   loadNavSuite();
   modal();
   document.getElementsByTagName("body")[0].setAttribute("modules","");

@@ -3,7 +3,7 @@ function addUploadFiles(local,object){
 
   const config = JSON.parse(localStorage.config);
 
-	var div 				= createObject('{"tag":"div"}');
+  var div         = createObject('{"tag":"div","type":"jpg","id":"'+filename+'"}');
 	var figure 			= createObject('{"tag":"figure"}');
 
 	var spanDelete 	= createObject('{"tag":"span","class":"icon-bin"}');
@@ -29,7 +29,7 @@ function addUploadFiles(local,object){
     var urlimg  = config.img+filename+"?key="+randomString(32);
 
 		    divOptions.append(spanDelete,spanLeft,spanZoom,spanRight);
-		    div.append(divOptions);
+		 /*    div.append(divOptions); */
 
 
 		sA(figure,"style","background-image:url('"+urlimgm+"');");
@@ -39,7 +39,7 @@ function addUploadFiles(local,object){
     
 
 
-    spanZoom.onclick=(function(){
+    figure.onclick=(function(){
       window.open(urlimg,'_blank');
     });
                       
@@ -48,7 +48,7 @@ function addUploadFiles(local,object){
       let key = randomString(32);
 
 			figure.setAttribute('style',"background-image:url('"+config.urlimagerotate+"?img="+filename+"&rotate=left&key="+key+"');");
-			//divOptions.setAttribute('style',"background-image:url('"+localStorage.getItem("url")+"/admin/action/actionChangeImageKey.php?filename="+filename+"&key="+randomString(32)+"');");
+
 
       rotateImage(filename,key);
       
@@ -59,19 +59,18 @@ function addUploadFiles(local,object){
       let key = randomString(32);
 
 			figure.setAttribute('style',"background-image:url('"+config.urlimagerotate+"?img="+filename+"&rotate=right&key="+key+"');");
-			//divOptions.setAttribute('style',"background-image:url('"+localStorage.getItem("url")+"/admin/action/actionChangeImageKey.php?filename="+filename+"&key="+randomString(32)+"');");
+
       rotateImage(filename,key);
 		});
 		
 		if(goiFind(filename)){
 			
-			goi(filename).appendChild(divOptions);
-			goi(filename).appendChild(figure);
-			
+			goi(filename).append(figure,divOptions);
+
 		}else{
 			
 			local.insertBefore(div, local.childNodes[0]);
-			div.appendChild(figure);
+			div.append(figure,divOptions);
 			
 		}
 		
@@ -86,7 +85,6 @@ function addUploadFiles(local,object){
     btsalvar.setAttribute("type","button");
 		
 
-		div.setAttribute("id",filename);
 	
 		
 	}else{
