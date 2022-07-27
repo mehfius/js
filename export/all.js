@@ -7490,47 +7490,65 @@ function itemDetail(item,data){
 
 }
 
-function itemDetailFigure(data){
+function itemDetailFigure(data) {
 
 
-      var config = JSON.parse(localStorage.config);
+  var config = JSON.parse(localStorage.config);
 
-      let figure = createObject('{"tag":"figure"}');
+  let figure = createObject('{"tag":"figure"}');
 
-			let split  =data.filename.split(".");
+  let split = data.filename.split(".");
 
-      let extensao = split[1];
-      let filename = split[0];
+  let extensao = split[1];
+  let filename = split[0];
 
-      let onclick = "";
+  let onclick = "";
 
-      switch(extensao) {
+  switch (extensao) {
 
-      case "jpg": 
+    case "jpg":
 
-          let url = config.img+filename+".jpg?key="+data.key;
+      var url = config.img + filename + ".jpg?key=" + data.key;
 
-          onclick="window.open('"+url+"','_blank');"
-          figure.setAttribute("onclick",onclick);
+      onclick = "window.open('" + url + "','_blank');"
+      figure.setAttribute("onclick", onclick);
+      figure.style.backgroundImage = "url(" + config.imgp + filename + ".jpg?key=" + data.key + ")";
+      break;
 
-        break;
+    case "pdf":
 
-      case "pdf": 
+      onclick = "window.open('" + config.pdf + filename + ".pdf','_blank');"
 
-        onclick = "window.open('"+config.pdf+filename+".pdf','_blank');"
-        
 
-        let label = createObject('{"tag":"label","innerhtml":"pdf"}');
+      var label = createObject('{"tag":"label","innerhtml":"pdf"}');
 
-            figure.setAttribute("onclick",onclick);
-            figure.append(label);
+      figure.setAttribute("onclick", onclick);
+      figure.append(label);
+      figure.style.backgroundImage = "url(" + config.imgp + filename + ".jpg?key=" + data.key + ")";
+      break;
 
-        break;
-      }        
+    case "mp4":
 
-			figure.style.backgroundImage="url("+config.imgp+filename+".jpg?key="+data.key+")";
-		
-return figure;
+      onclick = "window.open('" + config.mp4 + filename + ".mp4','_blank');"
+
+      var video = createObject('{"tag":"video"}');
+      var source = createObject('{"tag":"source","src":"' + config.mp4 + filename + '.mp4","type":"video/mp4"}');
+
+      figure.setAttribute("onclick", onclick);
+      video.append(source);
+      figure.append(video);
+      figure.style.backgroundImage = "url(" + config.imgp + filename + ".jpg?key=" + data.key + ")";
+
+      /* 
+      <video onclick="window.open('https://suite8.com.br/uploads/mp4/6561f49aa701e78efbd80978f967096b.mp4','_blank');"><source src="https://suite8.com.br/uploads/mp4/6561f49aa701e78efbd80978f967096b.mp4" type="video/mp4"></video>
+             */
+
+      break;
+  }
+
+
+
+  return figure;
 }
 
 
